@@ -2,4 +2,4 @@
 
 ## Ollama
 
-[a relative link](docs/how_to_communicatie_with_ollama.md)
+[Ollama connection instructions](docs/how_to_communicatie_with_ollama.md)
