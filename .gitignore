@@ -12,5 +12,6 @@ env/
 .ruff_cache/
 
 *.log
+log/
 
 *.egg-info/
