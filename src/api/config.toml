@@ -2,4 +2,5 @@
 Address = "10.245.115.5"
 Port = "11434"
  
-
+[LLM]
+Model = "llama3.1"
