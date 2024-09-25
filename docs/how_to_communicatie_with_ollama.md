@@ -4,7 +4,7 @@
 
 
 ```
-curl http://10.245.115.5:11434/api/generate -d '{
+curl http://<server-address>/api/generate -d '{
   "model": "llama3.1",
   "prompt": "Why is the sky blue?",
   "stream": false
