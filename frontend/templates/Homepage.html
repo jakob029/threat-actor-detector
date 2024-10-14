@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Analyzer</title>
+    <!-- Load the CSS file from the static folder -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Generate Response</h1>
+        <!-- Form to submit the prompt -->
+        <form id="textInputForm">
+            <textarea id="promptInput" placeholder="Enter your prompt here..." required></textarea>
+            <button type="submit">Submit Prompt</button>
+        </form>
+        <!-- Div to display the result from the Flask back-end -->
+        <div class="result" id="result"></div>
+    </div>
+
+    <!-- Load the JavaScript file from the static folder -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
