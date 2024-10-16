@@ -1,3 +1,7 @@
+"""
+Ollama requests.
+"""
+
 from flask_restful import Resource, reqparse
 from ollama import Client
 
@@ -5,7 +9,16 @@ from config import read_config
 
 
 class Analysis(Resource):
+    "A class representing the analysis response on call /analysis."
+    
     def get(self):
+        """
+        Handle a given get request, forward it to the llm and give the response back.
+
+        Return:
+        dict: response in json format.
+        int: code.
+        """
         config = read_config()
 
         if config is None:
@@ -24,8 +37,6 @@ class Analysis(Resource):
             }
         ])
 
-
-
         return {
             "created": llm_response["created_at"],
             "content": llm_response["message"]["content"],
@@ -34,23 +45,28 @@ class Analysis(Resource):
 
 
 class Test(Resource):
+    "A class representing the test response on call /test."
+
     def get(self):
+        "Qucik conversation test."
         config = read_config()
         if config is None:
             return {'status': 'error', 'message': 'Configuration file does not exist.'}, 400
 
+        # First request asking what is a rock.
         client = Client(host=config.llm_address)
-        llm_response = client.chat(model='llama3.2', messages=[
+        llm_response_1 = client.chat(model='llama3.2', messages=[
             {
                 'role': 'user',
                 'content': 'what is a rock?'
             }
         ])
 
-        # Testing llm chat.
-        resp = llm_response["message"]["content"]
+        # Second request using the previous response and question to ask if it could
+        # make a song about it.
+        resp = llm_response_1["message"]["content"]
         print(resp)
-        llm_response = client.chat(model='llama3.2', messages=[
+        llm_response_2 = client.chat(model='llama3.2', messages=[
             {
                 'role': 'user',
                 'content': 'what is a rock?'
@@ -62,7 +78,23 @@ class Test(Resource):
                 'content': 'can you write a song about it?'
             }
         ])
-        return {'llm-response': llm_response['message']}, 200
+
+        # Return the song
+        return {"messages": [
+            {
+                'role': 'user',
+                'content': 'what is a rock?'
+            }, {
+                'role': 'assistant',
+                'content': llm_response_1['message']['content']
+            }, {
+                'role': 'user',
+                'content': 'can you write a song about it?'
+            }, {
+                'role': 'assistant',
+                'content': llm_response_2['message']['content']
+            }
+        ]}, 200
         
 
 

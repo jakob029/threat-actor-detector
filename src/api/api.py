@@ -1,3 +1,7 @@
+"""
+Main API file.
+"""
+
 from flask import Flask
 from flask_restful import Api
 from ollama_module import Analysis, Test
