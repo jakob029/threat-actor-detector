@@ -8,7 +8,9 @@
 
 sends a question to the llm and gives the llm response as a response.
 
-    URL http://127.0.0.1:5000/test
+**URL**
+
+    http://127.0.0.1:5000/test
 
 **Response body**
 
@@ -48,7 +50,9 @@ sends a question to the llm and gives the llm response as a response.
 
 sends a question to the llm and gives the llm response as a response.
 
-    URL http://127.0.0.1:5000/analysis
+**URL**
+
+    http://127.0.0.1:5000/analysis
 
 **Request body**
 
