@@ -4,38 +4,38 @@
 
 <details>
 
-    <summary>Analysis request</summary>
+<summary>Analysis request</summary>
 
 ### Analysis
 
-    sends a question to the llm and gives the llm response as a response.
+sends a question to the llm and gives the llm response as a response.
 
-    > URL http://127.0.0.1:5000/analysis
+    URL http://127.0.0.1:5000/analysis
 
-    **Request body**
+**Request body**
 
-    ```json
-    {
-        "question": <question>
-    }
-    ```
+```json
+{
+    "question": <question>
+}
+```
 
-    **Response body**
+**Response body**
 
-    ```json
-    {
-        "created": <Time request was created>,
-        "content": <llm response>,
-        "message": "Success"
-    }
-    ```
+```json
+{
+    "created": <Time request was created>,
+    "content": <llm response>,
+    "message": "Success"
+}
+```
 
-    **Failed**
+**Failed**
 
-    ```json
-    {
-        "message": <messgae>
-    } 
-    ```
+```json
+{
+    "message": <messgae>
+} 
+```
 
 </details>
