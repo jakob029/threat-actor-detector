@@ -9,7 +9,7 @@ class Analysis(Resource):
         config = read_config()
 
         if config is None:
-            return {'status': 'error', 'message': 'Configuration file does not exist.'}, 400
+            return {"message": "Configuration file does not exist."}, 400
 
         parser = reqparse.RequestParser()
         parser.add_argument('question', type=str, required=True)
@@ -26,7 +26,11 @@ class Analysis(Resource):
 
 
 
-        return {"resp": llm_response}, 200
+        return {
+            "created": llm_response["created_at"],
+            "content": llm_response["message"]["content"],
+            "message": "Success"
+        }, 200
 
 
 class Test(Resource):
