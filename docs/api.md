@@ -4,7 +4,7 @@
 
 <details>
 
-<summary>### Analysis</summary>
+<summary>Analysis</summary>
 
 sends a question to the llm and gives the llm response as a response.
 
