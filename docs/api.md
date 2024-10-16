@@ -16,17 +16,17 @@ sends a question to the llm and gives the llm response as a response.
 {
     "messages": [
         {
-            'role': 'user',
-            'content': 'what is a rock?'
+            "role": "user",
+            "content": "what is a rock?"
         }, {
-            'role': 'assistant',
-            'content': <llm response 1>
+            "role": "assistant",
+            "content": <llm response 1>
         }, {
-            'role': 'user',
-            'content': 'can you write a song about it?'
+            "role": "user",
+            "content": "can you write a song about it?"
         }, {
-            'role': 'assistant',
-            'content': <llm response 2>
+            "role": "assistant",
+            "content": <llm response 2>
         }
     ]
 }
