@@ -4,14 +4,16 @@ Ollama requests.
 
 from flask_restful import Resource, reqparse
 from ollama import Client
-
 from config import read_config
 
 
-class Analysis(Resource):
+class Analyze(Resource):
     "A class representing the analysis response on call /analysis."
     
     def get(self):
+        return {'messgae': 'success'}, 200
+
+    def post(self):
         """
         Handle a given get request, forward it to the llm and give the response back.
 
@@ -25,22 +27,22 @@ class Analysis(Resource):
             return {"message": "Configuration file does not exist."}, 400
 
         parser = reqparse.RequestParser()
-        parser.add_argument('question', type=str, required=True)
+        parser.add_argument('prompt', type=str, required=True)
         args = parser.parse_args(strict=True)
-        question = args['question']
+        prompt = args['prompt']
 
         client = Client(host=config.llm_address)
         llm_response = client.chat(model='llama3.2', messages=[
             {
                 'role': 'user',
-                'content': question
+                'content': prompt
             }
         ])
 
         return {
             "created": llm_response["created_at"],
             "content": llm_response["message"]["content"],
-            "message": "Success"
+            "message": "success"
         }, 200
 
 

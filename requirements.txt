@@ -6,3 +6,7 @@ black==24.4.2
 #### API ####
 flask-restful==0.3.10
 ollama==0.3.3
+
+#### Frontend ####
+flask==3.0.3
+requests==2.32.3

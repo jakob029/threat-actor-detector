@@ -21,17 +21,15 @@ def analyze():
         return jsonify({'response': 'No prompt received'})
 
     # Oollama server URL and payload
-    oollama_url = "http://100.77.88.10/api/generate"
+    oollama_url = "http://127.0.0.1:5001/analyze"
     payload = {
-        "model": "llama3.1",
         "prompt": prompt,
-        "stream": False
     }
     
     headers = {'Content-Type': 'application/json'}
 
     try:
-        print(f"Sending payload to Oollama: {payload}")
+        print(f"Sending payload to API: {payload}")
         
         response = requests.post(oollama_url, json=payload, headers=headers)
         response_data = response.json()
@@ -39,7 +37,7 @@ def analyze():
         print(f"Oollama server response: {response_data}")
 
         # Adjust this to correctly access the 'response' key from Oollama's result
-        return jsonify({'response': response_data.get('response', 'No result')})
+        return jsonify({'response': response_data.get('content', 'No result')})
     
     except Exception as e:
         print(f"Error communicating with Oollama server: {e}")
