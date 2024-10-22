@@ -19,8 +19,7 @@ CONFIG_PATH = "config/api.toml"
 
 
 class Config:
-    """
-    A class representing the API configurations.
+    """A class representing the API configurations.
 
     Attributes:
         llm_address (str): the address of the llm to connect with.
@@ -34,8 +33,7 @@ class Config:
 
 
 def read_config() -> Config:
-    """
-    Reads thefile ./config/api.toml and loads the configurations into a Config object.
+    """Reads thefile ./config/api.toml and loads the configurations into a Config object.
 
     Returns:
         config (Config): on success a config obejct will be returned otherwise None.

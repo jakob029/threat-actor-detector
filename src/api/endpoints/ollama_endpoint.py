@@ -1,5 +1,4 @@
-"""
-Ollama requests.
+"""Ollama requests.
 
 Classes:
     Analyzis
@@ -13,13 +12,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
 class Analyzis(Resource):
-    "A class representing the analysis response on call /analysis."
+    """A class representing the analysis response on call /analysis."""
 
     def post(self):
-        """
-        Handle a given get request, forward it to the llm and give the response back.
+        """Handle a given get request, forward it to the llm and give the response back.
 
         Return:
             dict: response in json.

@@ -1,6 +1,4 @@
-"""
-Main API file.
-"""
+"""Main API file."""
 
 from flask import Flask
 from flask_restful import Api

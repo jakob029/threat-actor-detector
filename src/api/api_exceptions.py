@@ -1,5 +1,4 @@
-"""
-The different exceptions the api might raise.
+"""The different exceptions the api might raise.
 
 Classes:
     ConfigException

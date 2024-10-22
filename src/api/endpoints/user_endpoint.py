@@ -7,3 +7,4 @@ class Authentication(Resource):
 
     def post(self):
         return {}, 200
+
