@@ -12,6 +12,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class Analyzis(Resource):
     """A class representing the analysis response on call /analysis."""
 
@@ -21,8 +22,8 @@ class Analyzis(Resource):
         Return:
             dict: response in json.
             int: code.
-        """
 
+        """
         try:
             parser: RequestParser = RequestParser()
             parser.add_argument("prompt", type=str, required=True)
