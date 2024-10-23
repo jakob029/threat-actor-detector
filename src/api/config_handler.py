@@ -1,5 +1,4 @@
-"""
-API configuration module
+"""API configuration module.
 
 Classes:
     Config
@@ -23,25 +22,25 @@ class Config:
 
     Attributes:
         llm_address (str): the address of the llm to connect with.
+
     """
 
     def __init__(self) -> None:
-        "Initializes Config object."
-
+        """Initialize Config object."""
         self.llm_address: str = ""
         self.llm_model: str = ""
 
 
 def read_config() -> Config:
-    """Reads thefile ./config/api.toml and loads the configurations into a Config object.
+    """Read the file ./config/api.toml and return Config obejct.
 
     Returns:
         config (Config): on success a config obejct will be returned otherwise None.
 
     Raises:
         ConfigException: If config error occur.
-    """
 
+    """
     conf: dict[str, Any] | None = {}
 
     # read config file
@@ -56,18 +55,26 @@ def read_config() -> Config:
 
     # validate config
     if not isinstance(conf["llm"], dict):
-        raise ConfigException(path=CONFIG_PATH, message="llm is of wrong type.")
+        raise ConfigException(
+            path=CONFIG_PATH,
+            message="llm is of wrong type.")
 
     llm_conf: dict[str, Any] = conf["llm"]
 
     if not isinstance(llm_conf["host"], str):
-        raise ConfigException(path=CONFIG_PATH, message="llm.host is of wrong type, should be string.")
+        raise ConfigException(
+            path=CONFIG_PATH,
+            message="llm.host is of wrong type, should be string.")
 
     if not isinstance(llm_conf["model"], str):
-        raise ConfigException(path=CONFIG_PATH, message="llm.model is of wrong type, should be string.")
+        raise ConfigException(
+            path=CONFIG_PATH,
+            message="llm.model is of wrong type, should be string.")
 
     if not isinstance(llm_conf["port"], str) and not isinstance(llm_conf["port"], int):
-        raise ConfigException(path=CONFIG_PATH, message="llm.port is of wrong type, should be string or int.")
+        raise ConfigException(
+            path=CONFIG_PATH,
+            message="llm.port is of wrong type, should be string or int.")
 
     if isinstance(llm_conf["port"], str):
         llm_conf["port"] = int(llm_conf["port"])
@@ -94,11 +101,9 @@ def read_config() -> Config:
 
 
 def write_config(config: Config) -> None:
-    """
-    Writes the given config to ./config/api.toml.
+    """Write the given config to ./config/api.toml.
 
     Parameter:
     config (Config): config obejct to be written.
     """
-
     pass

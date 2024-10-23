@@ -10,18 +10,17 @@ from ollama import Client, Message
 
 
 def send_prompt(prompt: str | Sequence[Message]) -> str:
-    """
-    Send a prompt to the llm and return it. Can use chat history
-    by having prompt be a Sequence[Message] type.
+    """Send a prompt to the llm and return it.
 
-    Parameters:
+    Can use chat history by having prompt be a Sequence[Message] type.
+
+    Arguments:
         prompt (str | Sequence[Message]): the prompt to send.
 
     Return:
         llm_response (str): The response of the LLM.
 
     """
-
     config: Config = read_config()
 
     if isinstance(prompt, str):
