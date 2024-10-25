@@ -1,4 +1,0 @@
-[llm]
-host = "100.77.88.10"
-port = 80
-model = "llama3.2"
