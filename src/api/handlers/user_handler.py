@@ -2,7 +2,11 @@
 
 """
 import logging
-from bcrypt import hashpw
+from bcrypt import checkpw, hashpw
+from backend_connectors import get_password_hash, get_user_id
+from src.api.api_exceptions import AuthenticationException
+
+
 
 logger = logging.getLogger(__name__)
 
@@ -16,9 +20,22 @@ def register(username: str, password: str):
     logger.debug(txt)
 
 
+def authenicate(username: str, password: str) -> str:
+    """Authenticate the user.
 
-def sign_in():
-    pass
+    Arguments:
 
+        username (str): Username
+        password (str): Users password
 
-register("user", "pass")
+    Returns:
+        
+        (int): userid
+
+    """
+    password_bytes: bytes = bytes(password.encode())
+
+    if not checkpw(get_password_hash(username), password_bytes):
+        raise AuthenticationException("Password doesn't match.")
+
+    return get_user_id(username)
