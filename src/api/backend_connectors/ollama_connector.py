@@ -5,8 +5,6 @@ Functions:
 """
 
 from ollama import Client
-from backend_connectors import LLM_ADDRESS, LLM_MODEL, LLM_PREPROMPT_PATH
-
 
 def send_prompt(prompt: str | list) -> str:
     """
@@ -20,17 +18,23 @@ def send_prompt(prompt: str | list) -> str:
         llm_response (str): The response of the LLM.
 
     """
+    import os
+
+    llm_model = os.environ.get("LLM_MODEL", default="llama3.2")
+    llm_address = os.environ.get("LLM_ADDRESS", default="http://100.77.88.10")
+    llm_preprompt_path = os.environ.get("LLM_PREPROMPT_PATH", default="./prepromt")
+
     if isinstance(prompt, str):
         prompt = [{"role": "user", "content": prompt}]
 
-    with open(LLM_PREPROMPT_PATH, "r") as f:
+    with open(llm_preprompt_path, "r") as f:
         preprompt = f.read()
         prompt.insert(0, {"role": "system", "name": "Threat Analyzer", "content": preprompt})
 
     print(prompt)
 
     # send prompt
-    client: Client = Client(host=LLM_ADDRESS)
-    llm_response = client.chat(model=LLM_MODEL, messages=prompt)
+    client: Client = Client(host=llm_address)
+    llm_response = client.chat(model=llm_model, messages=prompt)
 
     return llm_response["message"]["content"]

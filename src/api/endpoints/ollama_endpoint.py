@@ -4,11 +4,13 @@ Classes:
     Analyzis
 """
 
+import logging
 from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
-from backend_connectors.ollama_connector import send_prompt
+
+from backend_connectors import send_prompt
 from api_exceptions import ConfigException
-import logging
+
 
 logger = logging.getLogger(__name__)
 

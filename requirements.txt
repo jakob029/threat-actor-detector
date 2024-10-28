@@ -5,4 +5,5 @@ black==24.4.2
 
 #### API ####
 flask-restful==0.3.10
+bcrypt==4.2.0
 ollama==0.3.3
