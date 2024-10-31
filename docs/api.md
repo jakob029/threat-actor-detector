@@ -42,6 +42,8 @@ sends a question to the llm and gives the llm response as a response.
 
 <summary>Authentication</summary>
 
+Signs the user in and returns their UID.
+
 **URL** POST
 
     http://127.0.0.1:5000/user/login
@@ -78,6 +80,8 @@ sends a question to the llm and gives the llm response as a response.
 
 <summary>Registration</summary>
 
+Registers a new user.
+
 **URL** POST
 
     http://127.0.0.1:5000/user/register
@@ -105,7 +109,16 @@ No error implemented.
 
 </details>
 
-## Functions
+## Packages
 
+- **backend_connectors**: Package containing everything related to backend connections.
+    - **.database_connector**: Module holding all the database related functions.
+    - **.ollama_connector**: Module holding all Ollama related functions.
 
+- **endpoints**: Package containing all endpoints.
+    - **.ollama_endpoint**: Module holding all ollama related endpoints.
+    - **.user_endpoint**: Module holding all user related enpoints.
 
+- **handlers**: Package containing all internal modules.
+    - **.user_handler**: Internal user handler, between endpoint and connector.
+ 
