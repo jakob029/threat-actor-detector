@@ -122,3 +122,8 @@ No error implemented.
 - **handlers**: Package containing all internal modules.
     - **.user_handler**: Internal user handler, between endpoint and connector.
  
+## Environment variables
+
+- `LLM_MODEL` which modle to user, default: `llama3.2`
+- `LLM_ADDRESS` full address to llm host, default: `http://100.77.88.10`
+- `LLM_PREPROPT_PATH` path to file containing the preprompt, default: `./preprompt`
