@@ -11,7 +11,6 @@ class Authentication(Resource):
         return {}, 200
 
     def post(self):
-
         try:
             parser: RequestParser = RequestParser()
             parser.add_argument("username", type=str, required=True)

@@ -2,22 +2,25 @@
 
 """
 import logging
-from bcrypt import checkpw, hashpw
+from bcrypt import checkpw, hashpw, gensalt
 from backend_connectors import get_password_hash, get_user_id
 from src.api.api_exceptions import AuthenticationException
-
-
 
 logger = logging.getLogger(__name__)
 
 def register(username: str, password: str):
-    from bcrypt import gensalt
+    """Registers a new user.
+
+    Arguments:
+
+        username (str): Username
+        password (str): Users password
+    """
 
     salt: bytes = gensalt()
     password_hash: bytes = hashpw(bytes(password.encode()), salt)
 
-    txt: str = f"Username: {username} | Password: {password_hash} | Salt: {salt}"
-    logger.debug(txt)
+    logger.debug(f"Username: {username} | Password: {password_hash} | Salt: {salt}")
 
 
 def authenicate(username: str, password: str) -> str:
