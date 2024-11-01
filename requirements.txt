@@ -7,3 +7,4 @@ black==24.4.2
 flask-restful==0.3.10
 bcrypt==4.2.0
 ollama==0.3.3
+httpx==0.27.2

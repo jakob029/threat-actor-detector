@@ -5,14 +5,16 @@ Classes:
 """
 
 import logging
+from httpx import ConnectTimeout
 from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
+from ollama import ResponseError
 
 from backend_connectors import send_prompt
-from api_exceptions import ConfigException
 
 
 logger = logging.getLogger(__name__)
+
 
 class Analyzis(Resource):
     """A class representing the analysis response on call /analysis."""
@@ -23,8 +25,8 @@ class Analyzis(Resource):
         Return:
             dict: response in json.
             int: code.
-        """
 
+        """
         try:
             parser: RequestParser = RequestParser()
             parser.add_argument("prompt", type=str, required=True)
@@ -34,6 +36,7 @@ class Analyzis(Resource):
             response: str = send_prompt(prompt)
 
             return {"message": "success", "response": response}, 200
-        except ConfigException as e:
-            logger.error(e.message)
-            return {"message": "An error occured, please check the logs."}, 500
+        except ResponseError:
+            return {"message": "LLM error."}, 500
+        except ConnectTimeout:
+            return {"message": "LLM error"}, 500
