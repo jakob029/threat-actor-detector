@@ -7,8 +7,9 @@ Functions:
 """
 
 import logging
+import secrets
 from argon2 import PasswordHasher
-from backend_connectors import get_password_hash, get_user_id
+from backend_connectors import get_password_hash, get_user_id, register_user, get_user_salt
 from api_exceptions import AuthenticationException
 
 logger = logging.getLogger(__name__)
@@ -22,9 +23,15 @@ def register(username: str, password: str):
         password (str): Users password
 
     """
-    ph: PasswordHasher = PasswordHasher()
+    # generate salt
+    salt = str(secrets.token_hex(4))
+    print(salt)
 
-    hash = ph.hash(password)
+    # hash password password + salt
+    ph: PasswordHasher = PasswordHasher()
+    hash = ph.hash(password + salt)
+
+    register_user(username, hash, salt)
 
     logger.debug(f"Created user, Username: {username} | Password: {hash}")
 
@@ -41,9 +48,8 @@ def authenicate(username: str, password: str) -> str:
 
     """
     ph: PasswordHasher = PasswordHasher()
+    hash: str = get_password_hash(username)
+    salt: str = get_user_salt(username)
+    ph.verify(hash, password + salt)
 
-    hash = get_password_hash(username)
-    ph.verify(hash, password)
-
-    logger.debug(f"Authentication succeeded for user / password {username} / {password}")
     return get_user_id(username)
