@@ -7,7 +7,7 @@ Functions:
 """
 
 import logging
-from bcrypt import checkpw, hashpw, gensalt
+from argon2 import PasswordHasher
 from backend_connectors import get_password_hash, get_user_id
 from api_exceptions import AuthenticationException
 
@@ -22,10 +22,11 @@ def register(username: str, password: str):
         password (str): Users password
 
     """
-    salt: bytes = gensalt()
-    password_hash: bytes = hashpw(bytes(password.encode()), salt)
+    ph: PasswordHasher = PasswordHasher()
 
-    logger.debug(f"Created user, Username: {username} | Password: {password_hash}")
+    hash = ph.hash(password)
+
+    logger.debug(f"Created user, Username: {username} | Password: {hash}")
 
 
 def authenicate(username: str, password: str) -> str:
@@ -39,11 +40,10 @@ def authenicate(username: str, password: str) -> str:
         (int): userid
 
     """
-    password_bytes: bytes = bytes(password.encode())
+    ph: PasswordHasher = PasswordHasher()
 
-    if not checkpw(get_password_hash(username), password_bytes):
-        logger.debug(f"Authentication failed for user / password {username} / {password}")
-        raise AuthenticationException("Password doesn't match.")
+    hash = get_password_hash(username)
+    ph.verify(hash, password)
 
     logger.debug(f"Authentication succeeded for user / password {username} / {password}")
     return get_user_id(username)
