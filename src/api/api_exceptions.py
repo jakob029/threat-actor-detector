@@ -17,16 +17,18 @@ class AuthenticationException(Exception):
         message (str): error message.
 
     """
+
     def __init__(self, message: str, code: int) -> None:
         """Init the object.
 
         Arguments:
             message (str): the error message.
+            code (int): error code.
 
         """
         self.message = message
         self.code = code
-        
+
 
 class RegistrationException(Exception):
     """Raised when a registration error occurs.
@@ -41,6 +43,7 @@ class RegistrationException(Exception):
 
         Arguments:
             message (str): error message.
+            code (int): error code.
 
         """
         self.message = message

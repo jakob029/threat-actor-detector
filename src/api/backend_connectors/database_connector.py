@@ -12,14 +12,19 @@ def connect_to_db():
     """Connect to mysql db.
 
     Returns:
-        (PooledMySQLConnection | MySQLConnectionAbstract): Connection"""
+        (PooledMySQLConnection | MySQLConnectionAbstract): Connection
 
+    """
     MYSQL_HOST = environ.get("TAD_MYSQL_HOST")
     MYSQL_USER = environ.get("TAD_MYSQL_USER")
     MYSQL_PASSWORD = environ.get("TAD_MYSQL_PASSWORD")
     MYSQL_DATABASE = environ.get("TAD_MYSQL_DATABASE")
 
-    return connector.connect(host=MYSQL_HOST, user=MYSQL_USER, password=MYSQL_PASSWORD, database=MYSQL_DATABASE)
+    return connector.connect(
+        host=MYSQL_HOST,
+        user=MYSQL_USER,
+        password=MYSQL_PASSWORD,
+        database=MYSQL_DATABASE)
 
 
 def username_exist(username: str) -> bool:
@@ -106,6 +111,7 @@ def get_user_id(username: str) -> str:
 
     Returns:
         (str): user id.
+
     """
     db = connect_to_db()
     cursor = db.cursor()

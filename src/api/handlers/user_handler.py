@@ -10,7 +10,7 @@ import logging
 import secrets
 from re import findall
 from argon2 import PasswordHasher
-from backend_connectors import get_password_hash, get_user_id, register_user, get_user_salt, username_exist
+from backend_connectors import database_connector as dc
 from api_exceptions import PASSWORD_TOO_WEAK, USER_ALREADY_EXIST, USER_DOES_NOT_EXIST, USERNAME_TOO_LONG, AuthenticationException, RegistrationException
 
 logger = logging.getLogger(__name__)
@@ -31,10 +31,10 @@ def register(username: str, password: str):
 
     # validate length of username.
     if len(username) > 40:
-        raise RegistrationException("Username too long.", USERNAME_TOO_LONG) 
+        raise RegistrationException("Username too long.", USERNAME_TOO_LONG)
 
     # validate if the name is unused.
-    if username_exist(username):
+    if dc.username_exist(username):
         raise RegistrationException("Username already taken.", USER_ALREADY_EXIST)
 
     # generate salt
@@ -44,7 +44,7 @@ def register(username: str, password: str):
     ph: PasswordHasher = PasswordHasher()
     hash = ph.hash(password + salt)
 
-    register_user(username, hash, salt)
+    dc.register_user(username, hash, salt)
 
     logger.debug(f"Created user, Username: {username} | Password: {hash}")
 
@@ -67,12 +67,12 @@ def authenicate(username: str, password: str) -> str:
         raise AuthenticationException("Username too long.", USERNAME_TOO_LONG)
 
     # Validate if name exists.
-    if not username_exist(username):
+    if not dc.username_exist(username):
         raise AuthenticationException("Username does not exist.", USER_DOES_NOT_EXIST)
 
     ph: PasswordHasher = PasswordHasher()
-    hash: str = get_password_hash(username)
-    salt: str = get_user_salt(username)
+    hash: str = dc.get_password_hash(username)
+    salt: str = dc.get_user_salt(username)
     ph.verify(hash, password + salt)
 
-    return get_user_id(username)
+    return dc.get_user_id(username)
