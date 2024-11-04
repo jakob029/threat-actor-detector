@@ -8,7 +8,7 @@
 
 sends a question to the llm and gives the llm response as a response.
 
-**URL** GET
+**URL** POST
 
     http://127.0.0.1:5000/analyzis
 
