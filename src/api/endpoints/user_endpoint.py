@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """User end points.
 
 Classes:
@@ -7,6 +8,14 @@ Classes:
 """
 
 import logging
+=======
+"""User endpoints.
+
+Classes:
+    Authentication
+
+"""
+>>>>>>> c80bb9db3d3088714847d20867e2008e8a727d29
 from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
 from handlers import register, authenicate
@@ -16,6 +25,7 @@ logger = logging.getLogger(__name__)
 
 
 class Authentication(Resource):
+<<<<<<< HEAD
     """Class representing authentications."""
 
     def get(self):
@@ -63,3 +73,25 @@ class Registration(Resource):
             return {"message": e.message}, 200
 
         return {"message": "User registered"}, 200
+=======
+    """Class representing an suthentication response."""
+
+    def get(self, id: str):
+        """Get user info.
+
+        Arguments:
+            id (str): user id
+
+        """
+        return {}, 200
+
+    def post(self, password: str, username: str):
+        """Sign user in.
+
+        Arguments:
+            password (str): user password hash.
+            username (str): user name.
+
+        """
+        return {}, 200
+>>>>>>> c80bb9db3d3088714847d20867e2008e8a727d29

@@ -15,6 +15,7 @@ class AuthenticationException(Exception):
 
     Attributes:
         message (str): error message.
+<<<<<<< HEAD
 
     """
 
@@ -26,6 +27,17 @@ class AuthenticationException(Exception):
             code (int): error code.
 
         """
+=======
+        path (str): config path.
+
+    """
+
+    def __init__(
+            self, path: str,
+            message: str = "Something went wrong with the config."
+    ) -> None:
+        self.path = path
+>>>>>>> c80bb9db3d3088714847d20867e2008e8a727d29
         self.message = message
         self.code = code
 
