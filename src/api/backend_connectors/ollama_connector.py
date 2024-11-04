@@ -9,7 +9,6 @@ import os
 from ollama import Client
 
 
-<<<<<<< HEAD
 def send_prompt(prompt: str | list) -> str:
     """Send prompt to llm.
 
@@ -18,27 +17,14 @@ def send_prompt(prompt: str | list) -> str:
 
     Arguments:
         prompt (str | list): the prompt to send.
-=======
-def send_prompt(prompt: str | Sequence[Message]) -> str:
-    """Send a prompt to the llm and return it.
-
-    Can use chat history by having prompt be a Sequence[Message] type.
-
-    Arguments:
-        prompt (str | Sequence[Message]): the prompt to send.
->>>>>>> c80bb9db3d3088714847d20867e2008e8a727d29
 
     Return:
         llm_response (str): The response of the LLM.
 
     """
-<<<<<<< HEAD
     llm_model = os.environ.get("LLM_MODEL", default="llama3.2")
     llm_address = os.environ.get("LLM_ADDRESS", default="http://100.77.88.10")
     llm_preprompt_path = os.environ.get("LLM_PREPROMPT_PATH", default="./prepromt")
-=======
-    config: Config = read_config()
->>>>>>> c80bb9db3d3088714847d20867e2008e8a727d29
 
     if isinstance(prompt, str):
         prompt = [{"role": "user", "content": prompt}]
