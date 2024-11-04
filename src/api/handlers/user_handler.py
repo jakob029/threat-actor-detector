@@ -25,7 +25,7 @@ def register(username: str, password: str):
 
     """
     # Validate password strength
-    password_regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+    password_regex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
     if len(findall(password_regex, password)) == 0:
         raise RegistrationException("Password is not strong enough.", PASSWORD_TOO_WEAK)
 
@@ -34,7 +34,7 @@ def register(username: str, password: str):
         raise RegistrationException("Username too long.", USERNAME_TOO_LONG) 
 
     # validate if the name is unused.
-    if not username_exist(username):
+    if username_exist(username):
         raise RegistrationException("Username already taken.", USER_ALREADY_EXIST)
 
     # generate salt
@@ -67,7 +67,7 @@ def authenicate(username: str, password: str) -> str:
         raise AuthenticationException("Username too long.", USERNAME_TOO_LONG)
 
     # Validate if name exists.
-    if username_exist(username):
+    if not username_exist(username):
         raise AuthenticationException("Username does not exist.", USER_DOES_NOT_EXIST)
 
     ph: PasswordHasher = PasswordHasher()
