@@ -127,3 +127,7 @@ No error implemented.
 - `LLM_MODEL` which modle to user, default: `llama3.2`
 - `LLM_ADDRESS` full address to llm host, default: `http://100.77.88.10`
 - `LLM_PREPROPT_PATH` path to file containing the preprompt, default: `./preprompt`
+- `TAD_MYSQL_HOST` host ip to MySQL server.
+- `TAD_MYSQL_USER` username of TAD managment account.
+- `TAD_MYSQL_PASSWORD` user password.
+- `TAD_MYSQL_DATABASE` database name.
