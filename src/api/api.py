@@ -4,7 +4,6 @@ from flask import Flask
 from flask_restful import Api
 from endpoints import Registration, Analyzis, Authentication
 import logging
-from handlers import authenicate
 
 
 logging.basicConfig(format="[ %(asctime)s ] %(message)s", datefmt="%m/%d/%Y %H:%M:%S", level=logging.DEBUG)

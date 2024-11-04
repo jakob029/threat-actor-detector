@@ -10,7 +10,7 @@ import logging
 from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
 from handlers import register, authenicate
-from api_exceptions import AuthenticationException
+from api_exceptions import AuthenticationException, RegistrationException
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +57,9 @@ class Registration(Resource):
 
         args = parser.parse_args(strict=True)
 
-        register(args["username"], args["password"])
+        try:
+            register(args["username"], args["password"])
+        except RegistrationException as e:
+            return {"message": e.message}, 200
 
         return {"message": "User registered"}, 200

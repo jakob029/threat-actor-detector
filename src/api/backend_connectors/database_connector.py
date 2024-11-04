@@ -4,19 +4,48 @@ from mysql import connector
 import logging
 from os import environ
 
-logger = logging.getLogger(__name__)
+from api_exceptions import AuthenticationException, USER_DOES_NOT_EXIST
 
-MYSQL_HOST = environ.get("TAD_MYSQL_HOST")
-MYSQL_USER = environ.get("TAD_MYSQL_USER")
-MYSQL_PASSWORD = environ.get("TAD_MYSQL_PASSWORD")
-MYSQL_DATABASE = environ.get("TAD_MYSQL_DATABASE")
+logger = logging.getLogger(__name__)
 
 def connect_to_db():
     """Connect to mysql db.
 
     Returns:
         (PooledMySQLConnection | MySQLConnectionAbstract): Connection"""
+
+    MYSQL_HOST = environ.get("TAD_MYSQL_HOST")
+    MYSQL_USER = environ.get("TAD_MYSQL_USER")
+    MYSQL_PASSWORD = environ.get("TAD_MYSQL_PASSWORD")
+    MYSQL_DATABASE = environ.get("TAD_MYSQL_DATABASE")
+
     return connector.connect(host=MYSQL_HOST, user=MYSQL_USER, password=MYSQL_PASSWORD, database=MYSQL_DATABASE)
+
+
+def username_exist(username: str) -> bool:
+    """Check if the username is taken.
+
+    Arguments:
+        username (str): user name to check.
+
+    Returns:
+        (bool): true if exists otherwise false.
+
+    """
+    db = connect_to_db()
+    cursor = db.cursor()
+
+    sql = "SELECT auth.username FROM auth WHERE auth.username = %s"
+    arg = (username,)
+
+    cursor.execute(sql, arg)
+    result = cursor.fetchall()
+
+    cursor.close()
+    db.close()
+
+    return len(result) != 0
+
 
 
 def get_password_hash(username: str) -> str:
@@ -34,10 +63,19 @@ def get_password_hash(username: str) -> str:
 
     cursor.execute(sql, arg)
     resp = cursor.fetchall()
+
+    db.close()
+
+    if len(resp) == 0:
+        raise AuthenticationException(
+            message = "Username doesn't exist.",
+            code = USER_DOES_NOT_EXIST
+        )
+
     hash = str(tuple(resp[0])[0])
 
-
     return hash
+
 
 def get_user_salt(username: str) -> str:
     """Get the salt for the user.
