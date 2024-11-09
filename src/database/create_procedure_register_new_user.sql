@@ -14,7 +14,7 @@ BEGIN
     
     -- insert into database
     INSERT INTO `user` (`username`, `password_hash`, `salt`, `uid`, `created`, `last_login`)
-		VALUE (in_username, in_password_hash, in_salt, uid, now(), 0);
+		VALUE (in_username, in_password_hash, in_salt, uid, now(), now());
 	
     COMMIT;
 END $$
