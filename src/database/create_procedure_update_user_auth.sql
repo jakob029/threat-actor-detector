@@ -10,6 +10,8 @@ CREATE PROCEDURE `update_user_salt` (
 	UPDATE `user`
 		SET `user`.`salt` = `in_salt`, `user`.`last_login` = now()
         WHERE `user`.`uid` = `in_uid`;
+	
+    COMMIT;
 end $$
 
 DELIMITER ;
