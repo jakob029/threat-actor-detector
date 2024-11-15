@@ -14,9 +14,9 @@ CREATE TABLE `session` (
 	`created` DATETIME,
     `last_access` DATETIME,
     `death_time` DATETIME,
-    `sid` VARCHAR(36) UNIQUE NOT NULL,
+    `token` VARCHAR(36) UNIQUE NOT NULL,
     `uid` VARCHAR(36) NOT NULL,
-    PRIMARY KEY (`sid`),
+    PRIMARY KEY (`token`),
     FOREIGN KEY (`uid`) REFERENCES `user`(`uid`)
 );
 
@@ -24,7 +24,7 @@ CREATE TABLE `session` (
 CREATE TABLE `chat` (
 	`message` VARCHAR(12288),
     `role` VARCHAR(24),
-    `order` INT,
+    `index` INT,
     `cid` VARCHAR(36) UNIQUE NOT NULL,
     `uid`VARCHAR(36) NOT NULL,
     PRIMARY KEY (`cid`),

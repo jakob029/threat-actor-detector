@@ -66,7 +66,7 @@ Table containing all active user sessions.
 - **created**: date and time of creation, *datetime*.
 - **last_access**: date and time of last access, *datetime*.
 - **death_time**: last valid use date and time, *datetime*.
-- ***sid***: session id / token, *varchar(36)*.
+- ***token***: session token, *varchar(36)*.
 - ***uid***: user id, *varchar(36)*.
   
 </details>
