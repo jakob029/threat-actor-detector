@@ -2,6 +2,10 @@
 
 Variables surrounded by '{}' are requierd.
 
+## Map
+
+![map image]([http://url/to/img.png](https://github.com/jakob029/threat-actor-detector/blob/mysql/basic_queries/docs/map.png))
+
 ## Procedures
 
 <details>
@@ -40,10 +44,7 @@ cursor.callproc("update_user_salt", ({username}, {salt}))
 
 ## Tables
 
-<details>
-<summary>User table</summary>
-
-<br>
+### User
 
 Table containing all user credentials.
 
@@ -53,13 +54,8 @@ Table containing all user credentials.
 - **password_hash**: hashed password, *varchar(100)*.
 - **salt**: salt for the password, *varchar(16)*.
 - ***uid***: user id, *varchar(36)*.
-  
-</details>
 
-<details>
-<summary>Session table</summary>
-
-<br>
+### Sessions
 
 Table containing all active user sessions.
 
@@ -68,13 +64,8 @@ Table containing all active user sessions.
 - **death_time**: last valid use date and time, *datetime*.
 - ***sid***: session id / token, *varchar(36)*.
 - ***uid***: user id, *varchar(36)*.
-  
-</details>
 
-<details>
-<summary>Chat table</summary>
-
-<br>
+### Chats
 
 Table containing all user credentials.
 
