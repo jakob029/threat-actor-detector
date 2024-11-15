@@ -16,7 +16,7 @@ sends a question to the llm and gives the llm response as a response.
 
 ```json
 {
-    "prompt": <prompt>
+    "prompt": "<prompt>"
 }
 ```
 
@@ -24,8 +24,12 @@ sends a question to the llm and gives the llm response as a response.
 
 ```json
 {
-    "response": <llm response>
-    "message": "Success"
+	"response": "<llm response>",
+	"mesage": "<RESONSE_MESSAGE>",
+	"data_points": {
+		"ENTRY_2": "<FLOAT>",
+		"ENRTY_1": "<FLOAT>"
+	}
 }
 ```
 
@@ -33,7 +37,7 @@ sends a question to the llm and gives the llm response as a response.
 
 ```json
 {
-    "message": <error message>
+    "mesage": "<RESONSE_MESSAGE>"
 } 
 ```
 
@@ -52,8 +56,8 @@ Signs the user in and returns their UID.
 
 ```json
 {
-    "username": <username>,
-    "password": <password>
+    "username": "<username>",
+    "password": "<password>"
 }
 ```
 
@@ -61,8 +65,8 @@ Signs the user in and returns their UID.
 
 ```json
 {
-    "message": "success",
-    "uid": <user id>
+    "mesage": "<RESONSE_MESSAGE>",
+    "uid": "<user id>"
 }
 ```
 
@@ -70,7 +74,7 @@ Signs the user in and returns their UID.
 
 ```json
 {
-    "message": <error message>
+    "mesage": "<RESONSE_MESSAGE>"
 }
 ```
 
@@ -90,8 +94,8 @@ Registers a new user.
 
 ```json
 {
-    "username": <username>,
-    "password": <password>
+    "username": "<username>",
+    "password": "<password>"
 }
 ```
 
@@ -99,7 +103,7 @@ Registers a new user.
 
 ```json
 {
-    "message": "User registered."
+    "mesage": "<RESONSE_MESSAGE>"
 }
 ```
 

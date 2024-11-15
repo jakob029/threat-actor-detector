@@ -62,4 +62,4 @@ class Registration(Resource):
         except RegistrationException as e:
             return {"message": e.message}, 200
 
-        return {"message": "User registered"}, 200
+        return {"message": "success"}, 200
