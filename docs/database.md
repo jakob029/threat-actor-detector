@@ -55,3 +55,33 @@ Table containing all user credentials.
 - ***uid***: user id, *varchar(36)*.
   
 </details>
+
+<details>
+<summary>Session table</summary>
+
+<br>
+
+Table containing all active user sessions.
+
+- **created**: date and time of creation, *datetime*.
+- **last_access**: date and time of last access, *datetime*.
+- **death_time**: last valid use date and time, *datetime*.
+- ***sid***: session id / token, *varchar(36)*.
+- ***uid***: user id, *varchar(36)*.
+  
+</details>
+
+<details>
+<summary>Chat table</summary>
+
+<br>
+
+Table containing all user credentials.
+
+- **message**: message, *varchar(12288)*.
+- **role**: role of the sender, *varchar (36)*.
+- **index**: message index in chat, *int*.
+- ***uid***: user id, *varchar(36)*.
+- ***cid***: chat id, *varchar(36)*.
+  
+</details>
