@@ -4,7 +4,7 @@ Variables surrounded by '{}' are requierd.
 
 ## Map
 
-![map image]([http://url/to/img.png](https://github.com/jakob029/threat-actor-detector/blob/mysql/basic_queries/docs/map.png))
+![map image](map.png?raw=true)
 
 ## Procedures
 
