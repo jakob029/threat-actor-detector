@@ -1,5 +1,5 @@
 [tool.ruff]
-line-length = 88
+line-length = 120
 select = ["E", "W", "F", "C90", "E", "W", "F", "C90", "D"]
 
 exclude = [
@@ -7,5 +7,9 @@ exclude = [
 ]
 
 ignore = [
-    "D107"
+    "D107", "D410", "D411", "D412", "D413"
 ]
+
+[tool.black]
+line-length = 120
+
