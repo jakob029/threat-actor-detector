@@ -1,5 +1,6 @@
+"""Temp connector to the MYQSL database with the purpose of inserting APT & IOCs."""
+
 import mysql.connector
-import os
 from getpass import getpass
 
 DB_IP = input("Database server IP: ")
@@ -14,7 +15,7 @@ class DbConnector:
     CURSOR = False
 
     def __init__(self, host, database, user, password):
-        """Constructor
+        """Constructor.
 
         Args:
             host: IP of the host system.
@@ -33,10 +34,9 @@ class DbConnector:
         """Insert a new APT in the apt_table.
 
         name: Name of the APT.
-        decription: Description of the APT.
+        description: Description of the APT.
         no_commit: Do not commit the selection instantly.
         """
-
         if not self.CURSOR:
             self.CURSOR = self.connection.cursor()
 

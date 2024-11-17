@@ -13,10 +13,10 @@ class ConstructDataBase:
     ERROR: int = 0
 
     def __init__(self) -> None:
-        status = subprocess.run(f"{LOCATION}/retrieve_data.sh")
+        status = subprocess.run([f"{LOCATION}/retrieve_data.sh", LOCATION])
         self.ERROR = status.returncode
 
-    def retrieve_instruction_set_relationships(self, attack_path: str = "enterprise-attack") -> dict:
+    def retrieve_instruction_set_relationships(self, attack_path: str = "enterprise-attack") -> list:
         """Retrieve each relationship for each instruction-set object.
 
         Args:
@@ -38,10 +38,39 @@ class ConstructDataBase:
                 relation_mapping = self._construct_mappings(self._generate_filepaths(intrusion_set))
                 relationship_map.append(relation_mapping)
 
-        with open(os.path.join(LOCATION, "constructed_dataset.json"), "w") as file:
+        with open(os.path.join(LOCATION, "constructed_dataset.json"), "w", encoding="utf-8") as file:
             json.dump(relationship_map, file)
 
         return relationship_map
+
+    def construct_atp_descriptor(self, attack_path: str = "enterprise-attack") -> list:
+        """Construct a mapping for APTs and descriptions.
+
+        Args:
+            attack_path: Path to the attack information library.
+        Returns:
+            Constructed mapped list containing descriptions and APTs.
+        """
+        apt_map = []
+        relationship_files = os.listdir(f"{LOCATION}/{attack_path}/intrusion-set")
+        for relation_file in relationship_files:
+            with open(
+                os.path.join(LOCATION, "enterprise-attack/intrusion-set", relation_file), "r", encoding="utf-8"
+            ) as file:
+                individual_file = json.load(file)
+                intrusion_object = individual_file.get("objects")
+                if not intrusion_object:
+                    continue
+                description = intrusion_object[0].get("description")
+                aliases = intrusion_object[0].get("aliases")
+                if not aliases:
+                    continue
+                apt_map.append({alias: description for alias in aliases})
+
+        with open(os.path.join(LOCATION, "group_descriptor.json"), "w", encoding="utf-8") as file:
+            json.dump(apt_map, file)
+
+        return apt_map
 
     @staticmethod
     def _source_intrusion_set(json_data: dict) -> tuple | None:
