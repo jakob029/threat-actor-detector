@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Info</title>
+    <link rel="stylesheet" href="static/css/style.css">
+    <link rel="stylesheet" href="static/css/nav_bar.css">
+</head>
+<body>
+    <!-- Top menu for navigation-->
+    <nav class="top-menu">
+        <ul>
+            <li><a href="/">Main Page</a></li>
+            <li><a href="/info.html" class="active">Info</a></li>
+        </ul>
+    </nav>
+
+    <!-- Dark mode toggle button -->
+    <button id="darkModeToggle" class="dark-mode-toggle">🌙</button>
+
+    <div class="container">
+        <h1>Information Page</h1>
+
+        <!-- Dynamic content based on session -->
+        {% if is_logged_in %}
+            <p>Welcome to the info page, {{ username }}!</p>
+            <button id="logoutButton">Log Out</button>
+        {% else %}
+            <p>Please sign in to view additional information.</p>
+            <a href="/">Go to Main Page</a>
+        {% endif %}
+        <p>Information here test test test</p>
+    </div>
+
+    <!-- JavaScript file link -->
+    <script src="static/js/script.js"></script>
+</body>
+</html>
