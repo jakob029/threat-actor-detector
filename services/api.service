@@ -3,7 +3,7 @@ Description=TAD API service
 
 [Service]
 User=usr
-WorkingDirectory=/home/usr/threat-actor-detector 
+WorkingDirectory=/home/usr/threat-actor-detector/src/api 
 ExecStart=/home/usr/threat-actor-detector/.venv/bin/python3 /home/usr/threat-actor-detector/src/api/api.py
 
 [Install]
