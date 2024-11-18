@@ -100,9 +100,8 @@ def update_user_auth(uid: str, hash: str, salt: str):
 
     Arguments:
         uid (str): user id.
-        hash (str): password hash.
+        hash: user password hash.
         salt (str): new user salt.
-
     """
     db = connect_to_db()
     cursor = db.cursor()

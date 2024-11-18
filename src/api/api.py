@@ -21,5 +21,4 @@ api.add_resource(ConversationsEndpoint, "/conversations/<string:uid>")
 api.add_resource(MessagesEndpoint, "/messages/<string:cid>")
 
 if __name__ == "__main__":
-    get_messages("865f781a-a39e-11ef-96fd-bc2411c91e6c")
-    app.run(debug=True)
+    app.run(debug=True, host="100.77.88.40")

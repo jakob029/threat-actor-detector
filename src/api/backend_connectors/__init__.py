@@ -9,5 +9,6 @@ from .database_connector import (
     username_exist,
     get_conversations,
     get_messages,
+    update_user_auth,
 )
 from os import environ
