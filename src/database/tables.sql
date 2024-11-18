@@ -20,13 +20,21 @@ CREATE TABLE `session` (
     FOREIGN KEY (`uid`) REFERENCES `user`(`uid`)
 );
 
--- chats
-CREATE TABLE `chat` (
-	`message` VARCHAR(12288),
-    `role` VARCHAR(24),
-    `index` INT,
+-- conversations.
+CREATE TABLE `conversation` (
     `cid` VARCHAR(36) UNIQUE NOT NULL,
-    `uid`VARCHAR(36) NOT NULL,
+    `uid` VARCHAR(36) NOT NULL,
+    `title` VARCHAR(64),
     PRIMARY KEY (`cid`),
-    FOREIGN KEY (`cid`) REFERENCES `user`(`uid`)
+    FOREIGN KEY (`uid`) REFERENCES `user`(`uid`)
+);
+
+-- Messages
+CREATE TABLE `message` (
+  `cid` VARCHAR(36) NOT NULL,
+  `index` INT,
+  `role` VARCHAR(24),
+  `text` VARCHAR(12288),
+  PRIMARY KEY (`cid`, `index`),
+  FOREIGN KEY (`cid`) REFERENCES `conversation`(`cid`)
 );
