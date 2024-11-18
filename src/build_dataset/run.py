@@ -27,11 +27,6 @@ def build_vector_database():
 
     relation_builder.save_database(os.path.join(LOCATION, "relationship_db"))
     logging.info("Saved relationship_db to disk")
-    response = relation_builder.collection.query(
-        query_texts=["crime group that has stolen payment card"], n_results=20, include=["distances"]
-    )
-
-    print(f"response: {response}")
 
 
 if __name__ == "__main__":
