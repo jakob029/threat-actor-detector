@@ -16,4 +16,4 @@ api.add_resource(Registration, "/user/register", methods=["POST"])
 api.add_resource(Authentication, "/user/login", methods=["POST"])
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="100.77.88.40")
