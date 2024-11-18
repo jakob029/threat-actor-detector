@@ -6,11 +6,5 @@ User=usr
 WorkingDirectory=/home/usr/threat-actor-detector 
 ExecStart=/home/usr/threat-actor-detector/.venv/bin/python3 /home/usr/threat-actor-detector/src/api/api.py
 
-#### MySQL ####
-Environment=TAD_MYSQL_HOST=100.77.88.30 # Host IP 
-Environment=TAD_MYSQL_USER=api          # Database User
-Environment=TAD_MYSQL_PASSWORD=         # User password 
-Environment=TAD_MYSQL_DATABASE=tad      # Database name
-
 [Install]
 WantedBy=multi-user.target
