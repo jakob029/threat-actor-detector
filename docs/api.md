@@ -80,7 +80,7 @@ Signs the user in and returns their UID.
 
 
 </details>
-<<details>
+<details>
 
 <summary>Registration</summary>
 
