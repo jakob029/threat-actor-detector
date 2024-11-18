@@ -114,4 +114,4 @@ def logout():
 
 # Ensure that the Flask app runs when the script is executed directly
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")
