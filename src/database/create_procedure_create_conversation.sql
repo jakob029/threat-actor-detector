@@ -1,3 +1,5 @@
+DROP PROCEDURE create_conversation;
+
 DELIMITER $$
 
 CREATE PROCEDURE `create_conversation` (
@@ -17,7 +19,8 @@ BEGIN
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'User does not exist.';
 	END IF;
-    SELECT uuid() INTO `out_cid`;
+    SET `out_cid` := uuid();
+    
     -- create new chat.
     INSERT INTO `conversation`
 		VALUES (`out_cid`, `in_uid`, `in_title`);
