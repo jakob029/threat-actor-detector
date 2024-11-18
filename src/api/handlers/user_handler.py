@@ -91,6 +91,6 @@ def authenicate(username: str, password: str) -> str:
     new_hash = ph.hash(password + new_salt)
 
     # Update database.
-    dc.update_user_auth(uid, new_hash, new_salt) 
+    dc.update_user_auth(uid, new_hash, new_salt)
 
     return dc.get_user_id(username)

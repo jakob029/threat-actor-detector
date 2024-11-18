@@ -96,11 +96,12 @@ def get_user_salt(username: str) -> str:
 
 
 def update_user_auth(uid: str, hash: str, salt: str):
-    """Update user salt.
+    """Update user password hash.
 
     Arguments:
         uid (str): user id.
-        satl (str): new user salt.
+        hash (str): password hash.
+        salt (str): new user salt.
 
     """
     db = connect_to_db()

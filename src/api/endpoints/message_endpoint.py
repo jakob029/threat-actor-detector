@@ -1,4 +1,4 @@
-"""Handle message actions
+"""Handle message actions.
 
 Class:
     MessageEndpoint
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 class MessagesEndpoint(Resource):
-    """Class representing messages endpoint"""
+    """Class representing messages endpoint."""
 
     def get(self, cid):
         """Return conversation messages.
