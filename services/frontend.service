@@ -1,0 +1,10 @@
+[Unit]
+Description=TAD API service
+
+[Service]
+User=usr
+WorkingDirectory=/home/usr/threat-actor-detector
+ExecStart=/home/usr/threat-actor-detector/.venv/bin/python3 /home/usr/threat-actor-detector/src/frontend/flask_port.py
+
+[Install]
+WantedBy=multi-user.target
