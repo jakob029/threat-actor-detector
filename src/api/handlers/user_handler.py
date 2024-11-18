@@ -77,9 +77,20 @@ def authenicate(username: str, password: str) -> str:
     if not dc.username_exist(username):
         raise AuthenticationException("Username does not exist.", USER_DOES_NOT_EXIST)
 
+    # Validate password hash.
     ph: PasswordHasher = PasswordHasher()
     hash: str = dc.get_password_hash(username)
     salt: str = dc.get_user_salt(username)
     ph.verify(hash, password + salt)
+
+    # Get uid.
+    uid: str = dc.get_user_id(username)
+
+    # Generate new hash and salt.
+    new_salt = str(secrets.token_hex(4))
+    new_hash = ph.hash(password + new_salt)
+
+    # Update database.
+    dc.update_user_auth(uid, new_hash, new_salt) 
 
     return dc.get_user_id(username)

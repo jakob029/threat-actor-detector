@@ -35,8 +35,8 @@ class Analyzis(Resource):
             prompt: str = args["prompt"]
             response: str = send_prompt(prompt)
 
-            return {"message": "success", "response": response}, 200
+            return {"message": "success", "response": response, "data_points": {}}, 200
         except ResponseError:
-            return {"message": "LLM error."}, 500
+            return {"message": "LLM_error"}, 500
         except ConnectTimeout:
-            return {"message": "LLM error"}, 500
+            return {"message": "LLM_error"}, 500

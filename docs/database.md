@@ -26,18 +26,18 @@ cursor.callproc("register_new_user", ({username}, {hash}, {salt}))
 </details>
 
 <details>
-<summary>Update User Salt</summary>
+<summary>Update User Auth</summary>
 
 <br>
 
-Updates the salt and last login, call at every login
+Updates the password hash, salt and last login, call at every login
 
 ``` sql
-CALL update_user_salt({username}, {salt})
+CALL update_user_auth({uid}, {salt})
 ```
 
 ```python
-cursor.callproc("update_user_salt", ({username}, {salt}))
+cursor.callproc("update_user_auth", ({uid}, {salt}))
 ```
   
 </details>

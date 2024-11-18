@@ -37,7 +37,7 @@ def username_exist(username: str) -> bool:
     db = connect_to_db()
     cursor = db.cursor()
 
-    sql = "SELECT auth.username FROM auth WHERE auth.username = %s"
+    sql = "SELECT user.username FROM user WHERE user.username = %s"
     arg = (username,)
 
     cursor.execute(sql, arg)
@@ -59,7 +59,7 @@ def get_password_hash(username: str) -> str:
     db = connect_to_db()
     cursor = db.cursor()
 
-    sql = "SELECT auth.password_hash FROM auth WHERE auth.username = %s"
+    sql = "SELECT user.password_hash FROM user WHERE user.username = %s"
     arg = (username,)
 
     cursor.execute(sql, arg)
@@ -85,7 +85,7 @@ def get_user_salt(username: str) -> str:
     db = connect_to_db()
     cursor = db.cursor()
 
-    sql = "SELECT auth.salt FROM auth WHERE auth.username = %s"
+    sql = "SELECT user.salt FROM user WHERE user.username = %s"
     arg = (username,)
 
     cursor.execute(sql, arg)
@@ -93,6 +93,23 @@ def get_user_salt(username: str) -> str:
     salt = str(tuple(resp[0])[0])
 
     return salt
+
+
+def update_user_auth(uid: str, hash: str, salt: str):
+    """Update user salt.
+
+    Arguments:
+        uid (str): user id.
+        satl (str): new user salt.
+
+    """
+    db = connect_to_db()
+    cursor = db.cursor()
+
+    cursor.callproc("update_user_auth", (uid, hash, salt))
+
+    db.close()
+    cursor.close()
 
 
 def get_user_id(username: str) -> str:
@@ -108,7 +125,7 @@ def get_user_id(username: str) -> str:
     db = connect_to_db()
     cursor = db.cursor()
 
-    sql = "SELECT auth.uid FROM auth WHERE auth.username = %s"
+    sql = "SELECT user.uid FROM user WHERE user.username = %s"
     arg = (username,)
 
     cursor.execute(sql, arg)
