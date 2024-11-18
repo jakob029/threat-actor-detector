@@ -55,26 +55,18 @@ def read_config() -> Config:
 
     # validate config
     if not isinstance(conf["llm"], dict):
-        raise ConfigException(
-            path=CONFIG_PATH,
-            message="llm is of wrong type.")
+        raise ConfigException(path=CONFIG_PATH, message="llm is of wrong type.")
 
     llm_conf: dict[str, Any] = conf["llm"]
 
     if not isinstance(llm_conf["host"], str):
-        raise ConfigException(
-            path=CONFIG_PATH,
-            message="llm.host is of wrong type, should be string.")
+        raise ConfigException(path=CONFIG_PATH, message="llm.host is of wrong type, should be string.")
 
     if not isinstance(llm_conf["model"], str):
-        raise ConfigException(
-            path=CONFIG_PATH,
-            message="llm.model is of wrong type, should be string.")
+        raise ConfigException(path=CONFIG_PATH, message="llm.model is of wrong type, should be string.")
 
     if not isinstance(llm_conf["port"], str) and not isinstance(llm_conf["port"], int):
-        raise ConfigException(
-            path=CONFIG_PATH,
-            message="llm.port is of wrong type, should be string or int.")
+        raise ConfigException(path=CONFIG_PATH, message="llm.port is of wrong type, should be string or int.")
 
     if isinstance(llm_conf["port"], str):
         llm_conf["port"] = int(llm_conf["port"])

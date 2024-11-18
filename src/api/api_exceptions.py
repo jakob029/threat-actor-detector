@@ -4,11 +4,13 @@ Classes:
     ConfigException
 
 """
+
 USER_DOES_NOT_EXIST = 0
 USER_ALREADY_EXIST = 1
 USERNAME_TOO_LONG = 2
 PASSWORD_DOES_NOT_MATCH = 3
 PASSWORD_TOO_WEAK = 4
+
 
 class AuthenticationException(Exception):
     """Raised when a authentication error occurs.
@@ -48,5 +50,3 @@ class RegistrationException(Exception):
         """
         self.message = message
         self.code = code
-
-
