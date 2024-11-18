@@ -96,7 +96,7 @@ def get_user_salt(username: str) -> str:
 
 
 def update_user_auth(uid: str, hash: str, salt: str):
-    """Update user salt.
+    """Update user password hash.
 
     Arguments:
         uid (str): user id.
@@ -149,4 +149,64 @@ def register_user(username: str, hash: str, salt: str):
     db = connect_to_db()
     cursor = db.cursor()
     cursor.callproc("register_new_user", (username, hash, salt))
+    cursor.close()
     db.close()
+
+
+def get_conversations(uid: str) -> list:
+    """Get user conversations.
+
+    Arguments:
+        uid (str): user id.
+
+    Returns:
+        conversations (list): list of user conversations.
+
+    """
+    db = connect_to_db()
+    cursor = db.cursor()
+    sql = """
+        SELECT conversation.cid, conversation.title
+            FROM conversation
+            WHERE conversation.uid = %s
+    """
+    cursor.execute(sql, (uid,))
+
+    resps = cursor.fetchall()
+
+    conversations = [{resp[0]: resp[1]} for resp in resps]
+
+    cursor.close()
+    db.close()
+
+    return conversations
+
+
+def get_messages(cid: str) -> list:
+    """Get conversation messages.
+
+    Arguments:
+        cid (str): conversation id.
+
+    Returns:
+        messages (list): list of the messages.
+
+    """
+    db = connect_to_db()
+    cursor = db.cursor()
+
+    sql = """
+        SELECT message.index, message.text, message.role
+            FROM message
+            WHERE message.cid = %s
+            ORDER BY message.index
+    """
+
+    cursor.execute(sql, (cid,))
+    responses = cursor.fetchall()
+    messages = [{response[0]: {"role": response[1], "text": response[2]}} for response in responses]
+
+    cursor.close()
+    db.close()
+
+    return messages

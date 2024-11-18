@@ -7,6 +7,8 @@ from .database_connector import (
     register_user,
     get_user_salt,
     username_exist,
+    get_conversations,
+    get_messages,
     update_user_auth,
 )
 from os import environ
