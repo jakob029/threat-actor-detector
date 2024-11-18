@@ -9,10 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-logging.basicConfig(
-    format="[ %(asctime)s ] %(message)s",
-    datefmt="%m/%d/%Y %H:%M:%S",
-    level=logging.DEBUG)
+logging.basicConfig(format="[ %(asctime)s ] %(message)s", datefmt="%m/%d/%Y %H:%M:%S", level=logging.DEBUG)
 
 app = Flask(__name__)
 api = Api(app)

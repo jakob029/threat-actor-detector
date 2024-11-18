@@ -31,10 +31,7 @@ def send_prompt(prompt: str | list) -> str:
 
     with open(llm_preprompt_path, "r") as f:
         preprompt = f.read()
-        prompt.insert(0, {
-            "role": "system",
-            "name": "Threat Analyzer",
-            "content": preprompt})
+        prompt.insert(0, {"role": "system", "name": "Threat Analyzer", "content": preprompt})
 
     # send prompt
     client: Client = Client(host=llm_address, timeout=120)

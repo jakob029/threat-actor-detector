@@ -8,6 +8,7 @@ from api_exceptions import AuthenticationException, USER_DOES_NOT_EXIST
 
 logger = logging.getLogger(__name__)
 
+
 def connect_to_db():
     """Connect to mysql db.
 
@@ -20,11 +21,7 @@ def connect_to_db():
     MYSQL_PASSWORD = environ.get("TAD_MYSQL_PASSWORD")
     MYSQL_DATABASE = environ.get("TAD_MYSQL_DATABASE")
 
-    return connector.connect(
-        host=MYSQL_HOST,
-        user=MYSQL_USER,
-        password=MYSQL_PASSWORD,
-        database=MYSQL_DATABASE)
+    return connector.connect(host=MYSQL_HOST, user=MYSQL_USER, password=MYSQL_PASSWORD, database=MYSQL_DATABASE)
 
 
 def username_exist(username: str) -> bool:
@@ -52,7 +49,6 @@ def username_exist(username: str) -> bool:
     return len(result) != 0
 
 
-
 def get_password_hash(username: str) -> str:
     """Get the hashed password for the user.
 
@@ -72,10 +68,7 @@ def get_password_hash(username: str) -> str:
     db.close()
 
     if len(resp) == 0:
-        raise AuthenticationException(
-            message = "Username doesn't exist.",
-            code = USER_DOES_NOT_EXIST
-        )
+        raise AuthenticationException(message="Username doesn't exist.", code=USER_DOES_NOT_EXIST)
 
     hash = str(tuple(resp[0])[0])
 
@@ -98,7 +91,6 @@ def get_user_salt(username: str) -> str:
     cursor.execute(sql, arg)
     resp = cursor.fetchall()
     salt = str(tuple(resp[0])[0])
-
 
     return salt
 
@@ -152,13 +144,13 @@ def get_conversations(uid: str) -> list:
 
     Returns:
         conversations (list): list of user conversations.
- 
+
     """
     db = connect_to_db()
     cursor = db.cursor()
     sql = """
-        SELECT conversation.cid, conversation.title 
-            FROM conversation 
+        SELECT conversation.cid, conversation.title
+            FROM conversation
             WHERE conversation.uid = %s
     """
     cursor.execute(sql, (uid,))
@@ -187,8 +179,8 @@ def get_messages(cid: str) -> list:
     cursor = db.cursor()
 
     sql = """
-        SELECT message.index, message.text, message.role 
-            FROM message 
+        SELECT message.index, message.text, message.role
+            FROM message
             WHERE message.cid = %s
             ORDER BY message.index
     """

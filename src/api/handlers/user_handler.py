@@ -11,7 +11,14 @@ import secrets
 from re import findall
 from argon2 import PasswordHasher
 from backend_connectors import database_connector as dc
-from api_exceptions import PASSWORD_TOO_WEAK, USER_ALREADY_EXIST, USER_DOES_NOT_EXIST, USERNAME_TOO_LONG, AuthenticationException, RegistrationException
+from api_exceptions import (
+    PASSWORD_TOO_WEAK,
+    USER_ALREADY_EXIST,
+    USER_DOES_NOT_EXIST,
+    USERNAME_TOO_LONG,
+    AuthenticationException,
+    RegistrationException,
+)
 
 logger = logging.getLogger(__name__)
 
