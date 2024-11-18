@@ -8,6 +8,7 @@ from api_exceptions import AuthenticationException, USER_DOES_NOT_EXIST
 
 logger = logging.getLogger(__name__)
 
+
 def connect_to_db():
     """Connect to mysql db.
 
@@ -20,11 +21,7 @@ def connect_to_db():
     MYSQL_PASSWORD = environ.get("TAD_MYSQL_PASSWORD")
     MYSQL_DATABASE = environ.get("TAD_MYSQL_DATABASE")
 
-    return connector.connect(
-        host=MYSQL_HOST,
-        user=MYSQL_USER,
-        password=MYSQL_PASSWORD,
-        database=MYSQL_DATABASE)
+    return connector.connect(host=MYSQL_HOST, user=MYSQL_USER, password=MYSQL_PASSWORD, database=MYSQL_DATABASE)
 
 
 def username_exist(username: str) -> bool:
@@ -40,7 +37,7 @@ def username_exist(username: str) -> bool:
     db = connect_to_db()
     cursor = db.cursor()
 
-    sql = "SELECT auth.username FROM auth WHERE auth.username = %s"
+    sql = "SELECT user.username FROM user WHERE user.username = %s"
     arg = (username,)
 
     cursor.execute(sql, arg)
@@ -50,7 +47,6 @@ def username_exist(username: str) -> bool:
     db.close()
 
     return len(result) != 0
-
 
 
 def get_password_hash(username: str) -> str:
@@ -63,7 +59,7 @@ def get_password_hash(username: str) -> str:
     db = connect_to_db()
     cursor = db.cursor()
 
-    sql = "SELECT auth.password_hash FROM auth WHERE auth.username = %s"
+    sql = "SELECT user.password_hash FROM user WHERE user.username = %s"
     arg = (username,)
 
     cursor.execute(sql, arg)
@@ -72,10 +68,7 @@ def get_password_hash(username: str) -> str:
     db.close()
 
     if len(resp) == 0:
-        raise AuthenticationException(
-            message = "Username doesn't exist.",
-            code = USER_DOES_NOT_EXIST
-        )
+        raise AuthenticationException(message="Username doesn't exist.", code=USER_DOES_NOT_EXIST)
 
     hash = str(tuple(resp[0])[0])
 
@@ -92,15 +85,31 @@ def get_user_salt(username: str) -> str:
     db = connect_to_db()
     cursor = db.cursor()
 
-    sql = "SELECT auth.salt FROM auth WHERE auth.username = %s"
+    sql = "SELECT user.salt FROM user WHERE user.username = %s"
     arg = (username,)
 
     cursor.execute(sql, arg)
     resp = cursor.fetchall()
     salt = str(tuple(resp[0])[0])
 
-
     return salt
+
+
+def update_user_auth(uid: str, hash: str, salt: str):
+    """Update user password hash.
+
+    Arguments:
+        uid (str): user id.
+        hash: user password hash.
+        salt (str): new user salt.
+    """
+    db = connect_to_db()
+    cursor = db.cursor()
+
+    cursor.callproc("update_user_auth", (uid, hash, salt))
+
+    db.close()
+    cursor.close()
 
 
 def get_user_id(username: str) -> str:
@@ -116,7 +125,7 @@ def get_user_id(username: str) -> str:
     db = connect_to_db()
     cursor = db.cursor()
 
-    sql = "SELECT auth.uid FROM auth WHERE auth.username = %s"
+    sql = "SELECT user.uid FROM user WHERE user.username = %s"
     arg = (username,)
 
     cursor.execute(sql, arg)
@@ -140,12 +149,8 @@ def register_user(username: str, hash: str, salt: str):
     db = connect_to_db()
     cursor = db.cursor()
     cursor.callproc("register_new_user", (username, hash, salt))
+    cursor.close()
     db.close()
-
-
-#### Session ####
-def create_session():
-    pass 
 
 
 ### Conversation ###
@@ -170,14 +175,64 @@ def add_message():
     pass
 
 
-def get_conversationns():
-    pass
-
-
-def get_chat_history():
-    pass
-
-
 def end_conversation():
     pass
 
+
+def get_conversations(uid: str) -> list:
+    """Get user conversations.
+
+    Arguments:
+        uid (str): user id.
+
+    Returns:
+        conversations (list): list of user conversations.
+
+    """
+    db = connect_to_db()
+    cursor = db.cursor()
+    sql = """
+        SELECT conversation.cid, conversation.title
+            FROM conversation
+            WHERE conversation.uid = %s
+    """
+    cursor.execute(sql, (uid,))
+
+    resps = cursor.fetchall()
+
+    conversations = [{resp[0]: resp[1]} for resp in resps]
+
+    cursor.close()
+    db.close()
+
+    return conversations
+
+
+def get_messages(cid: str) -> list:
+    """Get conversation messages.
+
+    Arguments:
+        cid (str): conversation id.
+
+    Returns:
+        messages (list): list of the messages.
+
+    """
+    db = connect_to_db()
+    cursor = db.cursor()
+
+    sql = """
+        SELECT message.index, message.text, message.role
+            FROM message
+            WHERE message.cid = %s
+            ORDER BY message.index
+    """
+
+    cursor.execute(sql, (cid,))
+    responses = cursor.fetchall()
+    messages = [{response[0]: {"role": response[1], "text": response[2]}} for response in responses]
+
+    cursor.close()
+    db.close()
+
+    return messages

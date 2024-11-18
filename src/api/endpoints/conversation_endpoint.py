@@ -1,17 +1,35 @@
-"""Conversation requests"""
+"""Handle Conversation acctions.
+
+Classes:
+    ConversationsEndpoint
+
+"""
 
 import logging
 from flask_restful import Resource
-from flask_restful.reqparse import RequestParser
+from backend_connectors import get_conversations
+
 
 logger = logging.getLogger(__name__)
 
-class Conversation(Resource):
-    """Class handling all conversation requests."""
 
-    def get(self, uid: str):
-        pass
+class ConversationsEndpoint(Resource):
+    """Class representing conversation endpoints."""
 
+    def get(self, uid):
+        """Return user conversations.
+
+        Arguments:
+            uid (str): user id
+
+        Returns:
+            response (dict): resposne
+
+        """
+        conversations = get_conversations(uid)
+        return {"message": "success", "conversations": conversations}, 200
 
     def post(self):
-        pass
+        """Create conversation."""
+        return {"messgae": "stahp"}, 200
+

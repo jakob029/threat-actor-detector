@@ -6,8 +6,8 @@ Functions:
 """
 
 import os
+from pathlib import Path
 from ollama import Client
-
 
 def send_prompt(prompt: str | list) -> str:
     """Send prompt to llm.
@@ -22,19 +22,18 @@ def send_prompt(prompt: str | list) -> str:
         llm_response (str): The response of the LLM.
 
     """
+    location = Path(os.path.dirname(os.path.abspath(__file__))).parent.absolute()
+    print(location)
     llm_model = os.environ.get("LLM_MODEL", default="llama3.2")
     llm_address = os.environ.get("LLM_ADDRESS", default="http://100.77.88.10")
-    llm_preprompt_path = os.environ.get("LLM_PREPROMPT_PATH", default="./prepromt")
+    llm_preprompt_path = os.environ.get("LLM_PREPROMPT_PATH", default=f"{location}/prepromt")
 
     if isinstance(prompt, str):
         prompt = [{"role": "user", "content": prompt}]
 
     with open(llm_preprompt_path, "r") as f:
         preprompt = f.read()
-        prompt.insert(0, {
-            "role": "system",
-            "name": "Threat Analyzer",
-            "content": preprompt})
+        prompt.insert(0, {"role": "system", "name": "Threat Analyzer", "content": preprompt})
 
     # send prompt
     client: Client = Client(host=llm_address, timeout=120)

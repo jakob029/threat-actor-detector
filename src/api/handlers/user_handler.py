@@ -11,7 +11,14 @@ import secrets
 from re import findall
 from argon2 import PasswordHasher
 from backend_connectors import database_connector as dc
-from api_exceptions import PASSWORD_TOO_WEAK, USER_ALREADY_EXIST, USER_DOES_NOT_EXIST, USERNAME_TOO_LONG, AuthenticationException, RegistrationException
+from api_exceptions import (
+    PASSWORD_TOO_WEAK,
+    USER_ALREADY_EXIST,
+    USER_DOES_NOT_EXIST,
+    USERNAME_TOO_LONG,
+    AuthenticationException,
+    RegistrationException,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -70,9 +77,20 @@ def authenicate(username: str, password: str) -> str:
     if not dc.username_exist(username):
         raise AuthenticationException("Username does not exist.", USER_DOES_NOT_EXIST)
 
+    # Validate password hash.
     ph: PasswordHasher = PasswordHasher()
     hash: str = dc.get_password_hash(username)
     salt: str = dc.get_user_salt(username)
     ph.verify(hash, password + salt)
+
+    # Get uid.
+    uid: str = dc.get_user_id(username)
+
+    # Generate new hash and salt.
+    new_salt = str(secrets.token_hex(4))
+    new_hash = ph.hash(password + new_salt)
+
+    # Update database.
+    dc.update_user_auth(uid, new_hash, new_salt)
 
     return dc.get_user_id(username)
