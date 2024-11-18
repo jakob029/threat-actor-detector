@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 """User end points.
 
 Classes:
