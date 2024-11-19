@@ -153,6 +153,32 @@ def register_user(username: str, hash: str, salt: str):
     db.close()
 
 
+### Conversation ###
+def create_conversation(uid: str) -> str:
+    db = connect_to_db()
+    cursor = db.cursor()
+    
+    args = (uid,"") 
+    cursor.callproc("create_conversation", args)
+
+    
+    cid = args[1]
+    
+    print(cid)
+
+    cursor.close()
+    db.close()
+    return ""
+
+
+def add_message():
+    pass
+
+
+def end_conversation():
+    pass
+
+
 def get_conversations(uid: str) -> list:
     """Get user conversations.
 

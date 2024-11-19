@@ -32,3 +32,4 @@ class ConversationsEndpoint(Resource):
     def post(self):
         """Create conversation."""
         return {"messgae": "stahp"}, 200
+

@@ -7,9 +7,17 @@ from backend_connectors import get_messages
 import logging
 from dotenv import load_dotenv
 
+# logging settings
+logging.basicConfig(
+    format="[ %(asctime)s ] %(message)s",
+    datefmt="%m/%d/%Y %H:%M:%S",
+    level=logging.DEBUG)
+
 load_dotenv()
 
-logging.basicConfig(format="[ %(asctime)s ] %(message)s", datefmt="%m/%d/%Y %H:%M:%S", level=logging.DEBUG)
+# load env
+logging.info("loaded .env")
+load_dotenv()
 
 app = Flask(__name__)
 api = Api(app)
