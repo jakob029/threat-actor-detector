@@ -25,7 +25,7 @@ class ConstructDataBase:
             Constructed APT-TTPs relationship mapping.
         """
         relationship_map = []
-        relationship_files = os.listdir(f"{attack_path}/relationship")
+        relationship_files = os.listdir(f"{LOCATION}/{attack_path}/relationship")
 
         for relation_file in relationship_files:
             with open(
