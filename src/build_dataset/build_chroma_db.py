@@ -10,20 +10,23 @@ class VectorDB:
 
     collection: chromadb.api.models.Collection.Collection
     instruction_set: str | list
+    name: str
 
-    def __init__(self, instruction_set: str | list) -> None:
+    def __init__(self, instruction_set: str | list, name: str) -> None:
         """Constructor.
 
         Args:
             instruction_set: Path to or a constructed instruction set for the data base.
+            name: Collection name to set.
         """
         self.instruction_set = instruction_set
+        self.name = name
 
     def build_db(self) -> None:
         """Build a vector database saved to memory."""
         chroma_client = chromadb.Client()
         sentence_transformer = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-mpnet-base-v2")
-        self.collection = chroma_client.create_collection(name="relation_db", embedding_function=sentence_transformer)
+        self.collection = chroma_client.create_collection(name=self.name, embedding_function=sentence_transformer)
         self._structure_data()
         self._build_collection()
 
@@ -40,6 +43,8 @@ class VectorDB:
         keys = []
         values = []
         for entries in self.instruction_set:
+            if not entries:
+                continue
             for groups, target in entries.items():
                 if groups in keys:
                     values[keys.index(groups)] += f", {target}"
