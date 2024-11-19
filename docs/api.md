@@ -113,6 +113,152 @@ No error implemented.
 
 </details>
 
+<details>
+
+<summary>Create conversation</summary>
+
+Create a new conversation.
+
+**URL** POST
+
+    http://127.0.0.1:5000/conversation
+
+**Request body**
+
+```json
+{
+    "uid": "<USER_ID>",
+}
+```
+
+**Response body**
+
+```json
+{
+    "mesage": "<RESONSE_MESSAGE>"
+    "cid": "<CONVERSATION_ID>"
+}
+```
+
+**Failed**
+
+```json
+{
+    "mesage": "<ERROR_MESSAGE>"
+}
+```
+
+</details>
+
+<details>
+
+<summary>Get conversations</summary>
+
+Get all user conversations.
+
+**URL** GET
+
+    http://127.0.0.1:5000/conversation/<USER_ID>
+
+**Response body**
+
+```json
+{
+    "mesage": "<RESONSE_MESSAGE>"
+    "conversations": {
+        "<CONVERSATION_ID_1>": "<CONVERSATION_TITLE_1>",
+        "<CONVERSATION_ID_2>": "<CONVERSATION_TITLE_2>"
+    }
+}
+```
+
+**Failed**
+
+```json
+{
+    "mesage": "<ERROR_MESSAGE>"
+}
+```
+
+</details>
+
+<details>
+
+<summary>Add message to conversation</summary>
+
+Adds a message to an already existing conversation.
+
+**URL** POST
+
+    http://127.0.0.1:5000/messages
+
+**Request body**
+
+```json
+{
+    "cid": "<CONVERSATION_ID>",
+    "text": "<TEXT>"
+}
+```
+
+**Response body**
+
+```json
+{
+    "mesage": "success"
+}
+```
+
+**Failed**
+
+```json
+{
+    "mesage": "<ERROR_MESSAGE>"
+}
+```
+
+</details>
+
+<details>
+
+<summary>Get messages</summary>
+
+Get all messages for a conversation.
+
+**URL** GET
+
+    http://127.0.0.1:5000/messages/<CONVERSATION_ID>
+
+**Response body**
+
+```json
+{
+    "mesage": "success"
+    "conversation_history": [
+        {
+            "role": "<SENDER_ROLE_1>",
+            "text": "<MESSAGE_TEXT_1>"
+        },
+        {
+            "role": "<SENDER_ROLE_2>",
+            "text": "<MESSAGE_TEXT_2>"
+        }
+    ]
+}
+```
+
+**Failed**
+
+```json
+{
+    "mesage": "<ERROR_MESSAGE>"
+}
+```
+
+</details>
+
+
+
 ## Packages
 
 - **backend_connectors**: Package containing everything related to backend connections.

@@ -1,3 +1,4 @@
+DROP PROCEDURE add_message;
 
 DELIMITER $$
 
@@ -18,19 +19,19 @@ BEGIN
 	-- validate user-chat combo exist. 
 	IF `validator` = 0 THEN
 		SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'Either user or chat does not exist.';
+			SET MESSAGE_TEXT = 'Conversation does not exist.';
 	END IF;
 
     SELECT count(*)
 		FROM `message`
         WHERE `message`.`cid` = `in_cid`
         INTO `count`;
+  
+    -- continue conversation.
+    INSERT INTO `message`
+		VALUES (`in_cid`, `count`, `in_role`, `in_message`);
 
-    -- continue chat.
-    INSERT INTO `chat`
-		VALUES (`in_cid`, `count` - 1, `role`, `text`);
-        
-	COMMIT;
+    COMMIT;
 END $$
 
 DELIMITER ;

@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 from ollama import Client
 
+
 def send_prompt(prompt: str | list) -> str:
     """Send prompt to llm.
 

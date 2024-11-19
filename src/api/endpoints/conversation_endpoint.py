@@ -7,7 +7,9 @@ Classes:
 
 import logging
 from flask_restful import Resource
-from backend_connectors import get_conversations
+from flask_restful.reqparse import RequestParser
+from backend_connectors import get_conversations, create_conversation
+from api_exceptions import DatabaseException
 
 
 logger = logging.getLogger(__name__)
@@ -30,6 +32,24 @@ class ConversationsEndpoint(Resource):
         return {"message": "success", "conversations": conversations}, 200
 
     def post(self):
-        """Create conversation."""
-        return {"messgae": "stahp"}, 200
+        """Create conversation.
 
+        Returns:
+            response (dict): response
+
+        """
+        try:
+            parser: RequestParser = RequestParser()
+            parser.add_argument("title", type=str, required=True)
+            parser.add_argument("uid", type=str, required=True)
+
+            args = parser.parse_args(strict=True)
+
+            cid = create_conversation(args["uid"], args["title"])
+
+            return {"messgae": "success", "conversation_id": cid}, 200
+
+        except DatabaseException as e:
+            return {"message": e.message}, 200
+        except Exception:
+            return {"message": "something went wrong."}, 500

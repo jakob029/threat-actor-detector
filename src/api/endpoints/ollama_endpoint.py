@@ -35,7 +35,11 @@ class Analyzis(Resource):
             prompt: str = args["prompt"]
             response: str = send_prompt(prompt)
 
-            return {"message": "success", "response": response, "data_points": {"testAPT": random.randint(0, 100), "otherAPT": random.randint(0, 100)}}, 200
+            return {
+                "message": "success",
+                "response": response,
+                "data_points": {"testAPT": random.randint(0, 100), "otherAPT": random.randint(0, 100)},
+            }, 200
         except ResponseError:
             return {"message": "LLM_error"}, 500
         except ConnectTimeout:
