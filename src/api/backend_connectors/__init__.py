@@ -12,6 +12,6 @@ from .database_connector import (
     update_user_auth,
     add_message,
     end_conversation,
-    create_conversation
+    create_conversation,
 )
 from os import environ

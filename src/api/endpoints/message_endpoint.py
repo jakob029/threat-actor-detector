@@ -31,7 +31,6 @@ class MessagesEndpoint(Resource):
         messages = get_messages(cid)
         return {"message": "success", "conversation_history": messages}, 200
 
-    
     def post(self):
         """Add message.
 
@@ -52,4 +51,3 @@ class MessagesEndpoint(Resource):
             return {"message": e.message}, 200
         except Exception:
             return {"message": "something went wrong."}, 500
-

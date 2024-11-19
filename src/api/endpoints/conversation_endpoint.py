@@ -31,7 +31,6 @@ class ConversationsEndpoint(Resource):
         conversations = get_conversations(uid)
         return {"message": "success", "conversations": conversations}, 200
 
-
     def post(self):
         """Create conversation.
 
@@ -54,4 +53,3 @@ class ConversationsEndpoint(Resource):
             return {"message": e.message}, 200
         except Exception:
             return {"message": "something went wrong."}, 500
-

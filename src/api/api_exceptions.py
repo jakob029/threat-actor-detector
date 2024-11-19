@@ -64,6 +64,7 @@ class DatabaseException(Exception):
         code (int): error code.
 
     """
+
     def __init__(self, message: str, code: int) -> None:
         """Inint object.
 

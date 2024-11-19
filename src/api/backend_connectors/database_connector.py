@@ -5,16 +5,23 @@ from mysql.connector import Error
 import logging
 from os import environ
 
-from api_exceptions import CONVERSATION_DOES_NOT_EXIST, UNKNOWN_ISSUE, AuthenticationException, USER_DOES_NOT_EXIST, DatabaseException
+from api_exceptions import (
+    CONVERSATION_DOES_NOT_EXIST,
+    UNKNOWN_ISSUE,
+    AuthenticationException,
+    USER_DOES_NOT_EXIST,
+    DatabaseException,
+)
 
 logger = logging.getLogger(__name__)
+
 
 def _load_config():
     db_config = {
         "host": environ.get("TAD_MYSQL_HOST"),
         "user": environ.get("TAD_MYSQL_USER"),
         "password": environ.get("TAD_MYSQL_PASSWORD"),
-        "database": environ.get("TAD_MYSQL_DATABASE")
+        "database": environ.get("TAD_MYSQL_DATABASE"),
     }
 
     return db_config
@@ -52,7 +59,7 @@ def get_password_hash(username: str) -> str:
     db_config = _load_config()
     with connector.connect(**db_config) as db:
         with db.cursor() as cursor:
- 
+
             sql = "SELECT user.password_hash FROM user WHERE user.username = %s"
             arg = (username,)
 
@@ -60,8 +67,7 @@ def get_password_hash(username: str) -> str:
             resp = cursor.fetchall()
 
     if len(resp) == 0:
-        raise AuthenticationException(
-            message="Username doesn't exist.", code=USER_DOES_NOT_EXIST)
+        raise AuthenticationException(message="Username doesn't exist.", code=USER_DOES_NOT_EXIST)
 
     hash = str(tuple(resp[0])[0])
 
@@ -142,13 +148,22 @@ def register_user(username: str, hash: str, salt: str):
 
 ### Conversation ###
 def create_conversation(uid: str, title: str) -> str:
+    """Create a conversation for the user.
 
+    Arguments:
+        uid (str): User id.
+        title (str): Conversation title.
+
+    Returns:
+        cid (str): Conversation id.
+
+    """
     db_config = _load_config()
     with connector.connect(**db_config) as db:
         with db.cursor() as cursor:
-            args = (uid, title, 0) 
+            args = (uid, title, 0)
             result_args = cursor.callproc("create_conversation", args)
-            
+
             # validate tuple return.
             if not isinstance(result_args, tuple):
                 raise TypeError()
@@ -181,9 +196,7 @@ def add_message(text: str, role: str, cid: str) -> None:
                 cursor.callproc("add_message", (text, role, cid))
     except Error as e:
         if e.errno == 45000:
-           raise DatabaseException(
-                "Conversation does not exist.",
-                CONVERSATION_DOES_NOT_EXIST) 
+            raise DatabaseException("Conversation does not exist.", CONVERSATION_DOES_NOT_EXIST)
         else:
             raise DatabaseException("Something went wrong.", UNKNOWN_ISSUE)
 
@@ -212,7 +225,7 @@ def get_conversations(uid: str) -> dict:
     db_config = _load_config()
     with connector.connect(**db_config) as db:
         with db.cursor() as cursor:
-         
+
             sql = """
                 SELECT conversation.cid, conversation.title
                     FROM conversation
@@ -251,8 +264,6 @@ def get_messages(cid: str) -> list:
 
             cursor.execute(sql, (cid,))
             responses = cursor.fetchall()
-            messages = [{
-                "role": response[1], "text": response[0]
-            } for response in responses]
+            messages = [{"role": response[1], "text": response[0]} for response in responses]
 
     return messages
