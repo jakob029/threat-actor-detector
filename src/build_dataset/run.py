@@ -3,14 +3,14 @@
 import os
 import logging
 
-import construct_db
-from construct_db import LOCATION
-from build_chroma_db import VectorDB
+from src.build_dataset import construct_db
+from src.build_dataset.construct_db import LOCATION
+from src.build_dataset.build_chroma_db import VectorDB
 
 logging.basicConfig(level=logging.INFO)
 
 
-def build_vector_database():
+def build_vector_database() -> tuple:
     """Vector database builder."""
     construction_instance = construct_db.ConstructDataBase()
     apt_descriptor = construction_instance.construct_atp_descriptor()
@@ -27,6 +27,8 @@ def build_vector_database():
 
     relation_builder.save_database(os.path.join(LOCATION, "relationship_db"))
     logging.info("Saved relationship_db to disk")
+
+    return description_builder, relation_builder
 
 
 if __name__ == "__main__":
