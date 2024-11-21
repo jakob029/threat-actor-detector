@@ -29,7 +29,7 @@ def llama_json_parser(content: str, bit: int = 0) -> dict:
         return json.loads(data)
     except json.decoder.JSONDecodeError:
         formatting_functions = (reduce_bloat, insert_correct_quotations)
-        return llama_json_parser(formatting_functions[bit](data), bit + 1)
+        return llama_json_parser(formatting_functions[bit](data), bit + 1) if bit < len(formatting_functions) else {}
 
 
 def reduce_bloat(json_structure: str) -> str:
