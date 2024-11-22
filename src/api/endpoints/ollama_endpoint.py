@@ -14,7 +14,7 @@ from flask_restful.reqparse import RequestParser
 from ollama import ResponseError
 from backend_connectors import send_prompt
 from handlers.statistic_parser import llama_json_parser
-
+from handlers.statistic_json_parser import SchemaParser
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
 
@@ -44,7 +44,10 @@ class Analyzis(Resource):
 
             prompt: str = args["prompt"]
             response: str = send_prompt(prompt, self.vector_databases, self.apt_descriptions)
-            statistics = llama_json_parser(response)
+
+            defined_json = SchemaParser()
+
+            statistics = defined_json.correct_structure(llama_json_parser(response))
             return {
                 "message": "success",
                 "response": response,
