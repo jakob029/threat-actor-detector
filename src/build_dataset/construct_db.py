@@ -12,8 +12,10 @@ class ConstructDataBase:
 
     ERROR: int = 0
 
-    def __init__(self) -> None:
-        status = subprocess.run([f"{LOCATION}/retrieve_data.sh", LOCATION])
+    def __init__(self, download_files: bool = False) -> None:
+        if not download_files and os.path.isdir(os.path.join(LOCATION, "enterprise-attack")):
+            return
+        status = subprocess.run([f"{LOCATION}/retrieve_data.sh", LOCATION], check=True)
         self.ERROR = status.returncode
 
     def retrieve_instruction_set_relationships(self, attack_path: str = "enterprise-attack") -> list:

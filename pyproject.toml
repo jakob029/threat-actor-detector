@@ -7,9 +7,12 @@ exclude = [
 ]
 
 ignore = [
-    "D107", "D410", "D411", "D412", "D413", "D401"
+    "D107", "D410", "D411", "D412", "D413", "D401", "E402"
 ]
 
 [tool.black]
 line-length = 120
 
+[tool.pylint]
+max-line-length = 120
+disable = ["C0103", "E0401", "R1710"]
