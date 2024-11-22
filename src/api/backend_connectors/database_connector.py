@@ -8,6 +8,7 @@ from os import environ
 from api_exceptions import (
     CONVERSATION_DOES_NOT_EXIST,
     UNKNOWN_ISSUE,
+    VARIABLE_NOT_SET,
     AuthenticationException,
     USER_DOES_NOT_EXIST,
     DatabaseException,
@@ -16,14 +17,36 @@ from api_exceptions import (
 logger = logging.getLogger(__name__)
 
 
-def _load_config():
+def _load_config() -> dict:
+    """Load config from env variables.
+
+    Raises:
+        DatabaseException
+
+    Returns:
+        config (dict): The configuration.
+    """
+    # Get variables.
+    host = environ.get("TAD_MYSQL_HOST")
+    user = environ.get("TAD_MYSQL_USER")
+    password = environ.get("TAD_MYSQL_PASSWORD")
+    database = environ.get("TAD_MYSQL_DATABASE")
+
+    # Validate variables.
+    if host is None: raise DatabaseException("Variable TAD_MYSQL_HOST is not set.", VARIABLE_NOT_SET)
+    if user is None: raise DatabaseException("Variable TAD_MYSQL_USER is not set.", VARIABLE_NOT_SET)
+    if password is None: raise DatabaseException("Variable TAD_MYSQL_PASSWORD is not set.", VARIABLE_NOT_SET)
+    if database is None: raise DatabaseException("Variable TAD_MYSQL_DATABASE is not set.", VARIABLE_NOT_SET)
+
     db_config = {
-        "host": environ.get("TAD_MYSQL_HOST"),
-        "user": environ.get("TAD_MYSQL_USER"),
-        "password": environ.get("TAD_MYSQL_PASSWORD"),
-        "database": environ.get("TAD_MYSQL_DATABASE"),
+        "host": host,
+        "user": user,
+        "password": password,
+        "database": database,
     }
 
+    
+    
     return db_config
 
 
@@ -264,6 +287,6 @@ def get_messages(cid: str) -> list:
 
             cursor.execute(sql, (cid,))
             responses = cursor.fetchall()
-            messages = [{"role": response[1], "text": response[0]} for response in responses]
+            messages = [{"role": response[1], "content": response[0]} for response in responses]
 
     return messages

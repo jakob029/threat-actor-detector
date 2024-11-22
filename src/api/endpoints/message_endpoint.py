@@ -10,7 +10,7 @@ from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
 from backend_connectors import get_messages, add_message
 from api_exceptions import DatabaseException
-
+from handlers import hold_conversation
 
 logger = logging.getLogger(__name__)
 
@@ -44,9 +44,9 @@ class MessagesEndpoint(Resource):
             parser.add_argument("cid", type=str, required=True)
             args = parser.parse_args(strict=True)
 
-            add_message(args["text"], "user", args["cid"])
+            response = hold_conversation(args["cid"], args["text"])
 
-            return {"messgae": "success"}, 200
+            return {"messgae": "success", "response": response}, 200
         except DatabaseException as e:
             return {"message": e.message}, 200
         except Exception:
