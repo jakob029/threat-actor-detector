@@ -1,63 +1,18 @@
 # API
 
-## Example usage
-
-First create user with:
-
-``` bash
-curl \
--H 'Content-TYPE: application/json' \
--X POST \
--d '{"username": "jeppeboi2cool4u", "password": "Test123!"}' \
-http://<HOST>:<PORT>/user/register
-```
-
-then, login to the newly created user:
-
-``` bash
-curl \
--H 'Content-TYPE: application/json' \
--X POST \
--d '{"username": "jeppeboi2cool4u", "password": "Test123!"}' \
-http://<HOST>:<PORT>/user/login
-```
-
-which uppon success will return the *uid*, eg. 'a3921875-a9a2-11ef-b4c2-bc2411c91e6c'. Now a conversation can be created:
-
-``` bash
-curl \
--H 'Content-TYPE: application/json' \
--X POST \
--d '{"uid": "a3921875-a9a2-11ef-b4c2-bc2411c91e6c"}' \
-http://<HOST>:<PORT>/conversation
-```
-
-which will return a *cid*, eg. 'ced239c1-a9a2-11ef-b4c2-bc2411c91e6c'. The *cid* will be used to handle the conversation, now we'll do an analyzis:
-
-``` bash
-curl \
--H 'Content-TYPE: application/json' \
--X POST \
--d '{"cid": "ced239c1-a9a2-11ef-b4c2-bc2411c91e6c", "prompt": "What APT is could be responsible for an attack that includes: Adversaries may encrypt data on target systems or on large numbers of systems in a network to interrupt availability to system and network resources."}' \
-http://<HOST>:<PORT>/analyzis
-```
-
-This will give the llm response and some data points, which can be used for a graph.
-
-
 ## Requests
 
 <details>
 
 <summary>Analysis</summary>
 
-sends a question to the llm and gives the llm response as a response.
+### POST
 
-**URL** POST
+sends a question to the llm and gives the llm response as a response.
 
     http://<HOST>:<PORT>/analyzis
 
-**Request body**
+#### Request body
 
 ```json
 {
@@ -66,7 +21,7 @@ sends a question to the llm and gives the llm response as a response.
 }
 ```
 
-**Response body**
+#### Response body
 
 ```json
 {
@@ -79,7 +34,7 @@ sends a question to the llm and gives the llm response as a response.
 }
 ```
 
-**Failed**
+#### Failed
 
 ```json
 {
@@ -87,13 +42,13 @@ sends a question to the llm and gives the llm response as a response.
 } 
 ```
 
-Get graph from previous analyzis call.
+### GET
 
-**URL** GET
+Get graph from previous analyzis call.
 
     http://<HOST>:<PORT>/analyzis/<CONVERSATION_ID>
 
-**Response body**
+#### Response body
 
 ```json
 {
@@ -105,7 +60,7 @@ Get graph from previous analyzis call.
 }
 ```
 
-**Failed**
+#### Failed
 
 ```json
 {
@@ -118,13 +73,13 @@ Get graph from previous analyzis call.
 
 <summary>Authentication</summary>
 
-Signs the user in and returns their UID.
+### POST
 
-**URL** POST
+Signs the user in and returns their UID.
 
     http://<HOST>:<PORT>/user/login
 
-**Request body**
+#### Request body
 
 ```json
 {
@@ -133,7 +88,7 @@ Signs the user in and returns their UID.
 }
 ```
 
-**Response body**
+#### Response body
 
 ```json
 {
@@ -142,7 +97,7 @@ Signs the user in and returns their UID.
 }
 ```
 
-**Failed**
+#### Failed
 
 ```json
 {
@@ -156,13 +111,13 @@ Signs the user in and returns their UID.
 
 <summary>Registration</summary>
 
-Registers a new user.
+### POST
 
-**URL** POST
+Registers a new user.
 
     http://<HOST>:<PORT>/user/register
 
-**Request body**
+#### Request body
 
 ```json
 {
@@ -171,7 +126,7 @@ Registers a new user.
 }
 ```
 
-**Response body**
+#### Response body
 
 ```json
 {
@@ -179,7 +134,7 @@ Registers a new user.
 }
 ```
 
-**Failed**
+#### Failed
 
 No error implemented.
 
@@ -189,13 +144,13 @@ No error implemented.
 
 <summary>Conversations</summary>
 
-Create a new conversation.
+### POST
 
-**URL** POST
+Create a new conversation.
 
     http://<HOST>:<PORT>/conversation
 
-**Request body**
+#### Request body
 
 ```json
 {
@@ -203,7 +158,7 @@ Create a new conversation.
 }
 ```
 
-**Response body**
+#### Response body
 
 ```json
 {
@@ -212,7 +167,7 @@ Create a new conversation.
 }
 ```
 
-**Failed**
+#### Failed
 
 ```json
 {
@@ -220,13 +175,13 @@ Create a new conversation.
 }
 ```
 
-Get all user conversations.
+### GET
 
-**URL** GET
+Get all user conversations.
 
     http://<HOST>:<PORT>/conversation/<USER_ID>
 
-**Response body**
+#### Response body
 
 ```json
 {
@@ -238,7 +193,7 @@ Get all user conversations.
 }
 ```
 
-**Failed**
+#### Failed
 
 ```json
 {
@@ -254,11 +209,11 @@ Get all user conversations.
 
 Adds a message to an already existing conversation.
 
-**URL** POST
+### POST
 
     http://<HOST>:<PORT>/messages
 
-**Request body**
+#### Request body
 
 ```json
 {
@@ -267,7 +222,7 @@ Adds a message to an already existing conversation.
 }
 ```
 
-**Response body**
+#### Response body
 
 ```json
 {
@@ -275,7 +230,7 @@ Adds a message to an already existing conversation.
 }
 ```
 
-**Failed**
+#### Failed
 
 ```json
 {
@@ -283,13 +238,13 @@ Adds a message to an already existing conversation.
 }
 ```
 
-Get all messages for a conversation.
+### GET
 
-**URL** GET
+Get all messages for a conversation.
 
     http://<HOST>:<PORT>/messages/<CONVERSATION_ID>
 
-**Response body**
+#### Response body
 
 ```json
 {
@@ -307,7 +262,7 @@ Get all messages for a conversation.
 }
 ```
 
-**Failed**
+#### Failed
 
 ```json
 {
@@ -315,13 +270,13 @@ Get all messages for a conversation.
 }
 ```
 
-Removes all messages and the graph for a conversation.
+### DELETE
 
-**URL** DELETE
+Removes all messages and the graph for a conversation.
 
     http://<HOST>:<PORT>/messages/<CONVERSATION_ID>
 
-**Response body**
+#### Response body
 
 ```json
 {
@@ -329,7 +284,7 @@ Removes all messages and the graph for a conversation.
 }
 ```
 
-**Failed**
+#### Failed
 
 ```json
 {
@@ -338,8 +293,6 @@ Removes all messages and the graph for a conversation.
 ```
 
 </details>
-
-
 
 ## Packages
 
@@ -366,3 +319,103 @@ Removes all messages and the graph for a conversation.
 - `TAD_MYSQL_USER` username of TAD managment account.
 - `TAD_MYSQL_PASSWORD` user password.
 - `TAD_MYSQL_DATABASE` database name.
+
+## Example usage
+
+### Register and login
+
+First create user with:
+
+``` bash
+curl \
+-H 'Content-TYPE: application/json' \
+-X POST \
+-d '{"username": "jeppeboi2cool4u", "password": "Test123!"}' \
+http://<HOST>:<PORT>/user/register
+```
+
+then, login to the newly created user:
+
+``` bash
+curl \
+-H 'Content-TYPE: application/json' \
+-X POST \
+-d '{"username": "jeppeboi2cool4u", "password": "Test123!"}' \
+http://<HOST>:<PORT>/user/login
+```
+
+which uppon success will return the *uid*, eg. 'a3921875-a9a2-11ef-b4c2-bc2411c91e6c'.
+
+### Conversations
+
+Now a conversation can be created:
+
+``` bash
+curl \
+-H 'Content-TYPE: application/json' \
+-X POST \
+-d '{"uid": "a3921875-a9a2-11ef-b4c2-bc2411c91e6c"}' \
+http://<HOST>:<PORT>/conversation
+```
+
+which will return a *cid*, eg. 'ced239c1-a9a2-11ef-b4c2-bc2411c91e6c'. The *cid* will be used to handle the conversation, now we'll do an analyzis:
+
+``` bash
+curl \
+-H 'Content-TYPE: application/json' \
+-X POST \
+-d '{"cid": "ced239c1-a9a2-11ef-b4c2-bc2411c91e6c", "prompt": "What APT is could be responsible for an attack that includes: Adversaries may encrypt data on target systems or on large numbers of systems in a network to interrupt availability to system and network resources."}' \
+http://<HOST>:<PORT>/analyzis
+```
+
+This will give the llm response and some data points, which can be used for a graph, all of which will be saved in the database. If you lost the graph call:
+
+``` bash
+curl \
+-H 'Content-TYPE: application/json' \
+-X GET \
+http://<HOST>:<PORT>/analyzis/ced239c1-a9a2-11ef-b4c2-bc2411c91e6c
+```
+
+It will return the graph. If you completely forgot about the whole conversation call:
+
+``` bash
+curl \
+-H 'Content-TYPE: application/json' \
+-X GET \
+http://<HOST>:<PORT>/conversations/a3921875-a9a2-11ef-b4c2-bc2411c91e6c
+```
+
+Now all the conversations the user with the given *uid* will be returned.
+
+### Messages
+
+To ask the LLM to, for example, clareify something in the response one could call:
+
+``` bash
+curl \
+-H 'Content-TYPE: application/json' \
+-X POST \
+-d '{"cid": "ced239c1-a9a2-11ef-b4c2-bc2411c91e6c", "text": "What do you mean?"}' \
+http://<HOST>:<PORT>/messages
+```
+
+which will return the LLM:s response. If you accidentally left the chat and all the messages disapeared call:
+
+``` bash
+curl \
+-H 'Content-TYPE: application/json' \
+-X GET \
+http://<HOST>:<PORT>/messages/ced239c1-a9a2-11ef-b4c2-bc2411c91e6c
+```
+
+It will return a list of messages and roles, bound to the given *cid*. If the conversation turned out to be *shit*, call:
+
+``` bash
+curl \
+-H 'Content-TYPE: application/json' \
+-X DELETE \
+http://<HOST>:<PORT>/messages/ced239c1-a9a2-11ef-b4c2-bc2411c91e6c
+```
+
+This will remove all messages and graphs, starting from fresh, without creating a new conversation.
