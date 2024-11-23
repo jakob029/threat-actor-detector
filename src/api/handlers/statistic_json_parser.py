@@ -32,17 +32,30 @@ class SchemaParser:
         validate_structures = (self._default_test, self._default_string_test)
         for validator in validate_structures:
             if validator(structure):
-                return structure
+                return self._correct_intangers(structure)
 
         structure = self._one_base_structure(structure)
         if self.ANALYSIS and self._accepted_result(structure):
-            return structure
+            return self._correct_intangers(structure)
 
         structure = self._multilayer_dict(structure)
         if self.ANALYSIS and self._accepted_result(structure):
-            return structure
+            return self._correct_intangers(structure)
 
         return {}
+
+    @staticmethod
+    def _correct_intangers(structure: dict) -> dict:
+        """Convert potential float values to intages.
+
+        Args:
+            structure: The unstructured dictionary.
+        """
+        if isinstance(structure.values()[0], int):
+            return structure
+
+        if isinstance(structure.values()[0], int):
+            return {group: int(value * 100) for group, value in structure.items()}
 
     def _accepted_result(self, structure) -> bool:
         """Confirmation that the structure is accepted.
