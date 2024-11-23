@@ -28,4 +28,4 @@ api.add_resource(ConversationsEndpoint, "/conversations/<string:uid>", "/convers
 api.add_resource(MessagesEndpoint, "/messages/<string:cid>", "/messages", methods=["GET", "DELETE", "POST"])
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="100.77.88.40")
