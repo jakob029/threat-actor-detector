@@ -9,7 +9,7 @@ Classes:
 import logging
 from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
-from handlers import register, authenicate
+from handlers.user_handler import register, authenicate
 from api_exceptions import AuthenticationException, RegistrationException
 
 logger = logging.getLogger(__name__)

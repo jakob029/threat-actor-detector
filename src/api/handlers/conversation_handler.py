@@ -1,5 +1,9 @@
 """Module handling all conversation related tasks."""
-from backend_connectors import get_messages, send_prompt, add_message
+
+from backend_connectors.database_connector import get_messages, add_message, add_graph_point
+from backend_connectors.ollama_connector import send_prompt
+from ollama import ResponseError
+
 
 def hold_conversation(cid: str, message: str) -> str:
     """Send message to llm and return the response.
@@ -36,3 +40,26 @@ def hold_conversation(cid: str, message: str) -> str:
     add_message(response, "assistant", cid)
 
     return response
+
+
+def set_graph_to_conversation(cid: str, points: dict) -> None:
+    """Sets the graph for the conversation.
+
+    Arguments:
+        cid (str): conversation id.
+        points (dict): graph points.
+
+    Raises:
+        DatabaseException
+        TypeError
+        ResponseError
+
+    """
+    if len(points) < 1:
+        raise ResponseError("Empty data points.")
+
+    for key, value in points.items():
+        if not isinstance(key, str):
+            raise TypeError("Expected string.")
+
+        add_graph_point(cid, key, int(value * 100))

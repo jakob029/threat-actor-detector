@@ -1,7 +1,9 @@
 """The different exceptions the api might raise.
 
 Classes:
-    ConfigException
+    AuthenticationException
+    RegistrationException
+    DatabaseException
 
 """
 
