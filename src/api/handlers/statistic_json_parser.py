@@ -54,8 +54,10 @@ class SchemaParser:
         if isinstance(structure.values()[0], int):
             return structure
 
-        if isinstance(structure.values()[0], int):
+        if isinstance(structure.values()[0], float):
             return {group: int(value * 100) for group, value in structure.items()}
+
+        return structure
 
     def _accepted_result(self, structure) -> bool:
         """Confirmation that the structure is accepted.
