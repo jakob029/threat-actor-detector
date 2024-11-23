@@ -62,4 +62,4 @@ def set_graph_to_conversation(cid: str, points: dict) -> None:
         if not isinstance(key, str):
             raise TypeError("Expected string.")
 
-        add_graph_point(cid, key, int(value * 100))
+        add_graph_point(cid, key, int(value))

@@ -70,6 +70,11 @@ class Analyzis(Resource):
 
             statistics = defined_json.correct_structure(llama_json_parser(response))
 
+            # Ugly quick fix
+            for key, value in statistics.items():
+                statistics[key] = int(value * 100)
+            print(statistics)
+
             set_graph_to_conversation(cid, statistics)
             add_message(response, "assistant", cid)
 
