@@ -5,9 +5,11 @@ from mysql.connector import Error
 import logging
 from os import environ
 
+
 from api_exceptions import (
     CONVERSATION_DOES_NOT_EXIST,
     UNKNOWN_ISSUE,
+    VARIABLE_NOT_SET,
     AuthenticationException,
     USER_DOES_NOT_EXIST,
     DatabaseException,
@@ -16,12 +18,36 @@ from api_exceptions import (
 logger = logging.getLogger(__name__)
 
 
-def _load_config():
+def _load_config() -> dict:
+    """Load config from env variables.
+
+    Raises:
+        DatabaseException
+
+    Returns:
+        config (dict): The configuration.
+    """
+    # Get variables.
+    host = environ.get("TAD_MYSQL_HOST")
+    user = environ.get("TAD_MYSQL_USER")
+    password = environ.get("TAD_MYSQL_PASSWORD")
+    database = environ.get("TAD_MYSQL_DATABASE")
+
+    # Validate variables.
+    if host is None:
+        raise DatabaseException("Variable TAD_MYSQL_HOST is not set.", VARIABLE_NOT_SET)
+    if user is None:
+        raise DatabaseException("Variable TAD_MYSQL_USER is not set.", VARIABLE_NOT_SET)
+    if password is None:
+        raise DatabaseException("Variable TAD_MYSQL_PASSWORD is not set.", VARIABLE_NOT_SET)
+    if database is None:
+        raise DatabaseException("Variable TAD_MYSQL_DATABASE is not set.", VARIABLE_NOT_SET)
+
     db_config = {
-        "host": environ.get("TAD_MYSQL_HOST"),
-        "user": environ.get("TAD_MYSQL_USER"),
-        "password": environ.get("TAD_MYSQL_PASSWORD"),
-        "database": environ.get("TAD_MYSQL_DATABASE"),
+        "host": host,
+        "user": user,
+        "password": password,
+        "database": database,
     }
 
     return db_config
@@ -201,15 +227,26 @@ def add_message(text: str, role: str, cid: str) -> None:
             raise DatabaseException("Something went wrong.", UNKNOWN_ISSUE)
 
 
-def end_conversation(uid: str, cid: str) -> None:
+def end_conversation(cid: str) -> None:
     """Delete conversation.
 
     Arguments:
-        uid (str): User id.
         cid (str): Conversation id.
 
+    Raises:
+        DatabaseException
+
     """
-    pass
+    db_config = _load_config()
+    try:
+        with connector.connect(**db_config) as db:
+            with db.cursor() as cursor:
+                cursor.callproc("delete_conversation", (cid,))
+    except Error as e:
+        if e.errno == 45000:
+            raise DatabaseException("Conversation does not exist.", CONVERSATION_DOES_NOT_EXIST)
+        else:
+            raise DatabaseException("Something went wrong.", UNKNOWN_ISSUE)
 
 
 def get_conversations(uid: str) -> dict:
@@ -264,6 +301,93 @@ def get_messages(cid: str) -> list:
 
             cursor.execute(sql, (cid,))
             responses = cursor.fetchall()
-            messages = [{"role": response[1], "text": response[0]} for response in responses]
+            messages = [{"role": response[1], "content": response[0]} for response in responses]
 
     return messages
+
+
+def get_graph(cid: str) -> dict[str, int]:
+    """Get data points for graph and return them.
+
+    Arguments:
+        cid (str): conversation id.
+
+    Returns:
+        data_points (dict[str, int]): the different data points.
+
+    Raises:
+        DatabaseException
+        TypeError
+    """
+    db_config = _load_config()
+    data_points: dict[str, int] = {}
+    with connector.connect(**db_config) as db:
+        with db.cursor() as cursor:
+
+            sql = """
+                SELECT graph.name, graph.value
+                    FROM graph
+                    WHERE graph.cid = %s
+                    ORDER BY graph.name
+            """
+
+            cursor.execute(sql, (cid,))
+            responses = cursor.fetchall()
+            for response in responses:
+                if not isinstance(response, tuple):
+                    raise TypeError(f"Expected tuple, got type {type(response)}.")
+                if not isinstance(response[0], str):
+                    raise TypeError(f"Expected string, got type {type(response)}.")
+                if not isinstance(response[1], int):
+                    raise TypeError(f"Expected int, got type {type(response)}.")
+
+                data_points.update({response[0]: int(response[1])})
+
+    return data_points
+
+
+def add_graph_point(cid: str, name: str, value: int) -> None:
+    """Add a data point to the graph.
+
+    Arguments:
+        cid (str): conversation id.
+        name (str): name of the point.
+        value (int): value.
+
+    Raises:
+        DatabaseException
+    """
+    db_config = _load_config()
+
+    try:
+        with connector.connect(**db_config) as db:
+            with db.cursor() as cursor:
+                cursor.callproc("add_data_point", (cid, name, value))
+    except Error as e:
+        if e.errno == 45000:
+            raise DatabaseException("Conversation does not exist.", CONVERSATION_DOES_NOT_EXIST)
+        else:
+            raise DatabaseException(str(e.msg), UNKNOWN_ISSUE)
+
+
+def reset_conversation(cid: str):
+    """Remove all messages and graphs related to the conversation.
+
+    Arguments:
+        cid (str): conversation id.
+
+    Raises:
+        DatabaseException
+
+    """
+    db_config = _load_config()
+
+    try:
+        with connector.connect(**db_config) as db:
+            with db.cursor() as cursor:
+                cursor.callproc("reset_conversation", (cid,))
+    except Error as e:
+        if e.errno == 45000:
+            raise DatabaseException("Conversation does not exist.", CONVERSATION_DOES_NOT_EXIST)
+        else:
+            raise DatabaseException(str(e.msg), UNKNOWN_ISSUE)

@@ -10,7 +10,14 @@ import logging
 import secrets
 from re import findall
 from argon2 import PasswordHasher
-from backend_connectors import database_connector as dc
+from backend_connectors.database_connector import (
+    username_exist,
+    register_user,
+    get_user_id,
+    update_user_auth,
+    get_password_hash,
+    get_user_salt,
+)
 from api_exceptions import (
     PASSWORD_TOO_WEAK,
     USER_ALREADY_EXIST,
@@ -41,7 +48,7 @@ def register(username: str, password: str):
         raise RegistrationException("Username too long.", USERNAME_TOO_LONG)
 
     # validate if the name is unused.
-    if dc.username_exist(username):
+    if username_exist(username):
         raise RegistrationException("Username already taken.", USER_ALREADY_EXIST)
 
     # generate salt
@@ -51,7 +58,7 @@ def register(username: str, password: str):
     ph: PasswordHasher = PasswordHasher()
     hash = ph.hash(password + salt)
 
-    dc.register_user(username, hash, salt)
+    register_user(username, hash, salt)
 
     logger.debug(f"Created user, Username: {username} | Password: {hash}")
 
@@ -74,23 +81,23 @@ def authenicate(username: str, password: str) -> str:
         raise AuthenticationException("Username too long.", USERNAME_TOO_LONG)
 
     # Validate if name exists.
-    if not dc.username_exist(username):
+    if not username_exist(username):
         raise AuthenticationException("Username does not exist.", USER_DOES_NOT_EXIST)
 
     # Validate password hash.
     ph: PasswordHasher = PasswordHasher()
-    hash: str = dc.get_password_hash(username)
-    salt: str = dc.get_user_salt(username)
+    hash: str = get_password_hash(username)
+    salt: str = get_user_salt(username)
     ph.verify(hash, password + salt)
 
     # Get uid.
-    uid: str = dc.get_user_id(username)
+    uid: str = get_user_id(username)
 
     # Generate new hash and salt.
     new_salt = str(secrets.token_hex(4))
     new_hash = ph.hash(password + new_salt)
 
     # Update database.
-    dc.update_user_auth(uid, new_hash, new_salt)
+    update_user_auth(uid, new_hash, new_salt)
 
-    return dc.get_user_id(username)
+    return get_user_id(username)

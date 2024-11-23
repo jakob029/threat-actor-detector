@@ -1,7 +1,9 @@
 """The different exceptions the api might raise.
 
 Classes:
-    ConfigException
+    AuthenticationException
+    RegistrationException
+    DatabaseException
 
 """
 
@@ -12,6 +14,7 @@ PASSWORD_DOES_NOT_MATCH = 3
 PASSWORD_TOO_WEAK = 4
 CONVERSATION_DOES_NOT_EXIST = 5
 UNKNOWN_ISSUE = 6
+VARIABLE_NOT_SET = 7
 
 
 class AuthenticationException(Exception):

@@ -38,3 +38,12 @@ CREATE TABLE `message` (
   PRIMARY KEY (`cid`, `index`),
   FOREIGN KEY (`cid`) REFERENCES `conversation`(`cid`)
 );
+drop table `graph`;
+-- Graphs
+CREATE TABLE `graph` (
+  `cid` VARCHAR(36) NOT NULL,
+  `name` VARCHAR(64),
+  `value` INT,
+  PRIMARY KEY (`cid`, `name`),
+  FOREIGN KEY (`cid`) REFERENCES `conversation`(`cid`)
+);

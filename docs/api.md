@@ -6,25 +6,26 @@
 
 <summary>Analysis</summary>
 
+### POST
+
 sends a question to the llm and gives the llm response as a response.
 
-**URL** POST
+    http://<HOST>:<PORT>/analyzis
 
-    http://127.0.0.1:5000/analyzis
-
-**Request body**
+#### Request body
 
 ```json
 {
-    "prompt": "<prompt>"
+    "prompt": "<PROMPT>",
+    "cid": "<CONVERSATION_ID"
 }
 ```
 
-**Response body**
+#### Response body
 
 ```json
 {
-	"response": "<llm response>",
+	"response": "<LLM_RESPONSE>",
 	"mesage": "<RESONSE_MESSAGE>",
 	"data_points": {
 		"ENTRY_2": "<FLOAT>",
@@ -33,7 +34,33 @@ sends a question to the llm and gives the llm response as a response.
 }
 ```
 
-**Failed**
+#### Failed
+
+```json
+{
+    "mesage": "<RESONSE_MESSAGE>"
+} 
+```
+
+### GET
+
+Get graph from previous analyzis call.
+
+    http://<HOST>:<PORT>/analyzis/<CONVERSATION_ID>
+
+#### Response body
+
+```json
+{
+	"mesage": "<RESONSE_MESSAGE>",
+	"data_points": {
+		"ENTRY_2": "<FLOAT>",
+		"ENRTY_1": "<FLOAT>"
+	}
+}
+```
+
+#### Failed
 
 ```json
 {
@@ -46,13 +73,13 @@ sends a question to the llm and gives the llm response as a response.
 
 <summary>Authentication</summary>
 
+### POST
+
 Signs the user in and returns their UID.
 
-**URL** POST
+    http://<HOST>:<PORT>/user/login
 
-    http://127.0.0.1:5000/user/login
-
-**Request body**
+#### Request body
 
 ```json
 {
@@ -61,7 +88,7 @@ Signs the user in and returns their UID.
 }
 ```
 
-**Response body**
+#### Response body
 
 ```json
 {
@@ -70,7 +97,7 @@ Signs the user in and returns their UID.
 }
 ```
 
-**Failed**
+#### Failed
 
 ```json
 {
@@ -84,13 +111,13 @@ Signs the user in and returns their UID.
 
 <summary>Registration</summary>
 
+### POST
+
 Registers a new user.
 
-**URL** POST
+    http://<HOST>:<PORT>/user/register
 
-    http://127.0.0.1:5000/user/register
-
-**Request body**
+#### Request body
 
 ```json
 {
@@ -99,7 +126,7 @@ Registers a new user.
 }
 ```
 
-**Response body**
+#### Response body
 
 ```json
 {
@@ -107,7 +134,7 @@ Registers a new user.
 }
 ```
 
-**Failed**
+#### Failed
 
 No error implemented.
 
@@ -115,15 +142,15 @@ No error implemented.
 
 <details>
 
-<summary>Create conversation</summary>
+<summary>Conversations</summary>
+
+### POST
 
 Create a new conversation.
 
-**URL** POST
+    http://<HOST>:<PORT>/conversation
 
-    http://127.0.0.1:5000/conversation
-
-**Request body**
+#### Request body
 
 ```json
 {
@@ -131,7 +158,7 @@ Create a new conversation.
 }
 ```
 
-**Response body**
+#### Response body
 
 ```json
 {
@@ -140,7 +167,7 @@ Create a new conversation.
 }
 ```
 
-**Failed**
+#### Failed
 
 ```json
 {
@@ -148,19 +175,13 @@ Create a new conversation.
 }
 ```
 
-</details>
-
-<details>
-
-<summary>Get conversations</summary>
+### GET
 
 Get all user conversations.
 
-**URL** GET
+    http://<HOST>:<PORT>/conversation/<USER_ID>
 
-    http://127.0.0.1:5000/conversation/<USER_ID>
-
-**Response body**
+#### Response body
 
 ```json
 {
@@ -172,7 +193,7 @@ Get all user conversations.
 }
 ```
 
-**Failed**
+#### Failed
 
 ```json
 {
@@ -184,15 +205,15 @@ Get all user conversations.
 
 <details>
 
-<summary>Add message to conversation</summary>
+<summary>Messages in conversations</summary>
 
 Adds a message to an already existing conversation.
 
-**URL** POST
+### POST
 
-    http://127.0.0.1:5000/messages
+    http://<HOST>:<PORT>/messages
 
-**Request body**
+#### Request body
 
 ```json
 {
@@ -201,7 +222,7 @@ Adds a message to an already existing conversation.
 }
 ```
 
-**Response body**
+#### Response body
 
 ```json
 {
@@ -209,7 +230,7 @@ Adds a message to an already existing conversation.
 }
 ```
 
-**Failed**
+#### Failed
 
 ```json
 {
@@ -217,19 +238,13 @@ Adds a message to an already existing conversation.
 }
 ```
 
-</details>
-
-<details>
-
-<summary>Get messages</summary>
+### GET
 
 Get all messages for a conversation.
 
-**URL** GET
+    http://<HOST>:<PORT>/messages/<CONVERSATION_ID>
 
-    http://127.0.0.1:5000/messages/<CONVERSATION_ID>
-
-**Response body**
+#### Response body
 
 ```json
 {
@@ -247,7 +262,29 @@ Get all messages for a conversation.
 }
 ```
 
-**Failed**
+#### Failed
+
+```json
+{
+    "mesage": "<ERROR_MESSAGE>"
+}
+```
+
+### DELETE
+
+Removes all messages and the graph for a conversation.
+
+    http://<HOST>:<PORT>/messages/<CONVERSATION_ID>
+
+#### Response body
+
+```json
+{
+    "mesage": "success"
+}
+```
+
+#### Failed
 
 ```json
 {
@@ -256,8 +293,6 @@ Get all messages for a conversation.
 ```
 
 </details>
-
-
 
 ## Packages
 
@@ -268,9 +303,12 @@ Get all messages for a conversation.
 - **endpoints**: Package containing all endpoints.
     - **.ollama_endpoint**: Module holding all ollama related endpoints.
     - **.user_endpoint**: Module holding all user related enpoints.
+    - **.conversation_endpoint**: Module holding all conversation related enpoints.
+    - **.message_endpoint**: Module holding all message related endpoints.
 
 - **handlers**: Package containing all internal modules.
     - **.user_handler**: Internal user handler, between endpoint and connector.
+    - **.conversation_handler**: Internal conversation handler, between endpoint and database.
  
 ## Environment variables
 
@@ -281,3 +319,103 @@ Get all messages for a conversation.
 - `TAD_MYSQL_USER` username of TAD managment account.
 - `TAD_MYSQL_PASSWORD` user password.
 - `TAD_MYSQL_DATABASE` database name.
+
+## Example usage
+
+### Register and login
+
+First create user with:
+
+``` bash
+curl \
+-H 'Content-TYPE: application/json' \
+-X POST \
+-d '{"username": "jeppeboi2cool4u", "password": "Test123!"}' \
+http://<HOST>:<PORT>/user/register
+```
+
+then, login to the newly created user:
+
+``` bash
+curl \
+-H 'Content-TYPE: application/json' \
+-X POST \
+-d '{"username": "jeppeboi2cool4u", "password": "Test123!"}' \
+http://<HOST>:<PORT>/user/login
+```
+
+which uppon success will return the *uid*, eg. 'a3921875-a9a2-11ef-b4c2-bc2411c91e6c'.
+
+### Conversations
+
+Now a conversation can be created:
+
+``` bash
+curl \
+-H 'Content-TYPE: application/json' \
+-X POST \
+-d '{"uid": "a3921875-a9a2-11ef-b4c2-bc2411c91e6c"}' \
+http://<HOST>:<PORT>/conversation
+```
+
+which will return a *cid*, eg. 'ced239c1-a9a2-11ef-b4c2-bc2411c91e6c'. The *cid* will be used to handle the conversation, now we'll do an analyzis:
+
+``` bash
+curl \
+-H 'Content-TYPE: application/json' \
+-X POST \
+-d '{"cid": "ced239c1-a9a2-11ef-b4c2-bc2411c91e6c", "prompt": "What APT is could be responsible for an attack that includes: Adversaries may encrypt data on target systems or on large numbers of systems in a network to interrupt availability to system and network resources."}' \
+http://<HOST>:<PORT>/analyzis
+```
+
+This will give the llm response and some data points, which can be used for a graph, all of which will be saved in the database. If you lost the graph call:
+
+``` bash
+curl \
+-H 'Content-TYPE: application/json' \
+-X GET \
+http://<HOST>:<PORT>/analyzis/ced239c1-a9a2-11ef-b4c2-bc2411c91e6c
+```
+
+It will return the graph. If you completely forgot about the whole conversation call:
+
+``` bash
+curl \
+-H 'Content-TYPE: application/json' \
+-X GET \
+http://<HOST>:<PORT>/conversations/a3921875-a9a2-11ef-b4c2-bc2411c91e6c
+```
+
+Now all the conversations the user with the given *uid* will be returned.
+
+### Messages
+
+To ask the LLM to, for example, clareify something in the response one could call:
+
+``` bash
+curl \
+-H 'Content-TYPE: application/json' \
+-X POST \
+-d '{"cid": "ced239c1-a9a2-11ef-b4c2-bc2411c91e6c", "text": "What do you mean?"}' \
+http://<HOST>:<PORT>/messages
+```
+
+which will return the LLM:s response. If you accidentally left the chat and all the messages disapeared call:
+
+``` bash
+curl \
+-H 'Content-TYPE: application/json' \
+-X GET \
+http://<HOST>:<PORT>/messages/ced239c1-a9a2-11ef-b4c2-bc2411c91e6c
+```
+
+It will return a list of messages and roles, bound to the given *cid*. If the conversation turned out to be *shit*, call:
+
+``` bash
+curl \
+-H 'Content-TYPE: application/json' \
+-X DELETE \
+http://<HOST>:<PORT>/messages/ced239c1-a9a2-11ef-b4c2-bc2411c91e6c
+```
+
+This will remove all messages and graphs, starting from fresh, without creating a new conversation.

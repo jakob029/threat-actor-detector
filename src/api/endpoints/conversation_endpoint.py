@@ -8,7 +8,7 @@ Classes:
 import logging
 from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
-from backend_connectors import get_conversations, create_conversation
+from backend_connectors.database_connector import get_conversations, create_conversation
 from api_exceptions import DatabaseException
 
 

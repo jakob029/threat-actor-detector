@@ -7,11 +7,33 @@ Functions:
 
 import os
 from pathlib import Path
-
 from ollama import Client
+from backend_connectors.database_connector import add_message
 
 
-def send_prompt(prompt: str | list, vector_databases: tuple | None = None, descriptor: dict | None = None) -> str:
+def send_prompt(prompt: list) -> str:
+    """Send basic proompt to llm.
+
+    Arguments:
+        prompt (list): prompt to send, with previous history.
+
+    Returns:
+        response (str): llm response.
+
+    """
+    llm_model = os.environ.get("LLM_MODEL", default="llama3.2")
+    llm_address = os.environ.get("LLM_ADDRESS", default="http://100.77.88.10")
+
+    # send prompt
+    client: Client = Client(host=llm_address, timeout=120)
+    llm_response = client.chat(model=llm_model, messages=prompt)
+
+    return llm_response["message"]["content"]
+
+
+def send_analyze_prompt(
+    prompt: str | list, cid: str, vector_databases: tuple | None = None, descriptor: dict | None = None
+) -> str:
     """Send prompt to llm.
 
     Send a prompt to the llm and return it. Can use chat history
@@ -19,6 +41,7 @@ def send_prompt(prompt: str | list, vector_databases: tuple | None = None, descr
 
     Arguments:
         prompt (str | list): the prompt to send.
+        cid (str): Conversation id.
         vector_databases: Tuple of VectorDB instances.
         descriptor: Group description dict.
 
@@ -64,8 +87,12 @@ def send_prompt(prompt: str | list, vector_databases: tuple | None = None, descr
         preprompt = f.read()
         prompt.insert(0, {"role": "system", "name": "Threat Analyzer", "content": preprompt})
 
+    # add preprompts to history.
+    for prompt_i in prompt:
+        add_message(prompt_i["content"], prompt_i["role"], cid)
+
     # send prompt
     client: Client = Client(host=llm_address, timeout=120)
-    llm_response = client.chat(model=llm_model, messages=prompt)
+    response = client.chat(model=llm_model, messages=prompt)["message"]["content"]
 
-    return llm_response["message"]["content"]
+    return response
