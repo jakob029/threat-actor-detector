@@ -9,7 +9,7 @@ import logging
 from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
 from backend_connectors.database_connector import get_messages, reset_conversation
-from api_exceptions import DatabaseException
+from api_exceptions import DatabaseException, CONVERSATION_DOES_NOT_EXIST
 from handlers.conversation_handler import hold_conversation
 
 logger = logging.getLogger(__name__)
@@ -28,13 +28,20 @@ class MessagesEndpoint(Resource):
             response (dict): list of messages.
 
         """
-        messages = get_messages(cid)
+        try:
+            messages = get_messages(cid)
 
-        for message in messages.copy():
-            if message["role"] == "system":
-                messages.remove(message)
-
-        return {"message": "success", "conversation_history": messages}, 200
+            for message in messages.copy():
+                if message["role"] == "system":
+                    messages.remove(message)
+        except DatabaseException as e:
+            logger.error(e.message)
+            return {"message": "something went wrong."}, 500
+        except Exception as e:
+            logger.error(e)
+            return {"message": "something went wrong."}, 500
+        else:
+            return {"message": "success", "conversation_history": messages}, 200
 
     def post(self):
         """Add message.
@@ -51,11 +58,17 @@ class MessagesEndpoint(Resource):
 
             response = hold_conversation(args["cid"], args["text"])
 
-            return {"messgae": "success", "response": response}, 200
         except DatabaseException as e:
-            return {"message": e.message}, 200
-        except Exception:
+            if e.code == CONVERSATION_DOES_NOT_EXIST:
+                return {"message": e.message}, 200
+
+            logger.error(e.message)
             return {"message": "something went wrong."}, 500
+        except Exception as e:
+            logger.error(e)
+            return {"message": "something went wrong."}, 500
+        else:
+            return {"messgae": "success", "response": response}, 200
 
     def delete(self, cid: str):
         """Reset conversation.
@@ -67,9 +80,14 @@ class MessagesEndpoint(Resource):
         try:
             reset_conversation(cid)
 
-            return {"messgae": "success"}, 200
-
         except DatabaseException as e:
-            return {"message": e.message}, 200
-        except Exception:
+            if e.code == CONVERSATION_DOES_NOT_EXIST:
+                return {"message": e.message}, 200
+
+            logger.error(e.message)
             return {"message": "something went wrong."}, 500
+        except Exception as e:
+            logger.error(e)
+            return {"message": "something went wrong."}, 500
+        else:
+            return {"messgae": "success"}, 200

@@ -62,17 +62,28 @@ def username_exist(username: str) -> bool:
     Returns:
         (bool): true if exists otherwise false.
 
+    Raises:
+        DatabaseException: UNKNOWN_ISSUE | VARIABLE_NOT_SET
+        TypeError
     """
     db_config = _load_config()
+    exist: bool = False
     with connector.connect(**db_config) as db:
         with db.cursor() as cursor:
             sql = "SELECT user.username FROM user WHERE user.username = %s"
             arg = (username,)
 
             cursor.execute(sql, arg)
-            result = cursor.fetchall()
+            response = cursor.fetchall()
 
-    return len(result) != 0
+            if response is None:
+                raise DatabaseException("Didn't get a valid response from database.", UNKNOWN_ISSUE)
+            if not isinstance(response, list):
+                raise TypeError(f"Expected tuple, got type {type(response)}, in {username_exist.__name__}.")
+
+            exist = len(response) != 0
+
+    return exist
 
 
 def get_password_hash(username: str) -> str:
@@ -81,8 +92,13 @@ def get_password_hash(username: str) -> str:
     Arguments:
         username (str): username
 
+    Raises:
+        DatabaseException: UNKNOWN_ISSUE | VARIABLE_NOT_SET
+        AuthenticationException: USER_DOES_NOT_EXIST
+        TypeError
     """
     db_config = _load_config()
+    hash: str = ""
     with connector.connect(**db_config) as db:
         with db.cursor() as cursor:
 
@@ -90,12 +106,18 @@ def get_password_hash(username: str) -> str:
             arg = (username,)
 
             cursor.execute(sql, arg)
-            resp = cursor.fetchall()
+            response = cursor.fetchone()
 
-    if len(resp) == 0:
-        raise AuthenticationException(message="Username doesn't exist.", code=USER_DOES_NOT_EXIST)
+            if response is None:
+                raise DatabaseException("Didn't get a valid response from database.", UNKNOWN_ISSUE)
+            if not isinstance(response, tuple):
+                raise TypeError(f"Expected tuple, got type {type(response)}, in {get_password_hash.__name__}.")
+            if len(response) == 0:
+                raise AuthenticationException(message="Username doesn't exist.", code=USER_DOES_NOT_EXIST)
+            if not isinstance(response[0], str):
+                raise TypeError(f"Expected string, got type {type(response[0])}, in {get_password_hash.__name__}.")
 
-    hash = str(tuple(resp[0])[0])
+            hash = response[0]
 
     return hash
 
@@ -106,15 +128,27 @@ def get_user_salt(username: str) -> str:
     Arguments:
         username (str): username
 
+    Raises:
+        DatabaseException: UNKNOWN_ISSUE | VARIABLE_NOT_SET
+        TypeError
     """
     db_config = _load_config()
+    salt: str = ""
     with connector.connect(**db_config) as db:
         with db.cursor() as cursor:
             sql = "SELECT user.salt FROM user WHERE user.username = %s"
             arg = (username,)
             cursor.execute(sql, arg)
-            resp = cursor.fetchall()
-            salt = str(tuple(resp[0])[0])
+            response = cursor.fetchone()
+
+            if response is None:
+                raise DatabaseException("Didn't get a valid response from database.", UNKNOWN_ISSUE)
+            if not isinstance(response, tuple):
+                raise TypeError(f"Expected tuple, got type {type(response)}, in {get_user_salt.__name__}.")
+            if not isinstance(response[0], str):
+                raise TypeError(f"Expected string, got type {type(response[0])}, in {get_user_salt.__name__}.")
+
+            salt = response[0]
 
     return salt
 
@@ -126,11 +160,21 @@ def update_user_auth(uid: str, hash: str, salt: str):
         uid (str): user id.
         hash: user password hash.
         salt (str): new user salt.
+
+    Raises:
+        DatabaseException: USER_DOES_NOT_EXIST | UNKNOWN_ISSUE | VARIABLE_NOT_SET
+
     """
     db_config = _load_config()
-    with connector.connect(**db_config) as db:
-        with db.cursor() as cursor:
-            cursor.callproc("update_user_auth", (uid, hash, salt))
+    try:
+        with connector.connect(**db_config) as db:
+            with db.cursor() as cursor:
+                cursor.callproc("update_user_auth", (uid, hash, salt))
+    except Error as e:
+        if e.errno == 45000:
+            raise DatabaseException("User does not exist.", USER_DOES_NOT_EXIST)
+
+        raise DatabaseException(str(e.msg), UNKNOWN_ISSUE)
 
 
 def get_user_id(username: str) -> str:
@@ -142,17 +186,29 @@ def get_user_id(username: str) -> str:
     Returns:
         (str): user id.
 
+    Raises:
+        DatabaseException: VARIABLE_NOT_SET | UNKNOWN_ISSUE
+        TypeError
+
     """
     db_config = _load_config()
+    uid: str = ""
     with connector.connect(**db_config) as db:
         with db.cursor() as cursor:
             sql = "SELECT user.uid FROM user WHERE user.username = %s"
             arg = (username,)
 
             cursor.execute(sql, arg)
-            resp = cursor.fetchall()
+            response = cursor.fetchone()
 
-            uid = str(tuple(resp[0])[0])
+            if response is None:
+                raise DatabaseException("Didn't get a valid response from database.", UNKNOWN_ISSUE)
+            if not isinstance(response, tuple):
+                raise TypeError(f"Expected tuple got {type(response)}, in {get_user_id.__name__}")
+            if not isinstance(response[0], str):
+                raise TypeError(f"Expected string got {type(response[0])}, in {get_user_id.__name__}")
+
+            uid = response[0]
 
     return uid
 
@@ -165,11 +221,17 @@ def register_user(username: str, hash: str, salt: str):
         hash (str): password hash.
         salt (str): salt used in the hash.
 
+    Raises:
+        DatabaseException: VARIABLE_NOT_SET | UNKNOWN_ISSUE
+
     """
     db_config = _load_config()
-    with connector.connect(**db_config) as db:
-        with db.cursor() as cursor:
-            cursor.callproc("register_new_user", (username, hash, salt))
+    try:
+        with connector.connect(**db_config) as db:
+            with db.cursor() as cursor:
+                cursor.callproc("register_new_user", (username, hash, salt))
+    except Error as e:
+        raise DatabaseException(str(e.msg), UNKNOWN_ISSUE)
 
 
 ### Conversation ###
@@ -183,22 +245,31 @@ def create_conversation(uid: str, title: str) -> str:
     Returns:
         cid (str): Conversation id.
 
+    Raises:
+        DatabaseException: VARIABLE_NOT_SET | USER_DOES_NOT_EXIST | UNKNOWN_ISSUE
+
     """
     db_config = _load_config()
-    with connector.connect(**db_config) as db:
-        with db.cursor() as cursor:
-            args = (uid, title, 0)
-            result_args = cursor.callproc("create_conversation", args)
+    try:
+        with connector.connect(**db_config) as db:
+            with db.cursor() as cursor:
+                args = (uid, title, 0)
+                result_args = cursor.callproc("create_conversation", args)
 
-            # validate tuple return.
-            if not isinstance(result_args, tuple):
-                raise TypeError()
+                # validate tuple return.
+                if not isinstance(result_args, tuple):
+                    raise TypeError(f"Expected tuple got {type(result_args)}, in {create_conversation.__name__}")
 
-            # validate str return.
-            if not isinstance(result_args[2], str):
-                raise TypeError()
+                # validate str return.
+                if not isinstance(result_args[2], str):
+                    raise TypeError(f"Expected string got {type(result_args[2])}, in {create_conversation.__name__}")
 
-            cid = result_args[2]
+                cid = result_args[2]
+    except Error as e:
+        if e.errno == 45000:
+            raise DatabaseException("User does not exist.", USER_DOES_NOT_EXIST)
+
+        raise DatabaseException(str(e.msg), UNKNOWN_ISSUE)
 
     return cid
 
@@ -212,7 +283,7 @@ def add_message(text: str, role: str, cid: str) -> None:
         cid (str): Conversation id.
 
     Raises:
-        DatabaseException
+        DatabaseException: CONVERSATION_DOES_NOT_EXIST | UNKNOWN_ISSUE | VARIABLE_NOT_SET
 
     """
     db_config = _load_config()
@@ -234,7 +305,7 @@ def end_conversation(cid: str) -> None:
         cid (str): Conversation id.
 
     Raises:
-        DatabaseException
+        DatabaseException: CONVERSATION_DOES_NOT_EXIST | UNKNOWN_ISSUE | VARIABLE_NOT_SET
 
     """
     db_config = _load_config()
@@ -258,8 +329,12 @@ def get_conversations(uid: str) -> dict:
     Returns:
         conversations (dict): user conversations.
 
+    Raises:
+        DatabaseException: VARIABLE_NOT_SET
+        TypeError
     """
     db_config = _load_config()
+    conversations: dict[str, str] = {}
     with connector.connect(**db_config) as db:
         with db.cursor() as cursor:
 
@@ -271,14 +346,20 @@ def get_conversations(uid: str) -> dict:
             cursor.execute(sql, (uid,))
 
             respsonses = cursor.fetchall()
-            conversations = {}
             for response in respsonses:
+                if not isinstance(response, tuple):
+                    raise TypeError(f"Expected tuple got {type(response)}, in {get_conversations.__name__}")
+                if not isinstance(response[0], str):
+                    raise TypeError(f"Expected string got {type(response[0])}, in {get_conversations.__name__}")
+                if not isinstance(response[1], str):
+                    raise TypeError(f"Expected string got {type(response[1])}, in {get_conversations.__name__}")
+
                 conversations.update({response[0]: response[1]})
 
     return conversations
 
 
-def get_messages(cid: str) -> list:
+def get_messages(cid: str) -> list[dict[str, str]]:
     """Get conversation messages.
 
     Arguments:
@@ -287,8 +368,13 @@ def get_messages(cid: str) -> list:
     Returns:
         messages (list): list of the messages.
 
+    Raises:
+        DatabaseException: VARIABLE_NOT_SET
+        TypeError
+
     """
     db_config = _load_config()
+    messages: list[dict[str, str]] = []
     with connector.connect(**db_config) as db:
         with db.cursor() as cursor:
 
@@ -301,7 +387,15 @@ def get_messages(cid: str) -> list:
 
             cursor.execute(sql, (cid,))
             responses = cursor.fetchall()
-            messages = [{"role": response[1], "content": response[0]} for response in responses]
+            for response in responses:
+                if not isinstance(response, tuple):
+                    raise TypeError(f"Expected tuple got {type(response)}, in {get_messages.__name__}")
+                if not isinstance(response[0], str):
+                    raise TypeError(f"Expected string got {type(response[0])}, in {get_messages.__name__}")
+                if not isinstance(response[1], str):
+                    raise TypeError(f"Expected string got {type(response[1])}, in {get_messages.__name__}")
+
+                messages += [{"content": response[0], "role": response[1]}]
 
     return messages
 
@@ -316,7 +410,7 @@ def get_graph(cid: str) -> dict[str, int]:
         data_points (dict[str, int]): the different data points.
 
     Raises:
-        DatabaseException
+        DatabaseException: VARIABLE_NOT_SET
         TypeError
     """
     db_config = _load_config()
@@ -355,7 +449,7 @@ def add_graph_point(cid: str, name: str, value: int) -> None:
         value (int): value.
 
     Raises:
-        DatabaseException
+        DatabaseException: CONVERSATION_DOES_NOT_EXIST | UNKNOWN_ISSUE | VARIABLE_NOT_SET
     """
     db_config = _load_config()
 
@@ -377,7 +471,7 @@ def reset_conversation(cid: str):
         cid (str): conversation id.
 
     Raises:
-        DatabaseException
+        DatabaseException: CONVERSATION_DOES_NOT_EXIST | UNKNOWN_ISSUE | VARIABLE_NOT_SET
 
     """
     db_config = _load_config()

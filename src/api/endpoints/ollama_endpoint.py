@@ -41,12 +41,14 @@ class Analyzis(Resource):
         """
         try:
             data_points = get_graph(cid)
-            return {"message": "success", "data_points": data_points}, 200
         except DatabaseException as e:
-            if e.code == UNKNOWN_ISSUE:
-                return {"message": e.message}, 500
-
-            return {"message": e.message}, 200
+            logger.error(e.message)
+            return {"message": "Something went wrong."}, 500
+        except Exception as e:
+            logger.error(e)
+            return {"message": "Something went wrong."}, 500
+        else:
+            return {"message": "success", "data_points": data_points}, 200
 
     def post(self):
         """Handle a given get request, forward it to the llm and give the response back.
@@ -73,16 +75,10 @@ class Analyzis(Resource):
             # Ugly quick fix
             for key, value in statistics.items():
                 statistics[key] = int(value * 100)
-            print(statistics)
 
             set_graph_to_conversation(cid, statistics)
             add_message(response, "assistant", cid)
 
-            return {
-                "message": "success",
-                "response": response,
-                "data_points": statistics,
-            }, 200
         except ResponseError as e:
             reset_conversation(cid)
             logger.error(str(e))
@@ -95,3 +91,12 @@ class Analyzis(Resource):
             if e.code == UNKNOWN_ISSUE:
                 return {"message": e.message}, 500
             return {"message": e.message}, 200
+        except Exception as e:
+            logger.error(e)
+            return {"Something went wrong."}, 500
+        else:
+            return {
+                "message": "success",
+                "response": response,
+                "data_points": statistics,
+            }, 200

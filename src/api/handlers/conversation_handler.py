@@ -20,7 +20,7 @@ def hold_conversation(cid: str, message: str) -> str:
         response (str): LLM response.
 
     Raises:
-        DatabaseException
+        DatabaseException: UNKOWN_ISSUE | CONVERSATION_DOES_NOT_EXIST | VARIABLE_NOT_SET
 
     """
     # Save new message to database.

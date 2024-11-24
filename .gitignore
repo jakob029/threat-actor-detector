@@ -14,3 +14,5 @@ env/
 *.log
 *.egg-info/*
 *.egg-info
+
+src/build_dataset/enterprise-attack
