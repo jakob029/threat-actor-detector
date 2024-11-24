@@ -37,6 +37,11 @@ def register(username: str, password: str):
         username (str): Username
         password (str): Users password
 
+    Raises:
+        RegistrationException: PASSWORD_TOO_WEAK | USERNAME_TOO_LONG | USER_ALREADY_EXIST
+        DatabaseException: VARIABLE_NOT_SET | UNKOWN_ISSUE
+        TypeError:
+
     """
     # Validate password strength
     password_regex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
@@ -73,9 +78,11 @@ def authenicate(username: str, password: str) -> str:
     Returns:
         (int): userid
 
+    Raises:
+        AuthenticationException: USERNAME_TOO_LONG | USER_DOES_NOT_EXIST
+        DatabaseException: VARIABLE_NOT_SET | UNKOWN_ISSUE | USER_DOES_NOT_EXIST
+        TypeError
     """
-    # validate password strength.
-
     # validate username length.
     if len(username) > 40:
         raise AuthenticationException("Username too long.", USERNAME_TOO_LONG)

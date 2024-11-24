@@ -1,4 +1,14 @@
 """Main API file."""
+import logging
+from datetime import datetime
+
+logging.basicConfig(
+    filename="logs/{:%Y-%m-%d}.log".format(datetime.now()), 
+    format="[ %(asctime)s ] %(message)s", 
+    datefmt="%m/%d/%Y %H:%M:%S",
+    level=logging.INFO,
+    encoding="utf-8"
+)
 
 from flask import Flask
 from flask_restful import Api
@@ -6,17 +16,13 @@ from endpoints.user_endpoint import Registration, Authentication
 from endpoints.ollama_endpoint import Analyzis
 from endpoints.message_endpoint import MessagesEndpoint
 from endpoints.conversation_endpoint import ConversationsEndpoint
-import logging
 from dotenv import load_dotenv
 
-# logging settings
-logging.basicConfig(format="[ %(asctime)s ] %(message)s", datefmt="%m/%d/%Y %H:%M:%S", level=logging.DEBUG)
-
-load_dotenv()
+logger = logging.getLogger(__name__)
 
 # load env
-logging.info("loaded .env")
 load_dotenv()
+logging.info("loaded .env")
 
 app = Flask(__name__)
 api = Api(app)
