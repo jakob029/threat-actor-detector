@@ -9,7 +9,7 @@ import logging
 from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
 from backend_connectors.database_connector import get_conversations, create_conversation
-from api_exceptions import USER_DOES_NOT_EXIST, VARIABLE_NOT_SET, DatabaseException
+from api_exceptions import USER_DOES_NOT_EXIST, DatabaseException
 
 
 logger = logging.getLogger(__name__)
@@ -41,7 +41,6 @@ class ConversationsEndpoint(Resource):
             return {"message": "something went wrong."}, 500
         else:
             return {"message": "success", "conversations": conversations}, 200
-
 
     def post(self):
         """Create conversation.

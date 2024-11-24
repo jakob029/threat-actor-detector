@@ -43,7 +43,6 @@ class MessagesEndpoint(Resource):
         else:
             return {"message": "success", "conversation_history": messages}, 200
 
-
     def post(self):
         """Add message.
 
@@ -70,7 +69,6 @@ class MessagesEndpoint(Resource):
             return {"message": "something went wrong."}, 500
         else:
             return {"messgae": "success", "response": response}, 200
-
 
     def delete(self, cid: str):
         """Reset conversation.

@@ -10,8 +10,18 @@ import logging
 from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
 from handlers.user_handler import register, authenicate
-from api_exceptions import PASSWORD_TOO_WEAK, UNKNOWN_ISSUE, USER_ALREADY_EXIST, USER_DOES_NOT_EXIST, USERNAME_TOO_LONG, VARIABLE_NOT_SET, AuthenticationException, DatabaseException, RegistrationException
-from argon2.exceptions import VerificationError, VerifyMismatchError, InvalidHashError
+from api_exceptions import (
+    PASSWORD_TOO_WEAK,
+    UNKNOWN_ISSUE,
+    USER_ALREADY_EXIST,
+    USER_DOES_NOT_EXIST,
+    USERNAME_TOO_LONG,
+    VARIABLE_NOT_SET,
+    AuthenticationException,
+    DatabaseException,
+    RegistrationException,
+)
+from argon2.exceptions import VerifyMismatchError
 
 logger = logging.getLogger(__name__)
 

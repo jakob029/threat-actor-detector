@@ -50,7 +50,6 @@ class Analyzis(Resource):
         else:
             return {"message": "success", "data_points": data_points}, 200
 
-
     def post(self):
         """Handle a given get request, forward it to the llm and give the response back.
 
@@ -101,4 +100,3 @@ class Analyzis(Resource):
                 "response": response,
                 "data_points": statistics,
             }, 200
-

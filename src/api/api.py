@@ -1,13 +1,14 @@
 """Main API file."""
+
 import logging
 from datetime import datetime
 
 logging.basicConfig(
-    filename="logs/{:%Y-%m-%d}.log".format(datetime.now()), 
-    format="[ %(asctime)s ] %(message)s", 
+    filename="logs/{:%Y-%m-%d}.log".format(datetime.now()),
+    format="[ %(asctime)s ] %(message)s",
     datefmt="%m/%d/%Y %H:%M:%S",
     level=logging.INFO,
-    encoding="utf-8"
+    encoding="utf-8",
 )
 
 from flask import Flask

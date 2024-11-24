@@ -81,7 +81,7 @@ def username_exist(username: str) -> bool:
             if not isinstance(response, list):
                 raise TypeError(f"Expected tuple, got type {type(response)}, in {username_exist.__name__}.")
 
-            exist = (len(response) != 0)
+            exist = len(response) != 0
 
     return exist
 
@@ -140,7 +140,7 @@ def get_user_salt(username: str) -> str:
             arg = (username,)
             cursor.execute(sql, arg)
             response = cursor.fetchone()
-            
+
             if response is None:
                 raise DatabaseException("Didn't get a valid response from database.", UNKNOWN_ISSUE)
             if not isinstance(response, tuple):
@@ -200,7 +200,7 @@ def get_user_id(username: str) -> str:
 
             cursor.execute(sql, arg)
             response = cursor.fetchone()
-            
+
             if response is None:
                 raise DatabaseException("Didn't get a valid response from database.", UNKNOWN_ISSUE)
             if not isinstance(response, tuple):
@@ -395,10 +395,7 @@ def get_messages(cid: str) -> list[dict[str, str]]:
                 if not isinstance(response[1], str):
                     raise TypeError(f"Expected string got {type(response[1])}, in {get_messages.__name__}")
 
-                messages += [{
-                    "content": response[0],
-                    "role": response[1]
-                }]
+                messages += [{"content": response[0], "role": response[1]}]
 
     return messages
 
