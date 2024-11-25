@@ -65,16 +65,10 @@ class Analyzis(Resource):
 
         prompt: str = args["prompt"]
         cid: str = args["cid"]
-
         try:
             response: str = send_analyze_prompt(prompt, cid, self.vector_databases, self.apt_descriptions)
             defined_json = SchemaParser()
-
             statistics = defined_json.correct_structure(llama_json_parser(response))
-
-            # Ugly quick fix
-            for key, value in statistics.items():
-                statistics[key] = int(value * 100)
 
             set_graph_to_conversation(cid, statistics)
             add_message(response, "assistant", cid)
