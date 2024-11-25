@@ -66,37 +66,38 @@ class Analyzis(Resource):
         prompt: str = args["prompt"]
         cid: str = args["cid"]
 
-        try:
-            response: str = send_analyze_prompt(prompt, cid, self.vector_databases, self.apt_descriptions)
-            defined_json = SchemaParser()
+        while True:
+            try:
+                response: str = send_analyze_prompt(prompt, cid, self.vector_databases, self.apt_descriptions)
+                defined_json = SchemaParser()
 
-            statistics = defined_json.correct_structure(llama_json_parser(response))
+                statistics = defined_json.correct_structure(llama_json_parser(response))
 
-            # Ugly quick fix
-            for key, value in statistics.items():
-                statistics[key] = int(value * 100)
+                # Ugly quick fix
+                for key, value in statistics.items():
+                    statistics[key] = int(value * 100)
 
-            set_graph_to_conversation(cid, statistics)
-            add_message(response, "assistant", cid)
+                set_graph_to_conversation(cid, statistics)
+                add_message(response, "assistant", cid)
 
-        except ResponseError as e:
-            reset_conversation(cid)
-            logger.error(str(e))
-            return {"message": "LLM_error"}, 500
-        except ConnectTimeout:
-            return {"message": "LLM_error"}, 500
-        except TypeError:
-            return {"message": "parse error"}, 500
-        except DatabaseException as e:
-            if e.code == UNKNOWN_ISSUE:
-                return {"message": e.message}, 500
-            return {"message": e.message}, 200
-        except Exception as e:
-            logger.error(e)
-            return {"Something went wrong."}, 500
-        else:
-            return {
-                "message": "success",
-                "response": response,
-                "data_points": statistics,
-            }, 200
+            except ResponseError as e:
+                reset_conversation(cid)
+                logger.error(str(e))
+                continue
+            except ConnectTimeout:
+                return {"message": "LLM_error"}, 500
+            except TypeError:
+                return {"message": "parse error"}, 500
+            except DatabaseException as e:
+                if e.code == UNKNOWN_ISSUE:
+                    return {"message": e.message}, 500
+                return {"message": e.message}, 200
+            except Exception as e:
+                logger.error(e)
+                return {"Something went wrong."}, 500
+            else:
+                return {
+                    "message": "success",
+                    "response": response,
+                    "data_points": statistics,
+                }, 200
