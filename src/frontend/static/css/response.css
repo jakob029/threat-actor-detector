@@ -34,3 +34,9 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+.response-container pre {
+    white-space: pre-wrap; /* Preserve formatting but allow wrapping */
+    word-wrap: break-word; /* Break long words if necessary */
+    overflow: auto; /* Add a scrollbar for overflow content */
+}

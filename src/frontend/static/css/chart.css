@@ -1,23 +1,7 @@
 /* Chart container styling */
 #chartContainer {
     margin: 20px auto;
-    max-width: 800px;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-canvas {
-    display: block;
-    margin: 0 auto;
-}
-
-/* Chart container styling */
-#chartContainer {
-    margin: 20px auto;
-    max-width: 800px;
+    max-width: 1000px; /* Increased max width to make the container larger */
     padding: 20px;
     background-color: #f9f9f9; /* Light mode background */
     border-radius: 10px;
@@ -32,6 +16,8 @@ canvas {
 canvas {
     display: block;
     margin: 0 auto;
+    width: 120%; /* Scale canvas width by 50% */
+    height: 120%; /* Scale canvas height by 50% */
 }
 
 /* Dark Mode Styles for Chart */
@@ -42,4 +28,3 @@ body.dark-mode #chartContainer {
 body.dark-mode #chartContainer h2 {
     color: #f4f4f4; /* Dark mode text color */
 }
-
