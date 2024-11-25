@@ -110,3 +110,19 @@ body.dark-mode .cookie-consent button:hover {
 .info-popup-content button:hover {
     background-color: #4cae4c;
 }
+
+/* Dark mode for info popup */
+body.dark-mode .info-popup-content {
+    background-color: #2a2a2a; /* Dark mode background */
+    color: #e0e0e0; /* Light text for contrast */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Stronger shadow for dark mode */
+}
+
+body.dark-mode .info-popup-content button {
+    background-color: #4cae4c; /* Adjusted button color for dark mode */
+    color: white;
+}
+
+body.dark-mode .info-popup-content button:hover {
+    background-color: #5cb85c; /* Slightly lighter green on hover in dark mode */
+}
