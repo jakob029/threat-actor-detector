@@ -37,10 +37,19 @@ document.getElementById('textInputForm')?.addEventListener('submit', async (even
             loader.style.display = 'none';
 
             if (analyzeResponse.ok) {
-                // Display the response text
-                responseText.innerHTML = analyzeData.response.replace(/\n/g, '<br>');
+                // Use marked.parse() to convert Markdown to HTML
+                const dirtyHTML = marked.parse(analyzeData.response);
+                // Sanitize the HTML to prevent XSS attacks
+                const cleanHTML = DOMPurify.sanitize(dirtyHTML);
+                // Display the sanitized HTML
+                responseText.innerHTML = cleanHTML;
 
-                // **Add this logic to handle data_points**
+                // Initialize syntax highlighting
+                document.querySelectorAll('#responseText pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+
+                // Handle data_points if needed
                 const dataPoints = analyzeData.data_points;
                 console.log("Data points received for chart:", dataPoints);
 
