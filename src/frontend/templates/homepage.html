@@ -4,14 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log Analyzer</title>
+    <!-- CSS Stylesheets -->
     <link rel="stylesheet" href="static/css/style.css">
-    <link rel="stylesheet" href="static/css/nav_bar.css">
+    <link rel="stylesheet" href="static/css/darkmode.css">
+    <link rel="stylesheet" href="static/css/response.css">
+    <link rel="stylesheet" href="static/css/signin.css">
+    <link rel="stylesheet" href="static/css/chart.css">
+    <link rel="stylesheet" href="static/css/cookies_consent.css">
+    <link rel="stylesheet" href="static/css/navbar.css">
+
 </head>
 <body>
     <!-- Top menu for navigation-->
     <nav class="top-menu">
         <ul>
-            <li><a href="/">Main Page</a></li>
+            <li><a href="/">Chat</a></li>
             <li><a href="/info.html" id="infoTab">Info</a></li>
         </ul>
     </nav>
@@ -53,7 +60,6 @@
         <!-- Dynamic content based on session -->
         {% if is_logged_in %}
             <p>Welcome, {{ username }}!</p>
-            <button id="logoutButton">Log Out</button>
         {% else %}
             <p>Please sign in to access the features.</p>
         {% endif %}
@@ -71,9 +77,30 @@
             <!-- Placeholder for response text -->
             <div id="responseText"></div>
         </div>
+
+        <!-- Chart container -->
+        <div id="chartContainer" style="display: none;">
+            <h2>Analysis Result</h2>
+            <canvas id="dataGraph"></canvas>
+        </div>
+
+        <!-- Log Out button -->
+        {% if is_logged_in %}
+            <button id="logoutButton" style="margin-top: 20px;">Log Out</button>
+        {% endif %}
     </div>
 
-    <!-- JavaScript file link -->
-    <script src="static/js/script.js"></script>
+    <!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- JavaScript file links -->
+    <script src="static/js/cookies_consent.js"></script> <!-- Handles cookie consent -->
+    <script src="static/js/darkmode.js"></script> <!-- Handles dark mode -->
+    <script src="static/js/auth.js"></script> <!-- Handles login, registration, logout -->
+    <script src="static/js/prompt.js"></script> <!-- Handles prompt submission -->
+    <script src="static/js/chart.js"></script> <!-- Handles chart rendering -->
+    <script src="static/js/utils.js"></script> <!-- Contains utility functions -->
+    <script src="static/js/navbar.js"></script> <!-- Contains navbar functions -->
+    <script src="static/js/main.js"></script> <!-- Entry point that initializes all modules -->
 </body>
 </html>

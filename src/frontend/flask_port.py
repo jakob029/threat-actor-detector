@@ -1,4 +1,4 @@
-"""Flask api for sending and receiving prompts, user support and sessions."""
+"""Flask API for managing user sessions, prompts, and interactions with an LLM backend."""
 
 from flask import Flask, request, jsonify, render_template, session
 import requests
@@ -9,40 +9,40 @@ app = Flask(__name__)
 # Define a single base URL for all API requests
 BASE_URL = "http://100.77.88.40:5000"
 
-# Set a secret key for session management
+# Key for session management
 app.secret_key = "Jeppecool1"
 
 
 @app.route("/accept-cookies", methods=["POST"])
 def accept_cookies():
-    """Route to handle cookies in the API."""
+    """Handle cookie consent acceptance."""
     session["cookies_accepted"] = True
     return jsonify({"message": "Cookies accepted"})
 
 
 @app.route("/")
 def homepage():
-    """Route to home page."""
-    print(f"Session on homepage: {session}")  # Debug log
+    """Render the homepage."""
     cookies_accepted = session.get("cookies_accepted", False)
     is_logged_in = "uid" in session  # Check if the user is logged in
     return render_template(
-        "Homepage.html", is_logged_in=is_logged_in, username=session.get("username"), cookies_accepted=cookies_accepted
+        "homepage.html",
+        is_logged_in=is_logged_in,
+        username=session.get("username"),
+        cookies_accepted=cookies_accepted,
     )
 
 
 @app.route("/info.html")
 def info_page():
-    """Route to info page."""
-    print(f"Session on info page: {session}")  # Debug log
+    """Render the info page."""
     is_logged_in = "uid" in session  # Check if the user is logged in
     return render_template("info.html", is_logged_in=is_logged_in, username=session.get("username"))
 
 
-# Route to handle user login
 @app.route("/user/login", methods=["POST"])
 def login():
-    """Login function to handle users."""
+    """Handle user login."""
     data = request.json
     username = data.get("username")
     password = data.get("password")
@@ -54,22 +54,19 @@ def login():
         if response_data.get("message") == "success":
             # Clear any existing session
             session.clear()
-
             # Store new user information in the session
             session["uid"] = response_data.get("uid")
             session["username"] = username
-            print(f"New session set: uid={session['uid']}, username={session['username']}")
             return jsonify({"message": "success"})
-        else:
-            return jsonify({"message": response_data.get("message")})
-    except Exception as e:
-        return jsonify({"message": f"Error communicating with the authentication server: {str(e)}"})
+
+        return jsonify({"message": response_data.get("message")})
+    except requests.RequestException as err:
+        return jsonify({"message": f"Error communicating with the server: {str(err)}"})
 
 
-# Route to handle user registration
 @app.route("/user/register", methods=["POST"])
 def register():
-    """Route to handle user registers."""
+    """Handle user registration."""
     data = request.json
     username = data.get("username")
     password = data.get("password")
@@ -77,41 +74,84 @@ def register():
     try:
         response = requests.post(f"{BASE_URL}/user/register", json={"username": username, "password": password})
         return jsonify(response.json())
-    except Exception as e:
-        return jsonify({"message": f"Error communicating with the registration server: {str(e)}"})
+    except requests.RequestException as err:
+        return jsonify({"message": f"Error communicating with the server: {str(err)}"})
 
 
-# Route to handle the input prompt
-@app.route("/analyze", methods=["POST"])
-def analyze():
-    """Main prompt route to retrieve and send requests to the LLM."""
-    prompt = request.form.get("prompt")
-
-    if not prompt:
-        return jsonify({"response": "No prompt received"})
-
-    # Use the BASE_URL for the analysis endpoint
-    analyze_url = f"{BASE_URL}/analyzis"
-    payload = {"prompt": prompt}
-
-    headers = {"Content-Type": "application/json"}
+@app.route("/conversations", methods=["POST"])
+def conversation():
+    """Create a conversation and store the conversation ID (cid) in the session."""
+    uid = session.get("uid")
+    if not uid:
+        return jsonify({"message": "User not logged in"}), 401
 
     try:
-        response = requests.post(analyze_url, json=payload, headers=headers)
+        # Match the curl request exactly
+        payload = {"uid": uid, "title": "hejsan"}
+
+        # Send request to backend
+        response = requests.post(f"{BASE_URL}/conversations", json=payload)
         response_data = response.json()
-        return jsonify({"response": response_data.get("response", "No result")})
+
+        if "conversation_id" in response_data:
+            # Store CID in the session
+            session["cid"] = response_data["conversation_id"]
+            session.modified = True  # Ensure session updates persist
+            return jsonify({"message": "Conversation created", "cid": session["cid"]})
+
+        # Handle case where 'conversation_id' is missing
+        return jsonify({"message": response_data.get("message", "Failed to create conversation")}), 400
+
     except Exception as e:
-        return jsonify({"response": f"Error communicating with the analysis server: {str(e)}"})
+        return jsonify({"message": f"Internal server error: {str(e)}"}), 500
 
 
-# Route to handle user logout
+@app.route("/analyze", methods=["POST"])
+def analyze():
+    """Analyze a prompt using the LLM backend."""
+    # Retrieve CID from session
+    cid = session.get("cid")
+
+    # Check if CID exists
+    if not cid:
+        return jsonify({"response": "No conversation ID found. Start a conversation first."}), 400
+
+    # Retrieve prompt from request
+    prompt = request.form.get("prompt")
+
+    # Check if prompt is provided
+    if not prompt:
+        return jsonify({"response": "No prompt received"}), 400
+
+    # Prepare payload for backend request
+    analyze_url = f"{BASE_URL}/analyzis"
+    payload = {"prompt": prompt, "cid": cid}
+
+    try:
+        # Send request to backend
+        response = requests.post(analyze_url, json=payload)
+        response_data = response.json()
+
+        # Return response to client
+        return jsonify(
+            {
+                "response": response_data.get("response", "No result"),
+                "data_points": response_data.get("data_points", {}),
+            }
+        )
+    except requests.RequestException as err:
+        return jsonify({"response": f"Error communicating with the server: {str(err)}"}), 500
+    except ValueError:
+        return jsonify({"response": "Error decoding JSON response from backend"}), 500
+
+
 @app.route("/logout", methods=["POST"])
 def logout():
-    """Route to end user session and sign out."""
-    session.clear()  # Clears all session data
+    """Log out the current user."""
+    session.clear()
     return jsonify({"message": "Logged out successfully"})
 
 
-# Ensure that the Flask app runs when the script is executed directly
+# Run the Flask app
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
