@@ -1,0 +1,45 @@
+/* Chart container styling */
+#chartContainer {
+    margin: 20px auto;
+    max-width: 800px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+canvas {
+    display: block;
+    margin: 0 auto;
+}
+
+/* Chart container styling */
+#chartContainer {
+    margin: 20px auto;
+    max-width: 800px;
+    padding: 20px;
+    background-color: #f9f9f9; /* Light mode background */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+#chartContainer h2 {
+    color: #333333; /* Light mode text color */
+}
+
+canvas {
+    display: block;
+    margin: 0 auto;
+}
+
+/* Dark Mode Styles for Chart */
+body.dark-mode #chartContainer {
+    background-color: #2a2a2a; /* Dark mode background */
+}
+
+body.dark-mode #chartContainer h2 {
+    color: #f4f4f4; /* Dark mode text color */
+}
+
