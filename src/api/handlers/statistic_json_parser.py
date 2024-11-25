@@ -51,10 +51,10 @@ class SchemaParser:
         Args:
             structure: The unstructured dictionary.
         """
-        if isinstance(structure.values()[0], int):
+        if isinstance(list(structure.values())[0], int):
             return structure
 
-        if isinstance(structure.values()[0], float):
+        if isinstance(list(structure.values())[0], float):
             return {group: int(value * 100) for group, value in structure.items()}
 
         return structure
