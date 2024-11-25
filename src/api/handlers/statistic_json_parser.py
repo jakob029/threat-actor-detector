@@ -51,6 +51,9 @@ class SchemaParser:
         Args:
             structure: The unstructured dictionary.
         """
+        if not list(structure.values()):
+            return structure
+
         if isinstance(list(structure.values())[0], int):
             return structure
 
