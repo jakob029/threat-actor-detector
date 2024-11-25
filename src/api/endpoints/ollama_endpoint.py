@@ -81,8 +81,7 @@ class Analyzis(Resource):
                     reset_conversation(cid)
                     continue
 
-                return {"message": "success",
-                        "response": response}, 200
+                return {"message": "success", "response": response}, 200
             except ConnectTimeout:
                 return {"message": "LLM_error"}, 500
             except TypeError:
@@ -97,8 +96,7 @@ class Analyzis(Resource):
                     continue
 
                 logger.error(e)
-                return {"message": "success",
-                    "response": response}, 200
+                return {"message": "success", "response": response}, 200
             else:
                 return {
                     "message": "success",
