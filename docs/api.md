@@ -148,13 +148,14 @@ No error implemented.
 
 Create a new conversation.
 
-    http://<HOST>:<PORT>/conversation
+    http://<HOST>:<PORT>/conversations
 
 #### Request body
 
 ```json
 {
     "uid": "<USER_ID>",
+    "title": "TITLE"
 }
 ```
 
