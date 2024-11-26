@@ -1,9 +1,9 @@
 """Database connector."""
 
+from os import environ
+import logging
 from mysql import connector
 from mysql.connector import Error
-import logging
-from os import environ
 
 
 from api_exceptions import (
@@ -98,7 +98,7 @@ def get_password_hash(username: str) -> str:
         TypeError
     """
     db_config = _load_config()
-    hash: str = ""
+    password_hash: str = ""
     with connector.connect(**db_config) as db:
         with db.cursor() as cursor:
 
@@ -117,9 +117,9 @@ def get_password_hash(username: str) -> str:
             if not isinstance(response[0], str):
                 raise TypeError(f"Expected string, got type {type(response[0])}, in {get_password_hash.__name__}.")
 
-            hash = response[0]
+            password_hash = response[0]
 
-    return hash
+    return password_hash
 
 
 def get_user_salt(username: str) -> str:
@@ -153,12 +153,12 @@ def get_user_salt(username: str) -> str:
     return salt
 
 
-def update_user_auth(uid: str, hash: str, salt: str):
+def update_user_auth(uid: str, password_hash: str, salt: str):
     """Update user password hash.
 
     Arguments:
         uid (str): user id.
-        hash: user password hash.
+        password_hash: user password hash.
         salt (str): new user salt.
 
     Raises:
@@ -169,12 +169,12 @@ def update_user_auth(uid: str, hash: str, salt: str):
     try:
         with connector.connect(**db_config) as db:
             with db.cursor() as cursor:
-                cursor.callproc("update_user_auth", (uid, hash, salt))
-    except Error as e:
-        if e.errno == 45000:
-            raise DatabaseException("User does not exist.", USER_DOES_NOT_EXIST)
+                cursor.callproc("update_user_auth", (uid, password_hash, salt))
+    except Error as err:
+        if err.errno == 45000:
+            raise DatabaseException("User does not exist.", USER_DOES_NOT_EXIST) from err
 
-        raise DatabaseException(str(e.msg), UNKNOWN_ISSUE)
+        raise DatabaseException(str(err.msg), UNKNOWN_ISSUE) from err
 
 
 def get_user_id(username: str) -> str:
@@ -213,12 +213,12 @@ def get_user_id(username: str) -> str:
     return uid
 
 
-def register_user(username: str, hash: str, salt: str):
+def register_user(username: str, password_hash: str, salt: str):
     """Register new user.
 
     Arguments:
         username (str): New users username.
-        hash (str): password hash.
+        password_hash (str): password hash.
         salt (str): salt used in the hash.
 
     Raises:
@@ -229,9 +229,9 @@ def register_user(username: str, hash: str, salt: str):
     try:
         with connector.connect(**db_config) as db:
             with db.cursor() as cursor:
-                cursor.callproc("register_new_user", (username, hash, salt))
-    except Error as e:
-        raise DatabaseException(str(e.msg), UNKNOWN_ISSUE)
+                cursor.callproc("register_new_user", (username, password_hash, salt))
+    except Error as err:
+        raise DatabaseException(str(err.msg), UNKNOWN_ISSUE) from err
 
 
 ### Conversation ###
@@ -265,11 +265,11 @@ def create_conversation(uid: str, title: str) -> str:
                     raise TypeError(f"Expected string got {type(result_args[2])}, in {create_conversation.__name__}")
 
                 cid = result_args[2]
-    except Error as e:
-        if e.errno == 45000:
-            raise DatabaseException("User does not exist.", USER_DOES_NOT_EXIST)
+    except Error as err:
+        if err.errno == 45000:
+            raise DatabaseException("User does not exist.", USER_DOES_NOT_EXIST) from err
 
-        raise DatabaseException(str(e.msg), UNKNOWN_ISSUE)
+        raise DatabaseException(str(err.msg), UNKNOWN_ISSUE) from err
 
     return cid
 
@@ -291,11 +291,11 @@ def add_message(text: str, role: str, cid: str) -> None:
         with connector.connect(**db_config) as db:
             with db.cursor() as cursor:
                 cursor.callproc("add_message", (text, role, cid))
-    except Error as e:
-        if e.errno == 45000:
-            raise DatabaseException("Conversation does not exist.", CONVERSATION_DOES_NOT_EXIST)
-        else:
-            raise DatabaseException("Something went wrong.", UNKNOWN_ISSUE)
+    except Error as err:
+        if err.errno == 45000:
+            raise DatabaseException("Conversation does not exist.", CONVERSATION_DOES_NOT_EXIST) from err
+
+        raise DatabaseException("Something went wrong.", UNKNOWN_ISSUE) from err
 
 
 def end_conversation(cid: str) -> None:
@@ -313,11 +313,11 @@ def end_conversation(cid: str) -> None:
         with connector.connect(**db_config) as db:
             with db.cursor() as cursor:
                 cursor.callproc("delete_conversation", (cid,))
-    except Error as e:
-        if e.errno == 45000:
-            raise DatabaseException("Conversation does not exist.", CONVERSATION_DOES_NOT_EXIST)
-        else:
-            raise DatabaseException("Something went wrong.", UNKNOWN_ISSUE)
+    except Error as err:
+        if err.errno == 45000:
+            raise DatabaseException("Conversation does not exist.", CONVERSATION_DOES_NOT_EXIST) from err
+
+        raise DatabaseException("Something went wrong.", UNKNOWN_ISSUE) from err
 
 
 def get_conversations(uid: str) -> dict:
@@ -457,11 +457,11 @@ def add_graph_point(cid: str, name: str, value: int) -> None:
         with connector.connect(**db_config) as db:
             with db.cursor() as cursor:
                 cursor.callproc("add_data_point", (cid, name, value))
-    except Error as e:
-        if e.errno == 45000:
-            raise DatabaseException("Conversation does not exist.", CONVERSATION_DOES_NOT_EXIST)
-        else:
-            raise DatabaseException(str(e.msg), UNKNOWN_ISSUE)
+    except Error as err:
+        if err.errno == 45000:
+            raise DatabaseException("Conversation does not exist.", CONVERSATION_DOES_NOT_EXIST) from err
+
+        raise DatabaseException(str(err.msg), UNKNOWN_ISSUE) from err
 
 
 def reset_conversation(cid: str):
@@ -480,8 +480,8 @@ def reset_conversation(cid: str):
         with connector.connect(**db_config) as db:
             with db.cursor() as cursor:
                 cursor.callproc("reset_conversation", (cid,))
-    except Error as e:
-        if e.errno == 45000:
-            raise DatabaseException("Conversation does not exist.", CONVERSATION_DOES_NOT_EXIST)
-        else:
-            raise DatabaseException(str(e.msg), UNKNOWN_ISSUE)
+    except Error as err:
+        if err.errno == 45000:
+            raise DatabaseException("Conversation does not exist.", CONVERSATION_DOES_NOT_EXIST) from err
+
+        raise DatabaseException(str(err.msg), UNKNOWN_ISSUE) from err

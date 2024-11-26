@@ -83,7 +83,7 @@ def send_analyze_prompt(
             },
         )
 
-    with open(llm_preprompt_path, "r") as f:
+    with open(llm_preprompt_path, "r", encoding="utf-8") as f:
         preprompt = f.read()
         prompt.insert(0, {"role": "system", "name": "Threat Analyzer", "content": preprompt})
 

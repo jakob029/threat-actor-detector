@@ -47,8 +47,8 @@ class Analyzis(Resource):
         except Exception as e:
             logger.error(e)
             return {"message": "Something went wrong."}, 500
-        else:
-            return {"message": "success", "data_points": data_points}, 200
+
+        return {"message": "success", "data_points": data_points}, 200
 
     def post(self):
         """Handle a given get request, forward it to the llm and give the response back.
@@ -65,7 +65,7 @@ class Analyzis(Resource):
 
         prompt: str = args["prompt"]
         cid: str = args["cid"]
-        countor: int = 0
+        counter: int = 0
         while True:
             try:
                 response: str = send_analyze_prompt(prompt, cid, self.vector_databases, self.apt_descriptions)
@@ -77,7 +77,7 @@ class Analyzis(Resource):
 
             except ResponseError as e:
                 logger.error(str(e))
-                if countor < 3:
+                if counter < 3:
                     reset_conversation(cid)
                     continue
 
@@ -91,15 +91,15 @@ class Analyzis(Resource):
                     return {"message": e.message}, 500
                 return {"message": e.message}, 200
             except Exception as e:
-                if countor < 3:
+                if counter < 3:
                     reset_conversation(cid)
                     continue
 
                 logger.error(e)
                 return {"message": "success", "response": response}, 200
-            else:
-                return {
-                    "message": "success",
-                    "response": response,
-                    "data_points": statistics,
-                }, 200
+
+            return {
+                "message": "success",
+                "response": response,
+                "data_points": statistics,
+            }, 200

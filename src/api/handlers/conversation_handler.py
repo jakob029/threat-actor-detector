@@ -29,7 +29,6 @@ def hold_conversation(cid: str, message: str) -> str:
     # Get conversation history.
     messages: list = get_messages(cid)
 
-    # TODO: add vector db preprompting.
     if len(messages) == 0:
         pass
 

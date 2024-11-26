@@ -45,13 +45,13 @@ class Authentication(Resource):
             uid: str = authenicate(args["username"], args["password"])
 
         except AuthenticationException as e:
-            if e.code == USERNAME_TOO_LONG or e.code == USER_DOES_NOT_EXIST:
+            if e.code in (USERNAME_TOO_LONG, USER_DOES_NOT_EXIST):
                 return {"message": "Password or User is wrong."}, 200
 
             logger.error(e.message)
             return {"message": "Something went wrong."}, 500
         except DatabaseException as e:
-            if e.code == VARIABLE_NOT_SET or e.code == UNKNOWN_ISSUE:
+            if e.code in (VARIABLE_NOT_SET, UNKNOWN_ISSUE):
                 logger.error(e.message)
                 return {"message": "Something went wrong."}, 200
 
@@ -65,8 +65,8 @@ class Authentication(Resource):
         except Exception as e:
             logger.error(e)
             return {"message": "Something went wrong"}, 500
-        else:
-            return {"message": "success", "uid": uid}, 200
+
+        return {"message": "success", "uid": uid}, 200
 
 
 class Registration(Resource):
@@ -97,5 +97,5 @@ class Registration(Resource):
         except Exception as e:
             logger.error(e)
             return {"message": "Something went wrong."}, 500
-        else:
-            return {"message": "success"}, 200
+
+        return {"message": "success"}, 200

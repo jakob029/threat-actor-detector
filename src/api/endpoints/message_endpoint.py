@@ -40,8 +40,8 @@ class MessagesEndpoint(Resource):
         except Exception as e:
             logger.error(e)
             return {"message": "something went wrong."}, 500
-        else:
-            return {"message": "success", "conversation_history": messages}, 200
+
+        return {"message": "success", "conversation_history": messages}, 200
 
     def post(self):
         """Add message.
@@ -67,8 +67,8 @@ class MessagesEndpoint(Resource):
         except Exception as e:
             logger.error(e)
             return {"message": "something went wrong."}, 500
-        else:
-            return {"messgae": "success", "response": response}, 200
+
+        return {"message": "success", "response": response}, 200
 
     def delete(self, cid: str):
         """Reset conversation.
@@ -89,5 +89,5 @@ class MessagesEndpoint(Resource):
         except Exception as e:
             logger.error(e)
             return {"message": "something went wrong."}, 500
-        else:
-            return {"messgae": "success"}, 200
+
+        return {"message": "success"}, 200

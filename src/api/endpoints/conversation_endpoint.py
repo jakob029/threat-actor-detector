@@ -39,8 +39,8 @@ class ConversationsEndpoint(Resource):
         except Exception as e:
             logger.error(e)
             return {"message": "something went wrong."}, 500
-        else:
-            return {"message": "success", "conversations": conversations}, 200
+
+        return {"message": "success", "conversations": conversations}, 200
 
     def post(self):
         """Create conversation.
@@ -66,5 +66,5 @@ class ConversationsEndpoint(Resource):
         except Exception as e:
             logger.error(e)
             return {"message": "something went wrong."}, 500
-        else:
-            return {"messgae": "success", "conversation_id": cid}, 200
+
+        return {"messgae": "success", "conversation_id": cid}, 200
