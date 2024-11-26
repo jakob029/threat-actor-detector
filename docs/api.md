@@ -1,5 +1,27 @@
 # API
 
+## Install
+
+### enviorment variables
+
+location:
+
+	./threat-actor-detector/src/api/.env
+
+.env content:
+``` bash
+# LLM options
+TAD_LLM_MODEL=llama3.1                    # Model to use
+TAD_LLM_ADDRESS=http://100.77.88.10       # Ollama address
+TAD_LLM_PREPROPT_PATH=./src/api/prepromt  # Preprompt path
+
+# Database options
+TAD_MYSQL_HOST=100.77.88.30  	# MySQL host 
+TAD_MYSQL_PASSWORD=<PASSWORD>   # User password
+TAD_MYSQL_DATABASE=tad      	# Database name
+TAD_MYSQL_USER=api          	# User name
+```
+
 ## Requests
 
 <details>
