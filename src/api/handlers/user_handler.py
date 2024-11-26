@@ -61,11 +61,11 @@ def register(username: str, password: str):
 
     # hash password password + salt
     ph: PasswordHasher = PasswordHasher()
-    hash = ph.hash(password + salt)
+    password_hash = ph.hash(password + salt)
 
-    register_user(username, hash, salt)
+    register_user(username, password_hash, salt)
 
-    logger.debug(f"Created user, Username: {username} | Password: {hash}")
+    logger.debug(f"Created user, Username: {username} | Password: {password_hash}")
 
 
 def authenicate(username: str, password: str) -> str:
@@ -93,9 +93,9 @@ def authenicate(username: str, password: str) -> str:
 
     # Validate password hash.
     ph: PasswordHasher = PasswordHasher()
-    hash: str = get_password_hash(username)
+    password_hash: str = get_password_hash(username)
     salt: str = get_user_salt(username)
-    ph.verify(hash, password + salt)
+    ph.verify(password_hash, password + salt)
 
     # Get uid.
     uid: str = get_user_id(username)

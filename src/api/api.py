@@ -3,14 +3,6 @@
 import logging
 from datetime import datetime
 
-logging.basicConfig(
-    filename="logs/{:%Y-%m-%d}.log".format(datetime.now()),
-    format="[ %(asctime)s ] %(message)s",
-    datefmt="%m/%d/%Y %H:%M:%S",
-    level=logging.INFO,
-    encoding="utf-8",
-)
-
 from flask import Flask
 from flask_restful import Api
 from endpoints.user_endpoint import Registration, Authentication
@@ -18,6 +10,14 @@ from endpoints.ollama_endpoint import Analyzis
 from endpoints.message_endpoint import MessagesEndpoint
 from endpoints.conversation_endpoint import ConversationsEndpoint
 from dotenv import load_dotenv
+
+logging.basicConfig(
+    filename=f"logs/{datetime.now().strftime('%Y-%m-%d')}",
+    format="[ %(asctime)s ] %(message)s",
+    datefmt="%m/%d/%Y %H:%M:%S",
+    level=logging.INFO,
+    encoding="utf-8",
+)
 
 logger = logging.getLogger(__name__)
 
