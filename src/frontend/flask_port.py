@@ -8,6 +8,7 @@ app = Flask(__name__)
 
 # Define a single base URL for all API requests
 BASE_URL = "http://100.77.88.40:5000"
+HOST = "10.20.0.20"
 
 # Key for session management
 app.secret_key = "Jeppecool1"
@@ -154,4 +155,4 @@ def logout():
 
 # Run the Flask app
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0")
+    app.run(debug=True, host=HOST)
