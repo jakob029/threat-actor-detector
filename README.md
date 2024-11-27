@@ -7,3 +7,5 @@
 [API documentation](docs/api.md)
 
 [Database documentation](docs/database.md)
+
+[Installation documentation](docs/installation_instructions.md)
