@@ -42,7 +42,7 @@ TAD_LLM_ADDRESS=http://100.77.88.10       # Ollama address
 TAD_LLM_PREPROPT_PATH=./src/api/prepromt  # Preprompt path
 
 # Database options
-TAD_MYSQL_HOST=100.77.88.30  	# MySQL host 
+TAD_MYSQL_HOST=100.77.88.30  	# MySQL host
 TAD_MYSQL_PASSWORD=<PASSWORD>   # User password
 TAD_MYSQL_DATABASE=tad      	# Database name
 TAD_MYSQL_USER=api          	# User name
@@ -60,3 +60,44 @@ set TAD_MYSQL_PASSWORD=<PASSWORD>
 set TAD_MYSQL_DATABASE=tad
 set TAD_MYSQL_USER=api
 ```
+
+## Push code to github
+Initially create a local branch:
+```bash
+git checkout -b <BRANCH_NAME>
+```
+
+Then, complete the code edits intended.
+
+Make sure the cude edits pass the automated test by running:
+```bash
+tox
+```
+
+Then do the following for each edited file:
+```bash
+git add <FILE_PATH>
+```
+
+Make a local commit by running:
+```bash
+git commit -m "<COMMIT_MESSAGE>"
+```
+
+Finaly, push the commit to github:
+```bash
+git push --set-upstream origin <BRANCH_NAME>
+```
+
+Once this is complete, you can initale a pull requests on github.
+This will initiate the process of pushing the code to the main branch,
+utilizing automatic checks and code review to certify a satisfactory
+result.
+
+Once the code has been merged to the main branch, run:
+```bash
+git checkout main
+git pull
+```
+
+To resync the local repository to the current main branch on github.
