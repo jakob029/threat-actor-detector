@@ -4,8 +4,6 @@ Classes:
     Analyzis
 """
 
-import os
-import sys
 import logging
 
 from httpx import ConnectTimeout
@@ -18,19 +16,14 @@ from handlers.statistic_parser import llama_json_parser
 from handlers.statistic_json_parser import SchemaParser
 from handlers.conversation_handler import set_graph_to_conversation
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
+from api_exceptions import UNKNOWN_ISSUE, DatabaseException
 
-from src.api.api_exceptions import UNKNOWN_ISSUE, DatabaseException
-from src.build_dataset.run import build_vector_database, retrieve_apt_descriptions
 
 logger = logging.getLogger(__name__)
 
 
 class Analyzis(Resource):
     """A class representing the analysis response on call /analysis."""
-
-    vector_databases: tuple = build_vector_database()
-    apt_descriptions: dict = retrieve_apt_descriptions()
 
     def get(self, cid: str):
         """Get data points and return them.
@@ -68,7 +61,7 @@ class Analyzis(Resource):
         counter: int = 0
         while True:
             try:
-                response: str = send_analyze_prompt(prompt, cid, self.vector_databases, self.apt_descriptions)
+                response: str = send_analyze_prompt(prompt, cid)
                 defined_json = SchemaParser()
                 statistics = defined_json.correct_structure(llama_json_parser(response))
 

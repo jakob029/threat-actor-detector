@@ -45,7 +45,11 @@ TAD_LLM_PREPROPT_PATH=./src/api/prepromt  # Preprompt path
 TAD_MYSQL_HOST=100.77.88.30  	# MySQL host
 TAD_MYSQL_PASSWORD=<PASSWORD>   # User password
 TAD_MYSQL_DATABASE=tad      	# Database name
-TAD_MYSQL_USER=api          	# User name
+TAD_MYSQL_USER=<USER>          	# User name
+
+# Vector database options
+VECTOR_DB_HOST=100.77.88.70     # Vector database host address
+VECTOR_DB_PORT=5000             # Vector database host open port
 ```
 
 ### Windows
