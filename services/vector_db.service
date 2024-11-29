@@ -1,0 +1,10 @@
+[Unit]
+Description=Vector database API service
+
+[Service]
+User=usr
+WorkingDirectory=/home/usr/threat-actor-detector
+ExecStart=/home/usr/threat-actor-detector/.venv/bin/python3 /home/usr/threat-actor-detector/src/vector_db_api/vector_db_api.py
+
+[Install]
+WantedBy=multi-user.target
