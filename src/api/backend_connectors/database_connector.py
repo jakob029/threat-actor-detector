@@ -295,7 +295,7 @@ def add_message(text: str, role: str, cid: str) -> None:
         if err.errno == 45000:
             raise DatabaseException("Conversation does not exist.", CONVERSATION_DOES_NOT_EXIST) from err
 
-        raise DatabaseException("Something went wrong.", UNKNOWN_ISSUE) from err
+        raise DatabaseException("Error connecting to the database.", UNKNOWN_ISSUE) from err
 
 
 def end_conversation(cid: str) -> None:
@@ -317,7 +317,7 @@ def end_conversation(cid: str) -> None:
         if err.errno == 45000:
             raise DatabaseException("Conversation does not exist.", CONVERSATION_DOES_NOT_EXIST) from err
 
-        raise DatabaseException("Something went wrong.", UNKNOWN_ISSUE) from err
+        raise DatabaseException("Unable to connect to the database.", UNKNOWN_ISSUE) from err
 
 
 def get_conversations(uid: str) -> dict:
