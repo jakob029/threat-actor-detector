@@ -1,5 +1,5 @@
 [Unit]
-Description=TAD API service
+Description=Frontend service
 
 [Service]
 User=usr
