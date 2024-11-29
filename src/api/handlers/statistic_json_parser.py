@@ -58,6 +58,9 @@ class SchemaParser:
             return structure
 
         if isinstance(list(structure.values())[0], float):
+            if list(structure.values())[0] > 1:
+                return {group: int(value) for group, value in structure.items()}
+
             return {group: int(value * 100) for group, value in structure.items()}
 
         return structure
