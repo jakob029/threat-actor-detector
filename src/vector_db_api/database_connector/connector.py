@@ -16,10 +16,11 @@ class DbConnector:
 
     def __init__(self):
         """Constructor."""
-        self.connection = mysql.connector.connect(host=self.DB_IP, database=self.DATABASE, user=self.USER, password=self.PASSWORD)
+        self.connection = mysql.connector.connect(
+            host=self.DB_IP, database=self.DATABASE, user=self.USER, password=self.PASSWORD
+        )
 
         print(type(self.connection))
-
 
     @property
     def connection_status(self):
@@ -38,7 +39,7 @@ class DbConnector:
     @staticmethod
     def _construct_format(fetched_results: list) -> list:
         """Construct a formatted list of IoC and APT pairs.
-        
+
         Args:
             fetched_results: Result fetched in form of a list of tuples.
 
@@ -51,10 +52,6 @@ class DbConnector:
         overview_list = []
         for element in fetched_results:
             if isinstance(element, tuple) and len(element) > 2:
-                overview_list.append({"indicator": element[0],
-                                      "type": element[1],
-                                      "apt": element[2]
-                                      }
-                )
+                overview_list.append({"indicator": element[0], "type": element[1], "apt": element[2]})
 
         return overview_list
