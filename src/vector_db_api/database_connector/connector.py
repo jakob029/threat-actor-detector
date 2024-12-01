@@ -20,8 +20,6 @@ class DbConnector:
             host=self.DB_IP, database=self.DATABASE, user=self.USER, password=self.PASSWORD
         )
 
-        print(type(self.connection))
-
     @property
     def connection_status(self):
         """SQL server connection status."""
@@ -55,3 +53,16 @@ class DbConnector:
                 overview_list.append({"indicator": element[0], "type": element[1], "apt": element[2]})
 
         return overview_list
+
+    def retrieve_specific_ioc(self, ioc: str) -> list:
+        """Retrieve the information for a given IOC if it can be found in the database.
+
+        Args:
+            ioc: Specified IoC.
+        """
+        cursor = self.connection.cursor()
+        cursor.execute(f"SELECT * FROM ioc_table where IoC = '{ioc}'")
+
+        fetched_results = cursor.fetchall()
+
+        return fetched_results
