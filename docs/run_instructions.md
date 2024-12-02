@@ -28,7 +28,10 @@ pip install -r requirements.txt
 ```
 
 ## Set up environment variables
-### Linux (and WSL) or Mac OS
+
+### For API
+
+#### Linux (and WSL) or Mac OS
 First, create a file in the given to this path: ./threat-actor-detector/src/api/.env
 ```bash
 touch threat-actor-detector/src/api/.env
@@ -51,6 +54,28 @@ TAD_MYSQL_USER=<USER>          	# User name
 VECTOR_DB_HOST=100.77.88.70     # Vector database host address
 VECTOR_DB_PORT=5000             # Vector database host open port
 ```
+
+### For vector database API
+
+#### Linux (and WSL) or Mac OS
+
+The following describes how to create a .env file for the vector database API.
+
+First, create a file in the given to this path: threat-actor-detector/src/vector_db_api/.env
+
+```bash
+touch threat-actor-detector/src/vector_db_api/.env
+```
+
+Then, write the following to the file:
+```bash
+# Database options
+TAD_MYSQL_HOST=100.77.88.30  	     # MySQL host
+TAD_MYSQL_PASSWORD=<PASSWORD>        # User password
+TAD_MYSQL_DATABASE=ioc_apt_mapping   # Database name
+TAD_MYSQL_USER=<USER>          	     # User name
+```
+
 
 ### Windows
 Execute the following in the local environment:
