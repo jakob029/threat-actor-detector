@@ -8,8 +8,8 @@ Classes:
 import logging
 from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
-from backend_connectors.database_connector import get_conversations, create_conversation
-from api_exceptions import USER_DOES_NOT_EXIST, DatabaseException
+from src.api.backend_connectors.database_connector import get_conversations, create_conversation
+from src.api.api_exceptions import USER_DOES_NOT_EXIST, DatabaseException
 
 
 logger = logging.getLogger(__name__)

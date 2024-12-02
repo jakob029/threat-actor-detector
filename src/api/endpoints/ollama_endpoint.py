@@ -10,13 +10,13 @@ from httpx import ConnectTimeout
 from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
 from ollama import ResponseError
-from backend_connectors.database_connector import get_graph, add_message, reset_conversation
-from backend_connectors.ollama_connector import send_analyze_prompt
-from handlers.statistic_parser import llama_json_parser
-from handlers.statistic_json_parser import SchemaParser
-from handlers.conversation_handler import set_graph_to_conversation
+from src.api.backend_connectors.database_connector import get_graph, add_message, reset_conversation
+from src.api.backend_connectors.ollama_connector import send_analyze_prompt
+from src.api.handlers.statistic_parser import llama_json_parser
+from src.api.handlers.statistic_json_parser import SchemaParser
+from src.api.handlers.conversation_handler import set_graph_to_conversation
 
-from api_exceptions import UNKNOWN_ISSUE, DatabaseException
+from src.api.api_exceptions import UNKNOWN_ISSUE, DatabaseException
 
 
 logger = logging.getLogger(__name__)

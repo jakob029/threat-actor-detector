@@ -9,8 +9,9 @@ Classes:
 import logging
 from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
-from handlers.user_handler import register, authenicate
-from api_exceptions import (
+from argon2.exceptions import VerifyMismatchError
+from src.api.handlers.user_handler import register, authenicate
+from src.api.api_exceptions import (
     PASSWORD_TOO_WEAK,
     UNKNOWN_ISSUE,
     USER_ALREADY_EXIST,
@@ -21,7 +22,6 @@ from api_exceptions import (
     DatabaseException,
     RegistrationException,
 )
-from argon2.exceptions import VerifyMismatchError
 
 logger = logging.getLogger(__name__)
 

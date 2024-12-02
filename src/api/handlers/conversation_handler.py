@@ -1,8 +1,8 @@
 """Module handling all conversation related tasks."""
 
-from backend_connectors.database_connector import get_messages, add_message, add_graph_point
-from backend_connectors.ollama_connector import send_prompt
 from ollama import ResponseError
+from src.api.backend_connectors.database_connector import get_messages, add_message, add_graph_point
+from src.api.backend_connectors.ollama_connector import send_prompt
 
 
 def hold_conversation(cid: str, message: str) -> str:

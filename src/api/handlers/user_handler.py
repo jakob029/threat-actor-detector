@@ -10,7 +10,7 @@ import logging
 import secrets
 from re import findall
 from argon2 import PasswordHasher
-from backend_connectors.database_connector import (
+from src.api.backend_connectors.database_connector import (
     username_exist,
     register_user,
     get_user_id,
@@ -18,7 +18,7 @@ from backend_connectors.database_connector import (
     get_password_hash,
     get_user_salt,
 )
-from api_exceptions import (
+from src.api.api_exceptions import (
     PASSWORD_TOO_WEAK,
     USER_ALREADY_EXIST,
     USER_DOES_NOT_EXIST,

@@ -11,7 +11,7 @@ from pathlib import Path
 
 import requests
 from ollama import Client
-from backend_connectors.database_connector import add_message
+from src.api.backend_connectors.database_connector import add_message
 
 
 logger = logging.getLogger(__name__)

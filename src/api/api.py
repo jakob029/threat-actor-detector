@@ -5,11 +5,11 @@ from datetime import datetime
 
 from flask import Flask
 from flask_restful import Api
-from endpoints.user_endpoint import Registration, Authentication
-from endpoints.ollama_endpoint import Analyzis
-from endpoints.message_endpoint import MessagesEndpoint
-from endpoints.conversation_endpoint import ConversationsEndpoint
 from dotenv import load_dotenv
+from src.api.endpoints.user_endpoint import Registration, Authentication
+from src.api.endpoints.ollama_endpoint import Analyzis
+from src.api.endpoints.message_endpoint import MessagesEndpoint
+from src.api.endpoints.conversation_endpoint import ConversationsEndpoint
 
 logging.basicConfig(
     filename=f"logs/{datetime.now().strftime('%Y-%m-%d')}",
