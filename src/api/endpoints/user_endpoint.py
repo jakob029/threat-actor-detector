@@ -9,8 +9,8 @@ Classes:
 import logging
 from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
-from handlers.user_handler import register, authenicate
-from api_exceptions import (
+from src.api.handlers.user_handler import register, authenicate
+from src.api.api_exceptions import (
     PASSWORD_TOO_WEAK,
     UNKNOWN_ISSUE,
     USER_ALREADY_EXIST,

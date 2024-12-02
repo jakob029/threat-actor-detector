@@ -6,7 +6,7 @@ from mysql import connector
 from mysql.connector import Error
 
 
-from api_exceptions import (
+from src.api.api_exceptions import (
     CONVERSATION_DOES_NOT_EXIST,
     UNKNOWN_ISSUE,
     VARIABLE_NOT_SET,
