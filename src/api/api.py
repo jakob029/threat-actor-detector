@@ -1,6 +1,7 @@
 """Main API file."""
 
 import logging
+from pathlib import Path
 from datetime import datetime
 
 from flask import Flask
@@ -10,6 +11,8 @@ from endpoints.ollama_endpoint import Analyzis
 from endpoints.message_endpoint import MessagesEndpoint
 from endpoints.conversation_endpoint import ConversationsEndpoint
 from dotenv import load_dotenv
+
+Path("logs").mkdir(parents=True, exist_ok=True)
 
 logging.basicConfig(
     filename=f"logs/{datetime.now().strftime('%Y-%m-%d')}",
