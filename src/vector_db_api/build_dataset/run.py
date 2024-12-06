@@ -4,9 +4,9 @@ import os
 import logging
 import json
 
-from build_dataset import construct_db
-from build_dataset.construct_db import LOCATION
-from build_dataset.build_chroma_db import VectorDB
+from src.vector_db_api.build_dataset import construct_db
+from src.vector_db_api.build_dataset.construct_db import LOCATION
+from src.vector_db_api.build_dataset.build_chroma_db import VectorDB
 
 logging.basicConfig(level=logging.INFO)
 
