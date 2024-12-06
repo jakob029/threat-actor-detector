@@ -1,0 +1,61 @@
+{
+    "swagger": "2.0",
+    "basePath": "/",
+    "paths": {
+        "/GroupAnalyzer": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Retrieve a response from the vector database",
+                "description": "Args:\n----\n    prompt: Prompt used to prompt the vector database.\n\nReturns:\n-------\n    Response given from the vector database including 'ids' for\n    represented by names of APT groups & distances to those ids.",
+                "operationId": "get_group_analyzer",
+                "tags": [
+                    "default"
+                ]
+            }
+        },
+        "/GroupDescriptor": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Retrieve descriptions for given APT groups",
+                "description": "Args:\n----\n    groups: Given groups separated by ':'.\n\nReturns:\n-------\n    Descriptions for each given group together with the group name.",
+                "operationId": "post_group_descriptor",
+                "tags": [
+                    "default"
+                ]
+            }
+        }
+    },
+    "info": {
+        "title": "chroma-DB-request-API",
+        "version": "1.0.0",
+        "description": "An API used for communicating with the Chroma DB vector database in the backend."
+    },
+    "produces": [
+        "application/json"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "tags": [
+        {
+            "name": "default",
+            "description": "Default namespace"
+        }
+    ],
+    "responses": {
+        "ParseError": {
+            "description": "When a mask can't be parsed"
+        },
+        "MaskError": {
+            "description": "When any error occurs on mask"
+        }
+    }
+}
