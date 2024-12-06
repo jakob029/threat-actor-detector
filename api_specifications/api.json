@@ -1,0 +1,277 @@
+{
+    "swagger": "2.0",
+    "basePath": "/",
+    "paths": {
+        "/analyzis": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Get data points and return them",
+                "description": "Arguments:\n    cid (str): conversation id.",
+                "operationId": "get_analyzis",
+                "tags": [
+                    "default"
+                ]
+            },
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Handle a given get request, forward it to the llm and give the response back",
+                "description": "Return:\n    dict: response in json.\n    int: code.",
+                "operationId": "post_analyzis",
+                "tags": [
+                    "default"
+                ]
+            }
+        },
+        "/analyzis/{cid}": {
+            "parameters": [
+                {
+                    "name": "cid",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Get data points and return them",
+                "description": "Arguments:\n    cid (str): conversation id.",
+                "operationId": "get_analyzis",
+                "tags": [
+                    "default"
+                ]
+            },
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Handle a given get request, forward it to the llm and give the response back",
+                "description": "Return:\n    dict: response in json.\n    int: code.",
+                "operationId": "post_analyzis",
+                "tags": [
+                    "default"
+                ]
+            }
+        },
+        "/conversations": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Return user conversations",
+                "description": "Arguments:\n    uid (str): user id\n\nReturns:\n    response (dict): resposne",
+                "operationId": "get_conversations_endpoint",
+                "tags": [
+                    "default"
+                ]
+            },
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Create conversation",
+                "description": "Returns:\n    response (dict): response",
+                "operationId": "post_conversations_endpoint",
+                "tags": [
+                    "default"
+                ]
+            }
+        },
+        "/conversations/{uid}": {
+            "parameters": [
+                {
+                    "name": "uid",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Return user conversations",
+                "description": "Arguments:\n    uid (str): user id\n\nReturns:\n    response (dict): resposne",
+                "operationId": "get_conversations_endpoint",
+                "tags": [
+                    "default"
+                ]
+            },
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Create conversation",
+                "description": "Returns:\n    response (dict): response",
+                "operationId": "post_conversations_endpoint",
+                "tags": [
+                    "default"
+                ]
+            }
+        },
+        "/messages": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Return conversation messages",
+                "description": "Arguments:\n    cid (str): conversation id.\n\nReturns:\n    response (dict): list of messages.",
+                "operationId": "get_messages_endpoint",
+                "tags": [
+                    "default"
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Reset conversation",
+                "description": "Returns:\n    response (dict): response",
+                "operationId": "delete_messages_endpoint",
+                "tags": [
+                    "default"
+                ]
+            },
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Add message",
+                "description": "Returns:\n    response (dict): response",
+                "operationId": "post_messages_endpoint",
+                "tags": [
+                    "default"
+                ]
+            }
+        },
+        "/messages/{cid}": {
+            "parameters": [
+                {
+                    "name": "cid",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Return conversation messages",
+                "description": "Arguments:\n    cid (str): conversation id.\n\nReturns:\n    response (dict): list of messages.",
+                "operationId": "get_messages_endpoint",
+                "tags": [
+                    "default"
+                ]
+            },
+            "delete": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Reset conversation",
+                "description": "Returns:\n    response (dict): response",
+                "operationId": "delete_messages_endpoint",
+                "tags": [
+                    "default"
+                ]
+            },
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Add message",
+                "description": "Returns:\n    response (dict): response",
+                "operationId": "post_messages_endpoint",
+                "tags": [
+                    "default"
+                ]
+            }
+        },
+        "/user/login": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Sign in the new user",
+                "operationId": "post_authentication",
+                "tags": [
+                    "default"
+                ]
+            }
+        },
+        "/user/register": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "Register a new user",
+                "operationId": "post_registration",
+                "tags": [
+                    "default"
+                ]
+            }
+        }
+    },
+    "info": {
+        "title": "threat-actor-detector-API",
+        "version": "1.0.0",
+        "description": "An API for the threat-actor-detector application to communicate between system components."
+    },
+    "produces": [
+        "application/json"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "tags": [
+        {
+            "name": "default",
+            "description": "Default namespace"
+        }
+    ],
+    "responses": {
+        "ParseError": {
+            "description": "When a mask can't be parsed"
+        },
+        "MaskError": {
+            "description": "When any error occurs on mask"
+        }
+    }
+}
