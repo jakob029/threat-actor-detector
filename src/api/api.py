@@ -14,6 +14,8 @@ from src.api.endpoints.conversation_endpoint import ConversationsEndpoint
 
 Path("logs").mkdir(parents=True, exist_ok=True)
 
+HOST = "0.0.0.0" # Change this to 10.40.0.40 when in production
+
 logging.basicConfig(
     filename=f"logs/{datetime.now().strftime('%Y-%m-%d')}",
     format="[ %(asctime)s ] %(message)s",
@@ -38,4 +40,4 @@ api.add_resource(ConversationsEndpoint, "/conversations/<string:uid>", "/convers
 api.add_resource(MessagesEndpoint, "/messages/<string:cid>", "/messages", methods=["GET", "DELETE", "POST"])
 
 if __name__ == "__main__":
-    app.run(host="100.77.88.40")
+    app.run(host=HOST)
