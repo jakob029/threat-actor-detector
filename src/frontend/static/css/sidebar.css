@@ -1,0 +1,93 @@
+.floating-sidebar {
+    position: fixed;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 200px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 10px;
+    z-index: 1000;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Sidebar Content Styles */
+.sidebar-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Chat list with uniform spacing */
+.chat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Sidebar Buttons */
+.sidebar-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #f4f4f4;
+    color: #333333;
+    border: none;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out; /* Removed transform scaling */
+}
+
+.sidebar-button:hover {
+    background-color: #e0e0e0; /* Slightly darker on hover for non-active chats */
+    color: #333333;
+}
+
+/* Active chat styling: static green highlight, no scaling */
+.active-chat {
+    background-color: #5cb85c !important; /* Green highlight */
+    color: #ffffff !important;
+}
+
+/* Ensure hover doesn't override active chat color */
+.active-chat:hover {
+    background-color: #5cb85c; /* Remains the same green on hover */
+    color: #ffffff;
+}
+
+/* Dark Mode Styles */
+body.dark-mode .floating-sidebar {
+    background-color: #333333;
+    border: 1px solid #444444;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .sidebar-button {
+    background-color: #444444;
+    color: #f4f4f4;
+}
+
+body.dark-mode .sidebar-button:hover {
+    background-color: #555555; /* Slight hover for dark mode non-active chats */
+    color: #f4f4f4;
+}
+
+body.dark-mode .active-chat {
+    background-color: #4cae4c !important; /* Slightly different green for dark mode if desired */
+    color: #333333 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .floating-sidebar {
+        width: 150px;
+        padding: 5px;
+    }
+
+    .sidebar-button {
+        padding: 8px;
+        font-size: 14px;
+    }
+}

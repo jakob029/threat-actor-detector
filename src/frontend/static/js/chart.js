@@ -1,7 +1,6 @@
 // Initialize Chart.js and set up a global chart instance variable
 let chartInstance = null;
 
-// Function to render a bar chart with given data points
 function renderChart(dataPoints) {
     const ctx = document.getElementById("dataGraph").getContext("2d");
 
@@ -22,18 +21,17 @@ function renderChart(dataPoints) {
             datasets: [{
                 label: 'Analysis Data',
                 data: values,
-                backgroundColor: 'rgba(54, 162, 235, 0.2)', // Bars' fill color
-                borderColor: 'rgba(54, 162, 235, 1)', // Bars' border color
-                borderWidth: 1 // Bars' border width
+                backgroundColor: 'rgba(54, 162, 235, 0.2)', 
+                borderColor: 'rgba(54, 162, 235, 1)', 
+                borderWidth: 1 
             }]
         },
         options: {
             responsive: true,
             scales: {
                 y: {
-                    beginAtZero: true, // Ensure the Y-axis starts at 0
+                    beginAtZero: true, 
                     ticks: {
-                        // Add the '%' sign to the labels
                         callback: function(value) {
                             return value + '%';
                         }
