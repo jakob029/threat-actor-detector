@@ -3,6 +3,7 @@
 import logging
 from pathlib import Path
 from datetime import datetime
+from os import environ
 
 from flask import Flask
 from flask_restful import Api
@@ -14,7 +15,7 @@ from src.api.endpoints.conversation_endpoint import ConversationsEndpoint
 
 Path("logs").mkdir(parents=True, exist_ok=True)
 
-HOST = "0.0.0.0" # Change this to 10.40.0.40 when in production
+HOST = environ.get("API_ADDRESS")
 
 logging.basicConfig(
     filename=f"logs/{datetime.now().strftime('%Y-%m-%d')}",

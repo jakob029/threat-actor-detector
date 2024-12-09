@@ -50,6 +50,8 @@ TAD_MYSQL_PASSWORD=<PASSWORD>   # User password
 TAD_MYSQL_DATABASE=tad      	# Database name
 TAD_MYSQL_USER=<USER>          	# User name
 
+API_ADDRESS=10.40.0.40
+
 # Vector database options
 VECTOR_DB_HOST=100.77.88.70     # Vector database host address
 VECTOR_DB_PORT=5000             # Vector database host open port
@@ -74,6 +76,8 @@ TAD_MYSQL_HOST=100.77.88.30  	     # MySQL host
 TAD_MYSQL_PASSWORD=<PASSWORD>        # User password
 TAD_MYSQL_DATABASE=ioc_apt_mapping   # Database name
 TAD_MYSQL_USER=<USER>          	     # User name
+
+CHROMA_DB_ADDRESS=10.50.0.50
 ```
 
 
