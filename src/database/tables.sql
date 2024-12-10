@@ -1,3 +1,8 @@
+
+drop table `graph`;
+drop table `message`;
+drop table `conversation`;
+
 -- Generic user data.
 CREATE TABLE `user` (
     `created` DATETIME,
@@ -9,24 +14,15 @@ CREATE TABLE `user` (
     PRIMARY KEY (`uid`)
 );
 
--- sessions
-CREATE TABLE `session` (
-	`created` DATETIME,
-    `last_access` DATETIME,
-    `death_time` DATETIME,
-    `token` VARCHAR(36) UNIQUE NOT NULL,
-    `uid` VARCHAR(36) NOT NULL,
-    PRIMARY KEY (`token`),
-    FOREIGN KEY (`uid`) REFERENCES `user`(`uid`)
-);
-
 -- conversations.
 CREATE TABLE `conversation` (
     `cid` VARCHAR(36) UNIQUE NOT NULL,
     `uid` VARCHAR(36) NOT NULL,
     `title` VARCHAR(64),
     PRIMARY KEY (`cid`),
-    FOREIGN KEY (`uid`) REFERENCES `user`(`uid`)
+    FOREIGN KEY (`uid`) 
+      REFERENCES `user`(`uid`)
+      ON DELETE CASCADE
 );
 
 -- Messages
@@ -36,14 +32,18 @@ CREATE TABLE `message` (
   `role` VARCHAR(24),
   `text` VARCHAR(12288),
   PRIMARY KEY (`cid`, `index`),
-  FOREIGN KEY (`cid`) REFERENCES `conversation`(`cid`)
+  FOREIGN KEY (`cid`) 
+    REFERENCES `conversation`(`cid`)
+    ON DELETE CASCADE
 );
-drop table `graph`;
+
 -- Graphs
 CREATE TABLE `graph` (
   `cid` VARCHAR(36) NOT NULL,
   `name` VARCHAR(64),
   `value` INT,
   PRIMARY KEY (`cid`, `name`),
-  FOREIGN KEY (`cid`) REFERENCES `conversation`(`cid`)
+  FOREIGN KEY (`cid`) 
+    REFERENCES `conversation`(`cid`)
+    ON DELETE CASCADE
 );

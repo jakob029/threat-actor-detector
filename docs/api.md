@@ -136,9 +136,51 @@ Registers a new user.
 
 #### Failed
 
-No error implemented.
+```json
+{
+    "mesage": "<ERROR_MESSAGE>"
+}
+```
 
 </details>
+
+<details>
+
+<summary>User deletion</summary>
+
+### DELETE
+
+Deletes a user and all conversations.
+
+    http://<HOST>:<PORT>/user/<UID>
+
+#### Request body
+
+```json
+{
+    "username": "<username>",
+    "password": "<password>"
+}
+```
+
+#### Response body
+
+```json
+{
+    "mesage": "<RESONSE_MESSAGE>"
+}
+```
+
+#### Failed
+
+```json
+{
+    "mesage": "<ERROR_MESSAGE>"
+}
+```
+
+</details>
+
 
 <details>
 
