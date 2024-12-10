@@ -1,3 +1,5 @@
+DROP PROCEDURE reset_conversation;
+
 DELIMITER $$
 
 CREATE PROCEDURE reset_conversation(
@@ -11,7 +13,7 @@ BEGIN
       INTO `found_cid`;
         
   -- validate conversation existance. 
-  IF `found_uid` = 0 THEN
+  IF `found_cid` = 0 THEN
       SIGNAL SQLSTATE '45000'
           SET MESSAGE_TEXT = 'Conversation does not exist.';
   END IF;

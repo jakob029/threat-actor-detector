@@ -11,6 +11,7 @@ import secrets
 from re import findall
 from argon2 import PasswordHasher
 from src.api.backend_connectors.database_connector import (
+    delete_user,
     username_exist,
     register_user,
     get_user_id,
@@ -19,6 +20,7 @@ from src.api.backend_connectors.database_connector import (
     get_user_salt,
 )
 from src.api.api_exceptions import (
+    DELETETION_ERROR,
     PASSWORD_TOO_WEAK,
     USER_ALREADY_EXIST,
     USER_DOES_NOT_EXIST,
@@ -68,6 +70,29 @@ def register(username: str, password: str):
     logger.debug(f"Created user, Username: {username} | Password: {password_hash}")
 
 
+def validate_user_delition(uid: str, password: str, username: str):
+    """Delete the user if the credentials match.
+
+    Arguments:
+        uid (str): user id.
+        password (str): user password.
+        username (str): username.
+
+    Raises:
+        AuthenticationException: USERNAME_TOO_LONG | USER_DOES_NOT_EXIST
+        DatabaseException: VARIABLE_NOT_SET | UNKOWN_ISSUE | USER_DOES_NOT_EXIST
+        TypeError
+        VerifyMismatchError
+
+    """
+    test_uid = authenicate(username, password)
+
+    if test_uid == uid:
+        delete_user(uid)
+    else:
+        raise AuthenticationException("Credentials does not match.", DELETETION_ERROR)
+
+
 def authenicate(username: str, password: str) -> str:
     """Authenticate the user.
 
@@ -82,6 +107,7 @@ def authenicate(username: str, password: str) -> str:
         AuthenticationException: USERNAME_TOO_LONG | USER_DOES_NOT_EXIST
         DatabaseException: VARIABLE_NOT_SET | UNKOWN_ISSUE | USER_DOES_NOT_EXIST
         TypeError
+        VerifyMismatchError
     """
     # validate username length.
     if len(username) > 40:

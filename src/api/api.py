@@ -36,7 +36,7 @@ api = Api(app)
 
 api.add_resource(Analyzis, "/analyzis/<string:cid>", "/analyzis", methods=["GET", "POST"])
 api.add_resource(Registration, "/user/register", methods=["POST"])
-api.add_resource(Authentication, "/user/login", methods=["POST"])
+api.add_resource(Authentication, "/user/login", "/user/<string:uid>", methods=["POST", "DELETE"])
 api.add_resource(ConversationsEndpoint, "/conversations/<string:uid>", "/conversations", methods=["GET", "POST"])
 api.add_resource(MessagesEndpoint, "/messages/<string:cid>", "/messages", methods=["GET", "DELETE", "POST"])
 

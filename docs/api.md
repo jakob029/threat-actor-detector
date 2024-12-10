@@ -136,9 +136,51 @@ Registers a new user.
 
 #### Failed
 
-No error implemented.
+```json
+{
+    "mesage": "<ERROR_MESSAGE>"
+}
+```
 
 </details>
+
+<details>
+
+<summary>User deletion</summary>
+
+### DELETE
+
+Deletes a user and all conversations.
+
+    http://<HOST>:<PORT>/user/<UID>
+
+#### Request body
+
+```json
+{
+    "username": "<username>",
+    "password": "<password>"
+}
+```
+
+#### Response body
+
+```json
+{
+    "mesage": "<RESONSE_MESSAGE>"
+}
+```
+
+#### Failed
+
+```json
+{
+    "mesage": "<ERROR_MESSAGE>"
+}
+```
+
+</details>
+
 
 <details>
 
@@ -227,7 +269,8 @@ Adds a message to an already existing conversation.
 
 ```json
 {
-    "mesage": "success"
+    "mesage": "success",
+    "response": "<LLM_RESPONSE>"
 }
 ```
 
@@ -249,7 +292,11 @@ Get all messages for a conversation.
 
 ```json
 {
-    "mesage": "success"
+    "mesage": "success",
+    "data_points": {
+		"ENTRY_2": "<FLOAT>",
+		"ENRTY_1": "<FLOAT>"
+    },
     "conversation_history": [
         {
             "role": "<SENDER_ROLE_1>",

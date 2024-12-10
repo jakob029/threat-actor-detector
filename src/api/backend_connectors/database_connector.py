@@ -485,3 +485,23 @@ def reset_conversation(cid: str):
             raise DatabaseException("Conversation does not exist.", CONVERSATION_DOES_NOT_EXIST) from err
 
         raise DatabaseException(str(err.msg), UNKNOWN_ISSUE) from err
+
+
+def delete_user(uid: str):
+    """Deletes the user and all data with it.
+
+    Arguments:
+        uid (str): user id.
+
+    Raises:
+        DatabaseException: UNKNOWN_ISSUE | VARIABLE_NOT_SET
+
+    """
+    db_config = _load_config()
+
+    try:
+        with connector.connect(**db_config) as db:
+            with db.cursor() as cursor:
+                cursor.callproc("delete_user", (uid,))
+    except Error as err:
+        raise DatabaseException(str(err.msg), UNKNOWN_ISSUE) from err
