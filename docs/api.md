@@ -296,7 +296,7 @@ Get all messages for a conversation.
     "data_points": {
 		"ENTRY_2": "<FLOAT>",
 		"ENRTY_1": "<FLOAT>"
-	}
+    },
     "conversation_history": [
         {
             "role": "<SENDER_ROLE_1>",
