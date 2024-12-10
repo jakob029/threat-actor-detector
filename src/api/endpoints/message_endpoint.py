@@ -8,7 +8,7 @@ Class:
 import logging
 from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
-from src.api.backend_connectors.database_connector import get_messages, reset_conversation
+from src.api.backend_connectors.database_connector import get_graph, get_messages, reset_conversation
 from src.api.api_exceptions import DatabaseException, CONVERSATION_DOES_NOT_EXIST
 from src.api.handlers.conversation_handler import hold_conversation
 
@@ -25,11 +25,12 @@ class MessagesEndpoint(Resource):
             cid (str): conversation id.
 
         Returns:
-            response (dict): list of messages.
+            response (dict): list of messages and the graph.
 
         """
         try:
             messages = get_messages(cid)
+            data_points = get_graph(cid)
 
             for message in messages.copy():
                 if message["role"] == "system":
@@ -41,7 +42,7 @@ class MessagesEndpoint(Resource):
             logger.error(e)
             return {"message": "something went wrong."}, 500
 
-        return {"message": "success", "conversation_history": messages}, 200
+        return {"message": "success", "conversation_history": messages, "data_points": data_points}, 200
 
     def post(self):
         """Add message.

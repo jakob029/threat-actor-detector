@@ -227,7 +227,8 @@ Adds a message to an already existing conversation.
 
 ```json
 {
-    "mesage": "success"
+    "mesage": "success",
+    "response": "<LLM_RESPONSE>"
 }
 ```
 
@@ -249,7 +250,11 @@ Get all messages for a conversation.
 
 ```json
 {
-    "mesage": "success"
+    "mesage": "success",
+    "data_points": {
+		"ENTRY_2": "<FLOAT>",
+		"ENRTY_1": "<FLOAT>"
+	}
     "conversation_history": [
         {
             "role": "<SENDER_ROLE_1>",
