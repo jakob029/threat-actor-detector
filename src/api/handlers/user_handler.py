@@ -87,7 +87,7 @@ def validate_user_delition(uid: str, password: str, username: str):
     """
     test_uid = authenicate(username, password)
 
-    if (test_uid == uid):
+    if test_uid == uid:
         delete_user(uid)
     else:
         raise AuthenticationException("Credentials does not match.", DELETETION_ERROR)

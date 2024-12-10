@@ -505,5 +505,3 @@ def delete_user(uid: str):
                 cursor.callproc("delete_user", (uid,))
     except Error as err:
         raise DatabaseException(str(err.msg), UNKNOWN_ISSUE) from err
-
-

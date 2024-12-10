@@ -53,7 +53,7 @@ class Authentication(Resource):
 
             if e.code == USER_DOES_NOT_EXIST:
                 return {"message": "User does not exist."}, 200
-            
+
             if e.code == DELETETION_ERROR:
                 return {"message": e.message}, 200
 
@@ -65,9 +65,7 @@ class Authentication(Resource):
             logger.error(e)
             return {"message": "Something went wrong"}, 500
 
-
         return {"message": "success"}, 200
-
 
     def post(self):
         """Sign in the new user."""
