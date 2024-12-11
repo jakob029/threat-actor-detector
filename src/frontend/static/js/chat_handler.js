@@ -10,6 +10,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let pendingResponseBubble = null;
 
+    function updateChatPlaceholder() {
+        const chatContainer = document.getElementById('chatContainer');
+        if (chatList.childElementCount === 0) {
+            chatContainer.innerHTML = `<div class="chat-placeholder animate"> Start by creating a new chat!</div>`;
+        } else {
+            chatContainer.innerHTML = ''; // Clear placeholder
+        }
+    }
+    
+    
+
     function addMessageToChat(content, type) {
         const messageBubble = document.createElement('div');
         messageBubble.className = `chat-bubble ${type}`;
@@ -185,6 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 addChatToSidebar(data.cid, date);
                 chatContainer.innerHTML = '';
                 document.getElementById("chartContainer").style.display = "none";
+                updateChatPlaceholder();
             }
         } catch (error) {
             console.error('Error creating new conversation:', error);
@@ -195,5 +207,8 @@ document.addEventListener('DOMContentLoaded', () => {
         chatList.innerHTML = '';
         chatContainer.innerHTML = '';
         document.getElementById("chartContainer").style.display = "none";
+        updateChatPlaceholder();
     });
+
+    updateChatPlaceholder();
 });

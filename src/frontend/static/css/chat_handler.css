@@ -107,3 +107,76 @@ body.dark-mode #chatForm button {
     100% { transform: rotate(360deg); }
 }
 
+/* Placeholder styling */
+.chat-placeholder {
+    max-width: 90%; /* Adjust width for better alignment */
+    padding: 20px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.8;
+    color: #666; /* Darker text for better readability */
+    background-color: #f1f1f1; /* Neutral light background */
+    border: 2px dashed #ccc; /* Dashed border to make it visually distinct */
+    border-radius: 15px;
+    margin: 20px auto; /* Center the placeholder with some spacing */
+    align-self: center; /* Ensure alignment in the chat container */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+}
+
+body.dark-mode .chat-placeholder {
+    background-color: #333333; /* Dark mode background */
+    color: #ddd; /* Light text for dark mode */
+    border: 2px dashed #555555; /* Subtle border for dark mode */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5); /* Adjust shadow for dark mode */
+}
+
+/* Add subtle animation for the placeholder */
+.chat-placeholder.animate {
+    animation: fadeInScale 0.5s ease-in-out;
+}
+
+
+/* Ensure <pre> and <code> elements are left-aligned */
+.chat-bubble pre, 
+.chat-bubble code {
+    text-align: left; /* Align text to the left */
+    font-family: 'Courier New', Courier, monospace; /* Use a monospaced font */
+    font-size: 14px; /* Adjust font size */
+    overflow-x: auto; /* Enable horizontal scrolling for long lines */
+    background-color: #f4f4f4; /* Light mode background for code blocks */
+    color: #333; /* Light mode text color for code blocks */
+    padding: 10px; /* Add padding for better spacing */
+    border-radius: 8px; /* Rounded corners */
+    margin: 5px 0; /* Spacing between code blocks */
+}
+
+body.dark-mode .chat-bubble pre, 
+body.dark-mode .chat-bubble code {
+    background-color: #2d2d2d; /* Dark mode background for code blocks */
+    color: #e8e8e8; /* Light text color for dark mode */
+}
+
+/* Remove additional padding or margin from inline code */
+.chat-bubble pre {
+    margin: 0;
+    padding: 0;
+}
+
+/* Highlight.js or syntax highlighting styles if necessary */
+.chat-bubble .hljs {
+    text-align: left; /* Ensure syntax-highlighted code is left-aligned */
+    background: none; /* Ensure background matches theme */
+}
+
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
