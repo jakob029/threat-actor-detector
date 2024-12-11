@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateChatPlaceholder() {
         const chatContainer = document.getElementById('chatContainer');
         if (chatList.childElementCount === 0) {
-            chatContainer.innerHTML = `<div class="chat-placeholder animate"> Start by creating a new chat!</div>`;
+            chatContainer.innerHTML = `<div class="chat-placeholder animate"> Start by creating a new chat or selecting an already existing one!</div>`;
         } else {
             chatContainer.innerHTML = ''; // Clear placeholder
         }
