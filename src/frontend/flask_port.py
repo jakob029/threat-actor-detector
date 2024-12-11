@@ -144,26 +144,23 @@ def chat():
 
 
 
-@app.route("/messages", methods=["POST"])
-def send_message():
-    cid = session.get("cid")
-    text = request.json.get("text")
-
-    if not cid or not text:
-        return jsonify({"message": "Missing conversation ID or message text"}), 400
-
+@app.route("/messages/<cid>", methods=["GET"])
+def get_messages(cid):
     try:
-        response = requests.post(f"{BASE_URL}/messages", json={"cid": cid, "text": text})
+        response = requests.get(f"{BASE_URL}/messages/{cid}")
         response_data = response.json()
+
         if response.status_code == 200 and response_data.get("message") == "success":
             return jsonify({
                 "message": "success",
-                "response": response_data.get("response")
+                "conversation_history": response_data.get("conversation_history"),
+                "data_points": response_data.get("data_points", {})
             })
         else:
-            return jsonify({"message": response_data.get("message", "Failed to process message")}), 500
+            return jsonify({"message": response_data.get("message", "Failed to fetch messages")}), 500
     except requests.RequestException as e:
         return jsonify({"message": f"Error communicating with backend: {str(e)}"}), 500
+
 
 @app.route("/logout", methods=["POST"])
 def logout():

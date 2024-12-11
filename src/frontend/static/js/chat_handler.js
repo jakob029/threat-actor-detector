@@ -2,7 +2,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatForm = document.getElementById('chatForm');
     const chatInput = document.getElementById('chatInput');
     const chatContainer = document.getElementById('chatContainer');
-    const chartContainer = document.getElementById('chartContainer'); // Ensure this exists in your HTML
+    const chartContainer = document.getElementById('chartContainer');
+    const newChatButton = document.querySelector('.sidebar-button.new-chat');
+    const clearHistoryButton = document.querySelector('.sidebar-button.clear-history');
+    const sidebarContent = document.querySelector('.sidebar-content');
+    const chatList = sidebarContent.querySelector('.chat-list');
+
     let pendingResponseBubble = null;
 
     function addMessageToChat(content, type) {
@@ -14,24 +19,45 @@ document.addEventListener('DOMContentLoaded', () => {
         return messageBubble;
     }
 
+    function renderConversation(messages) {
+        chatContainer.innerHTML = '';
+        messages.forEach((msg) => {
+            const type = msg.role === 'user' ? 'user' : 'bot';
+            addMessageToChat(msg.content, type);
+        });
+    }
+
+    async function renderChartWrapper(dataPoints) {
+        if (dataPoints && Object.keys(dataPoints).length > 0) {
+            document.getElementById("chartContainer").style.display = "block";
+            renderChart(dataPoints); // Assuming renderChart is imported or globally available
+        } else {
+            document.getElementById("chartContainer").style.display = "none";
+        }
+    }
+
     chatForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
         const userInput = chatInput.value.trim();
         if (!userInput) return;
 
-        // Add the user's message to the chat
         addMessageToChat(userInput, 'user');
         chatInput.value = '';
 
         const currentChatItem = document.querySelector('.chat-item.active-chat');
-        const currentCid = currentChatItem.dataset.cid;
-        const isNew = currentChatItem.dataset.isNew === 'true';
+        const currentCid = currentChatItem?.dataset.cid;
+        const isNew = currentChatItem?.dataset.isNew === 'true';
+
+        if (!currentCid) {
+            console.error("No active chat selected. Unable to send message.");
+            return;
+        }
 
         const body = {
             cid: currentCid,
             prompt: userInput,
-            is_new: isNew  // Send the flag to the backend
+            is_new: isNew
         };
 
         pendingResponseBubble = addMessageToChat('', 'bot');
@@ -47,41 +73,31 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             const data = await response.json();
-
             pendingResponseBubble.innerHTML = '';
 
             if (response.ok) {
-                // Render markdown for the bot's response
-                const dirtyHTML = marked.parse(data.response || 'No response');
-                const cleanHTML = DOMPurify.sanitize(dirtyHTML);
+                const cleanHTML = DOMPurify.sanitize(marked.parse(data.response || 'No response'));
                 pendingResponseBubble.innerHTML = cleanHTML;
-
-                // Highlight code blocks if present
                 pendingResponseBubble.querySelectorAll('pre code').forEach((block) => {
                     hljs.highlightElement(block);
                 });
 
-                // Render the chart using data points
-                if (data.data_points && Object.keys(data.data_points).length > 0) {
-                    document.getElementById("chartContainer").style.display = "block"; // Show chart container
-                    renderChart(data.data_points); // Call renderChart with the data points
-                } else {
-                    document.getElementById("chartContainer").style.display = "none"; // Hide if no data points
-                }
+                // Render chart if `data_points` are available
+                await renderChartWrapper(data.data_points);
 
                 if (isNew) {
-                    currentChatItem.dataset.isNew = false; // Mark as no longer new
+                    currentChatItem.dataset.isNew = false;
                 }
             } else {
                 pendingResponseBubble.innerHTML = `<p>${data.message || 'Error communicating with the server.'}</p>`;
-                document.getElementById("chartContainer").style.display = "none"; // Hide chart on error
+                document.getElementById("chartContainer").style.display = "none";
             }
         } catch (error) {
             console.error('Error during chat submission:', error);
             pendingResponseBubble.innerHTML = '<p>Error communicating with the server.</p>';
-            document.getElementById("chartContainer").style.display = "none"; // Hide chart on exception
+            document.getElementById("chartContainer").style.display = "none";
         } finally {
-            pendingResponseBubble = null; // Reset the pending response bubble
+            pendingResponseBubble = null;
         }
     });
 
@@ -99,17 +115,67 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-});
 
-function renderConversation(messages) {
-    const chatContainer = document.getElementById('chatContainer');
+    async function loadConversation(cid) {
+        try {
+            const response = await fetch(`/messages/${cid}`);
+            if (!response.ok) throw new Error(`Failed to fetch messages: ${response.statusText}`);
+            const data = await response.json();
 
-    chatContainer.innerHTML = '';
+            if (data.message === 'success') {
+                renderConversation(data.conversation_history);
+                await renderChartWrapper(data.data_points); // Render chart with the conversation's `data_points`
+            }
+        } catch (error) {
+            console.error('Error fetching conversation:', error);
+        }
+    }
 
-    messages.forEach((msg) => {
-        const type = msg.role === 'user' ? 'user' : 'bot';
-        addMessageToChat(msg.text, type);
+    function setActiveChat(chatItem) {
+        chatList.querySelectorAll('.chat-item').forEach((c) => c.classList.remove('active-chat'));
+        chatItem.classList.add('active-chat');
+    }
+
+    function addChatToSidebar(cid, baseDateLabel) {
+        const chatItem = document.createElement('button');
+        chatItem.classList.add('sidebar-button', 'chat-item');
+        chatItem.textContent = baseDateLabel;
+        chatItem.dataset.cid = cid || '';
+        chatItem.dataset.isNew = true;
+
+        chatItem.addEventListener('click', () => {
+            setActiveChat(chatItem);
+            loadConversation(cid);
+        });
+
+        chatList.appendChild(chatItem);
+        setActiveChat(chatItem);
+        renderConversation([]);
+    }
+
+    newChatButton?.addEventListener('click', async () => {
+        const date = new Date().toISOString().split('T')[0];
+
+        try {
+            const response = await fetch('/conversations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const data = await response.json();
+            if (response.ok && data.cid) {
+                addChatToSidebar(data.cid, date);
+                chatContainer.innerHTML = '';
+                document.getElementById("chartContainer").style.display = "none";
+            }
+        } catch (error) {
+            console.error('Error creating new conversation:', error);
+        }
     });
-}
 
-export { renderConversation };
+    clearHistoryButton?.addEventListener('click', () => {
+        chatList.innerHTML = '';
+        chatContainer.innerHTML = '';
+        document.getElementById("chartContainer").style.display = "none";
+    });
+});
