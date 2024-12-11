@@ -13,21 +13,26 @@ if [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     touch ../src/api/.env 
     echo "
 # LLM options
-TAD_LLM_MODEL=llama3.1                    # Model to use
-TAD_LLM_ADDRESS=http://100.77.88.10       # Ollama address
-TAD_LLM_PREPROPT_PATH=./src/api/prepromt  # Preprompt path
+TAD_LLM_MODEL=llama3.1                                    # Model to use
+TAD_LLM_ADDRESS=https://llm.infra.encryptedallies.com     # Ollama address
+TAD_LLM_PREPROPT_PATH=./src/api/prepromt                  # Preprompt path
 
 # Database options
-TAD_MYSQL_HOST=100.77.88.30  	  # MySQL host
+TAD_MYSQL_HOST=10.51.0.51  	    # MySQL host
 TAD_MYSQL_PASSWORD=<PASSWORD>   # User password
 TAD_MYSQL_DATABASE=tad      	  # Database name
 TAD_MYSQL_USER=<USER>          	# User name
 
-API_ADDRESS=10.40.0.40
+BIND_ADDRESS=10.40.0.40
 
 # Vector database options
-VECTOR_DB_HOST=100.77.88.70     # Vector database host address
+VECTOR_DB_HOST=10.50.0.50    # Vector database host address
 VECTOR_DB_PORT=5000             # Vector database host open port
+    " >> ../src/api/.env
+    
+    echo "
+# Traefik-2
+10.40.0.30  llm.infra.encryptedallies.com
     " >> ../src/api/.env
 
     if command -v vim 2>&1 >/dev/null; then

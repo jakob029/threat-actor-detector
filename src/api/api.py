@@ -15,7 +15,7 @@ from src.api.endpoints.conversation_endpoint import ConversationsEndpoint
 
 Path("logs").mkdir(parents=True, exist_ok=True)
 
-HOST = environ.get("API_ADDRESS")
+HOST = environ.get("BIND_ADDRESS")
 
 logging.basicConfig(
     filename=f"logs/{datetime.now().strftime('%Y-%m-%d')}",
