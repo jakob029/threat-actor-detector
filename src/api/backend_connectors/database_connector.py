@@ -509,6 +509,46 @@ def delete_user(uid: str):
         raise DatabaseException(str(err.msg), UNKNOWN_ISSUE) from err
 
 
+def delete_conversation(cid: str):
+    """Deletes the conversation fully.
+
+    Arguments:
+        cid (str): conversation id.
+
+    Raises:
+        DatabaseException: UNKNOWN_ISSUE | VARIABLE_NOT_SET
+
+    """
+    db_config = _load_config(environ.get("TAD_MYSQL_DATABASE"))
+
+    try:
+        with connector.connect(**db_config) as db:
+            with db.cursor() as cursor:
+                cursor.callproc("delete_conversation", (cid,))
+    except Error as err:
+        raise DatabaseException(str(err.msg), UNKNOWN_ISSUE) from err
+
+
+def delete_all_conversations(uid: str):
+    """Fully delete all conversations for a user.
+
+    Arguments:
+        uid (str): user id.
+
+    Raises:
+        DatabaseException: UNKNOWN_ISSUE | VARIABLE_NOT_SET
+
+    """
+    db_config = _load_config(environ.get("TAD_MYSQL_DATABASE"))
+
+    try:
+        with connector.connect(**db_config) as db:
+            with db.cursor() as cursor:
+                cursor.callproc("delete_all_conversations", (uid,))
+    except Error as err:
+        raise DatabaseException(str(err.msg), UNKNOWN_ISSUE) from err
+
+
 def collect_ioc_mapping(IoC: str) -> tuple | None:
     """Collect which APT a given IoC is mapped to based on IoC database.
 
