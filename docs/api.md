@@ -367,6 +367,7 @@ Removes all messages and the graph for a conversation.
 - `TAD_MYSQL_USER` username of TAD managment account.
 - `TAD_MYSQL_PASSWORD` user password.
 - `TAD_MYSQL_DATABASE` database name.
+- `IOC_MYSQL_DATABASE` IoC database name.
 
 ## Example usage
 

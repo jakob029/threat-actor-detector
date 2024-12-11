@@ -27,7 +27,7 @@ def send_prompt(prompt: list) -> str:
         response (str): llm response.
 
     """
-    llm_model = os.environ.get("LLM_MODEL", default="llama3.2")
+    llm_model = os.environ.get("LLM_MODEL", default="llama3.1")
     llm_address = os.environ.get("LLM_ADDRESS", default="https://llm.infra.encryptedallies.com")
 
     client: Client = Client(host=llm_address, timeout=120)
@@ -51,7 +51,7 @@ def send_analyze_prompt(prompt: str | list, cid: str) -> str:
 
     """
     location = Path(os.path.dirname(os.path.abspath(__file__))).parent.absolute()
-    llm_model = os.environ.get("LLM_MODEL", default="llama3.2")
+    llm_model = os.environ.get("LLM_MODEL", default="llama3.1")
     llm_address = os.environ.get("LLM_ADDRESS", default="http://100.77.88.10")
     llm_preprompt_path = os.environ.get("LLM_PREPROMPT_PATH", default=f"{location}/prepromt")
 
