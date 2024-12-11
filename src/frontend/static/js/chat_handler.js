@@ -2,85 +2,89 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatForm = document.getElementById('chatForm');
     const chatInput = document.getElementById('chatInput');
     const chatContainer = document.getElementById('chatContainer');
-    let pendingResponseBubble = null; // To store the bubble currently showing the loader
+    const chartContainer = document.getElementById('chartContainer'); // Ensure this exists in your HTML
+    let pendingResponseBubble = null;
 
     function addMessageToChat(content, type) {
         const messageBubble = document.createElement('div');
         messageBubble.className = `chat-bubble ${type}`;
-        messageBubble.innerHTML = content; 
+        messageBubble.innerHTML = content;
         chatContainer.appendChild(messageBubble);
-        chatContainer.scrollTop = chatContainer.scrollHeight; 
+        chatContainer.scrollTop = chatContainer.scrollHeight;
         return messageBubble;
     }
 
     chatForm.addEventListener('submit', async (event) => {
         event.preventDefault();
-        const userInput = chatInput.value.trim();
 
+        const userInput = chatInput.value.trim();
         if (!userInput) return;
 
-        // Add the user's message
+        // Add the user's message to the chat
         addMessageToChat(userInput, 'user');
         chatInput.value = '';
 
-        // Create a bot bubble with a loader
+        const currentChatItem = document.querySelector('.chat-item.active-chat');
+        const currentCid = currentChatItem.dataset.cid;
+        const isNew = currentChatItem.dataset.isNew === 'true';
+
+        const body = {
+            cid: currentCid,
+            prompt: userInput,
+            is_new: isNew  // Send the flag to the backend
+        };
+
         pendingResponseBubble = addMessageToChat('', 'bot');
         const loader = document.createElement('div');
         loader.className = 'loader';
         pendingResponseBubble.appendChild(loader);
-        chatContainer.scrollTop = chatContainer.scrollHeight;
 
         try {
             const response = await fetch('/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt: userInput }),
+                body: JSON.stringify(body),
             });
+
             const data = await response.json();
 
-            // Remove loader before inserting the actual response
             pendingResponseBubble.innerHTML = '';
 
             if (response.ok) {
-                // Render markdown
+                // Render markdown for the bot's response
                 const dirtyHTML = marked.parse(data.response || 'No response');
                 const cleanHTML = DOMPurify.sanitize(dirtyHTML);
-
-                // Insert sanitized HTML
                 pendingResponseBubble.innerHTML = cleanHTML;
 
-                // Highlight code blocks
+                // Highlight code blocks if present
                 pendingResponseBubble.querySelectorAll('pre code').forEach((block) => {
                     hljs.highlightElement(block);
                 });
 
-                // Debugging: Log the data_points
-                console.log("Data points received:", data.data_points);
-
-                // Handle data points for chart
+                // Render the chart using data points
                 if (data.data_points && Object.keys(data.data_points).length > 0) {
-                    console.log("Rendering chart with data points:", data.data_points);
-                    document.getElementById("chartContainer").style.display = "block";
-                    renderChart(data.data_points);
+                    document.getElementById("chartContainer").style.display = "block"; // Show chart container
+                    renderChart(data.data_points); // Call renderChart with the data points
                 } else {
-                    console.log("No data points available, hiding chart.");
-                    document.getElementById("chartContainer").style.display = "none";
+                    document.getElementById("chartContainer").style.display = "none"; // Hide if no data points
                 }
 
+                if (isNew) {
+                    currentChatItem.dataset.isNew = false; // Mark as no longer new
+                }
             } else {
-                pendingResponseBubble.innerHTML = `<p>${data.message || "Error communicating with the server."}</p>`;
-                document.getElementById("chartContainer").style.display = "none";
+                pendingResponseBubble.innerHTML = `<p>${data.message || 'Error communicating with the server.'}</p>`;
+                document.getElementById("chartContainer").style.display = "none"; // Hide chart on error
             }
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error during chat submission:', error);
             pendingResponseBubble.innerHTML = '<p>Error communicating with the server.</p>';
-            document.getElementById("chartContainer").style.display = "none";
+            document.getElementById("chartContainer").style.display = "none"; // Hide chart on exception
         } finally {
-            pendingResponseBubble = null;
+            pendingResponseBubble = null; // Reset the pending response bubble
         }
     });
 
-    // Handle "Enter" and "Shift+Enter" in chatInput
     chatInput.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
             if (event.shiftKey) {
@@ -97,19 +101,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-
 function renderConversation(messages) {
     const chatContainer = document.getElementById('chatContainer');
 
-    // Clear current chat
     chatContainer.innerHTML = '';
 
-    // Render each message
-    messages.forEach(msg => {
-        const type = (msg.role === 'user') ? 'user' : 'bot';
+    messages.forEach((msg) => {
+        const type = msg.role === 'user' ? 'user' : 'bot';
         addMessageToChat(msg.text, type);
     });
 }
 
-// Export if needed, or just ensure this file is included and addMessageToChat is accessible
 export { renderConversation };
