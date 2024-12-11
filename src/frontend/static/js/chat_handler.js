@@ -31,8 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dataPoints && Object.keys(dataPoints).length > 0) {
             document.getElementById("chartContainer").style.display = "block";
             renderChart(dataPoints); // Assuming renderChart is imported or globally available
-        } else {
-            document.getElementById("chartContainer").style.display = "none";
         }
     }
 
