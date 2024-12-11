@@ -49,6 +49,7 @@ TAD_MYSQL_HOST=100.77.88.30  	# MySQL host
 TAD_MYSQL_PASSWORD=<PASSWORD>   # User password
 TAD_MYSQL_DATABASE=tad      	# Database name
 TAD_MYSQL_USER=<USER>          	# User name
+IOC_MYSQL_DATABASE=ioc_apt_mapping
 
 API_ADDRESS=10.40.0.40
 
