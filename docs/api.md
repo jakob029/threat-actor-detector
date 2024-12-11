@@ -218,6 +218,37 @@ Create a new conversation.
 }
 ```
 
+### POST
+
+Create a new conversation.
+
+    http://<HOST>:<PORT>/conversations
+
+#### Request body
+
+```json
+{
+    "uid": "<USER_ID>",
+    "title": "TITLE"
+}
+```
+
+#### Response body
+
+```json
+{
+    "mesage": "<RESONSE_MESSAGE>"
+    "cid": "<CONVERSATION_ID>"
+}
+```
+
+#### Failed
+
+```json
+{
+    "mesage": "<ERROR_MESSAGE>"
+}
+```
 ### GET
 
 Get all user conversations.
@@ -233,6 +264,48 @@ Get all user conversations.
         "<CONVERSATION_ID_1>": "<CONVERSATION_TITLE_1>",
         "<CONVERSATION_ID_2>": "<CONVERSATION_TITLE_2>"
     }
+}
+```
+
+#### Failed
+
+```json
+{
+    "mesage": "<ERROR_MESSAGE>"
+}
+```
+
+### DELETE
+
+Deletes a conversation(s).
+
+    http://<HOST>:<PORT>/conversations
+
+#### Request body
+
+It will follow *option 2* if both the *cid* and *uid* is given.
+
+##### Option 1 delete all conversations
+
+```json
+{
+    "uid": "<USER_ID>",
+}
+```
+
+##### Option 2 delete one conversation
+
+```json
+{
+    "cid": "<CONVERSATION_ID>",
+}
+```
+
+#### Response body
+
+```json
+{
+    "mesage": "success"
 }
 ```
 
