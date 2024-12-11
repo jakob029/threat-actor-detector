@@ -8,26 +8,61 @@
     border: 1px solid #e0e0e0;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    padding: 10px;
+    padding: 0;
     z-index: 1000;
-    transition: all 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Sidebar Content Styles */
+/* Sidebar Content */
 .sidebar-content {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    height: 100%; /* Ensures the sidebar takes full height */
 }
 
-/* Chat list with uniform spacing */
+/* Sticky New Chat at the Top */
+.new-chat {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: #f4f4f4;
+    color: #333333;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+/* Scrollable Chat List */
 .chat-list {
+    flex: 1; /* Allows the chat list to grow and occupy available space */
+    overflow-y: auto; /* Enables scrolling for overflow */
+    padding: 10px; /* Add some padding for aesthetics */
     display: flex;
     flex-direction: column;
     gap: 10px;
+    max-height: 375px; /* Adjust height to account for sticky buttons */
 }
 
-/* Sidebar Buttons */
+/* Sticky Clear History at the Bottom */
+.clear-history {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    background-color: #f4f4f4;
+    color: #333333;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    border-top: 1px solid #e0e0e0;
+}
+
+/* Sidebar Button Styles */
 .sidebar-button {
     width: 100%;
     padding: 10px;
@@ -37,31 +72,39 @@
     border-radius: 4px;
     text-align: center;
     cursor: pointer;
-    transition: background-color 0.3s ease-in-out; /* Removed transform scaling */
+    transition: background-color 0.3s ease-in-out;
 }
 
+/* Hover Effects */
 .sidebar-button:hover {
-    background-color: #e0e0e0; /* Slightly darker on hover for non-active chats */
-    color: #333333;
+    background-color: #e0e0e0;
 }
 
-/* Active chat styling: static green highlight, no scaling */
+/* Active Chat Styling */
 .active-chat {
-    background-color: #5cb85c !important; /* Green highlight */
+    background-color: #5cb85c !important;
     color: #ffffff !important;
 }
 
-/* Ensure hover doesn't override active chat color */
 .active-chat:hover {
-    background-color: #5cb85c; /* Remains the same green on hover */
-    color: #ffffff;
+    background-color: #5cb85c;
 }
 
-/* Dark Mode Styles */
+/* Dark Mode Styling */
 body.dark-mode .floating-sidebar {
     background-color: #333333;
     border: 1px solid #444444;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .new-chat, body.dark-mode .clear-history {
+    background-color: #444444;
+    color: #f4f4f4;
+    border-color: #555555;
+}
+
+body.dark-mode .new-chat:hover, body.dark-mode .clear-history:hover {
+    background-color: #555555;
 }
 
 body.dark-mode .sidebar-button {
@@ -70,12 +113,12 @@ body.dark-mode .sidebar-button {
 }
 
 body.dark-mode .sidebar-button:hover {
-    background-color: #555555; /* Slight hover for dark mode non-active chats */
+    background-color: #555555;
     color: #f4f4f4;
 }
 
 body.dark-mode .active-chat {
-    background-color: #4cae4c !important; /* Slightly different green for dark mode if desired */
+    background-color: #4cae4c !important;
     color: #333333 !important;
 }
 
@@ -83,11 +126,14 @@ body.dark-mode .active-chat {
 @media (max-width: 768px) {
     .floating-sidebar {
         width: 150px;
-        padding: 5px;
     }
 
-    .sidebar-button {
+    .new-chat, .clear-history {
         padding: 8px;
         font-size: 14px;
+    }
+
+    .chat-list {
+        gap: 8px;
     }
 }
