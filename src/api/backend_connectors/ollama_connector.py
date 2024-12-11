@@ -28,7 +28,7 @@ def send_prompt(prompt: list) -> str:
 
     """
     llm_model = os.environ.get("LLM_MODEL", default="llama3.2")
-    llm_address = os.environ.get("LLM_ADDRESS", default="http://100.77.88.10")
+    llm_address = os.environ.get("LLM_ADDRESS", default="https://llm.infra.encryptedallies.com")
 
     client: Client = Client(host=llm_address, timeout=120)
     llm_response = client.chat(model=llm_model, messages=prompt)
