@@ -143,7 +143,8 @@ body.dark-mode .chat-placeholder {
     text-align: left; /* Align text to the left */
     font-family: 'Courier New', Courier, monospace; /* Use a monospaced font */
     font-size: 14px; /* Adjust font size */
-    overflow-x: auto; /* Enable horizontal scrolling for long lines */
+    white-space: pre-wrap; /* Allow text wrapping */
+    word-wrap: break-word; /* Ensure long words wrap */
     background-color: #f4f4f4; /* Light mode background for code blocks */
     color: #333; /* Light mode text color for code blocks */
     padding: 10px; /* Add padding for better spacing */
