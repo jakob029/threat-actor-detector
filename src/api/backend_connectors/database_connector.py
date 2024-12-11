@@ -31,9 +31,9 @@ def _load_config(database: str) -> dict:
         config (dict): The configuration.
     """
     # Get variables.
-    host = environ.get("TAD_MYSQL_HOST")
-    user = environ.get("TAD_MYSQL_USER")
-    password = environ.get("TAD_MYSQL_PASSWORD")
+    host = "100.77.88.30" #environ.get("TAD_MYSQL_HOST")
+    user = "remote_user" #environ.get("TAD_MYSQL_USER")
+    password = "pass" #environ.get("TAD_MYSQL_PASSWORD")
 
     # Validate variables.
     if host is None:
