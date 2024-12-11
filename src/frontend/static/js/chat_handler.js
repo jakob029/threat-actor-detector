@@ -20,12 +20,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderConversation(messages) {
-        chatContainer.innerHTML = '';
+        chatContainer.innerHTML = ''; // Clear the chat container
+    
         messages.forEach((msg) => {
             const type = msg.role === 'user' ? 'user' : 'bot';
-            addMessageToChat(msg.content, type);
+            let content;
+    
+            if (type === 'bot') {
+                // Render Markdown and sanitize for bot responses
+                content = DOMPurify.sanitize(marked.parse(msg.content || ''));
+            } else {
+                // For user messages, keep plain text
+                content = msg.content;
+            }
+    
+            // Add the message to the chat
+            const messageBubble = addMessageToChat(content, type);
+    
+            if (type === 'bot') {
+                // Apply syntax highlighting for code blocks
+                messageBubble.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+            }
         });
     }
+    
 
     async function renderChartWrapper(dataPoints) {
         if (dataPoints && Object.keys(dataPoints).length > 0) {

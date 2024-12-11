@@ -30,19 +30,26 @@ async function createNewConversation() {
 // Function to load a conversation's entire message history from /messages/<cid>
 // Returns a promise that resolves to an array of message objects:
 // [{ role: "user" or "assistant", text: "<message>"}]
-async function loadConversationHistory(cid) {
-    const response = await fetch(`/messages/${cid}`, {
-        method: 'GET'
-    });
-    const data = await response.json();
+async function loadConversation(cid) {
+    try {
+        const response = await fetch(`/messages/${cid}`);
+        if (!response.ok) throw new Error(`Failed to fetch messages: ${response.statusText}`);
+        const data = await response.json();
 
-    if (!response.ok || data.mesage !== "success") {
-        throw new Error(data.mesage || "Failed to load conversation history");
+        if (data.message === 'success') {
+            // Render the conversation messages
+            renderConversation(data.conversation_history);
+
+            // Render the chart if data points are available
+            if (data.data_points && Object.keys(data.data_points).length > 0) {
+                await renderChartWrapper(data.data_points);
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching conversation:', error);
     }
-
-    // Return the conversation_history array directly
-    return data.conversation_history || [];
 }
+
 
 // Export the functions so other modules can use them
 export { createNewConversation, loadConversationHistory };
