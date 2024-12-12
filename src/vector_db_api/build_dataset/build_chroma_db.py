@@ -9,10 +9,10 @@ class VectorDB:
     """Helper class to construct a vector data base."""
 
     collection: chromadb.api.models.Collection.Collection
-    instruction_set: str | list
+    instruction_set: dict | str
     name: str
 
-    def __init__(self, instruction_set: str | list, name: str) -> None:
+    def __init__(self, instruction_set: dict | str, name: str) -> None:
         """Constructor.
 
         Args:
@@ -42,15 +42,12 @@ class VectorDB:
         """Build collection based on instruction_set."""
         keys = []
         values = []
-        for entries in self.instruction_set:
-            if not entries:
+        for groups, target in self.instruction_set.items():
+            if groups in keys:
+                values[keys.index(groups)] += f", {target}"
                 continue
-            for groups, target in entries.items():
-                if groups in keys:
-                    values[keys.index(groups)] += f", {target}"
-                    continue
-                keys.append(groups)
-                values.append(target)
+            keys.append(groups)
+            values.append(target)
 
         self.collection.add(documents=values, ids=keys)
 
