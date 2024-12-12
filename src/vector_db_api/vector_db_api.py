@@ -20,7 +20,7 @@ def setup_app() -> Flask:
     api.add_resource(GroupAnalyzer, "/GroupAnalyzer", methods=["GET"])
     api.add_resource(GroupDescriptor, "/GroupDescriptor", methods=["POST"])
 
-    app.run()
+    return app
 
 
 if __name__ == "__main__":

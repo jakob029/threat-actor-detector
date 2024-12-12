@@ -8,10 +8,7 @@ from src.vector_db_api.build_dataset.run import build_vector_database
 class GroupAnalyzer(Resource):
     """Group analyzer endpoint for vector db API."""
 
-    vector_databases: tuple
-
-    def __init__(self) -> None:
-        self.vector_databases: tuple = build_vector_database()
+    vector_databases: tuple = build_vector_database()
 
     def get(self) -> tuple:
         """Retrieve a response from the vector database.
