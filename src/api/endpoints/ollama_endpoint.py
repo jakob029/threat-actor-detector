@@ -11,6 +11,7 @@ from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
 from ollama import ResponseError
 from src.api.backend_connectors.database_connector import get_graph, add_message, reset_conversation
+from src.api.backend_connectors.ollama_connector import construct_analyze_prompt
 from src.api.backend_connectors.ollama_connector import send_analyze_prompt
 from src.api.handlers.statistic_parser import llama_json_parser
 from src.api.handlers.statistic_json_parser import SchemaParser
@@ -59,9 +60,11 @@ class Analyzis(Resource):
         prompt: str = args["prompt"]
         cid: str = args["cid"]
         counter: int = 0
+
+        constucted_prompt: list = construct_analyze_prompt(prompt, cid)
         while True:
             try:
-                response: str = send_analyze_prompt(prompt, cid)
+                response: str = send_analyze_prompt(constucted_prompt)
                 defined_json = SchemaParser()
                 statistics = defined_json.correct_structure(llama_json_parser(response))
 
