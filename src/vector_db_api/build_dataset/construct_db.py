@@ -26,7 +26,7 @@ class ConstructDataBase:
         Returns:
             Constructed APT-TTPs relationship mapping.
         """
-        relationship_map = []
+        relationship_map = {}
         relationship_files = os.listdir(f"{LOCATION}/{attack_path}/relationship")
 
         for relation_file in relationship_files:
@@ -38,7 +38,11 @@ class ConstructDataBase:
                 if not intrusion_set:
                     continue
                 relation_mapping = self._construct_mappings(self._generate_filepaths(intrusion_set))
-                relationship_map.append(relation_mapping)
+
+                if not relation_mapping:
+                    continue
+
+                self._insert_relationships(relationship_map, relation_mapping)
 
         with open(os.path.join(LOCATION, "constructed_dataset.json"), "w", encoding="utf-8") as file:
             json.dump(relationship_map, file)
@@ -148,4 +152,14 @@ class ConstructDataBase:
         if not aliases:
             return None
 
-        return {alias: description for alias in aliases}
+        return {alias: description.replace("Adversaries may ", "") for alias in aliases}
+
+    @staticmethod
+    def _insert_relationships(relationship_map: dict, relation_mapping: dict):
+        """."""
+        for alias, description in relation_mapping.items():
+            if not relationship_map.get(alias):
+                relationship_map[alias] = description
+                continue
+
+            relationship_map[alias] += description
