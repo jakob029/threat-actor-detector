@@ -11,11 +11,3 @@ function formatJsonData(jsonData) {
     html += '</ul>';
     return html;
 }
-
-// Allow "Enter" to submit the form, but "Shift+Enter" creates a new line
-document.getElementById('promptInput')?.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-        event.preventDefault();
-        document.getElementById('textInputForm').requestSubmit();
-    }
-});

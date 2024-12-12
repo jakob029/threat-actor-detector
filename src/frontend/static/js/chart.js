@@ -1,10 +1,11 @@
 let chartInstance = null;
 
 function renderChart(dataPoints) {
-    const ctx = document.getElementById("dataGraph").getContext("2d");
+    const canvas = document.getElementById("dataGraph");
+    const ctx = canvas?.getContext("2d");
 
     if (!ctx) {
-        console.error('Chart canvas element not found');
+        alert('Unable to render the chart. Canvas element not found.');
         return;
     }
 
@@ -30,7 +31,7 @@ function renderChart(dataPoints) {
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        callback: (value) => value + '%'
+                        callback: (value) => `${value}%`
                     }
                 }
             }
