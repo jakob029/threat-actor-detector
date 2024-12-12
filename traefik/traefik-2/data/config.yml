@@ -1,0 +1,65 @@
+http:
+ #region routers
+  routers:
+    llm:
+      entryPoints:
+        - "https"
+      rule: "Host(`llm.infra.encryptedallies.com`)"
+      middlewares:
+        - default-headers
+        - https-redirectscheme
+      tls: {}
+      service: llm
+    api:
+      entryPoints:
+        - "https"
+      rule: "Host(`api.infra.encryptedallies.com`)"
+      middlewares:
+        - default-headers
+        - https-redirectscheme
+      tls: {}
+      service: api
+#endregion
+
+#region services
+  services:
+    llm:
+      loadBalancer:
+        servers:
+          - url: "http://10.41.0.41:11434"
+        passHostHeader: true
+    api:
+      loadBalancer:
+        servers:
+          - url: "http://10.40.0.40:5000"
+        passHostHeader: true
+
+#endregion
+  middlewares:
+    https-redirectscheme:
+      redirectScheme:
+        scheme: https
+        permanent: true
+    default-headers:
+      headers:
+        frameDeny: true
+        browserXssFilter: true
+        contentTypeNosniff: true
+        forceSTSHeader: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 15552000
+        customFrameOptionsValue: SAMEORIGIN
+        customRequestHeaders:
+          X-Forwarded-Proto: https
+
+    default-whitelist:
+      ipAllowList:
+        sourceRange:
+          - "100.77.88.0/24"
+
+    secured:
+      chain:
+        middlewares:
+        - default-whitelist
+        - default-headers
