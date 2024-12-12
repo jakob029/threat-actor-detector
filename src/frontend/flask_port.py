@@ -15,6 +15,7 @@ def homepage():
         is_logged_in=is_logged_in,
         username=session.get("username"),
         cookies_accepted=cookies_accepted,
+        uid=session["uid"]
     )
 
 @app.route("/accept-cookies", methods=["POST"])
@@ -69,6 +70,32 @@ def create_conversation():
         return jsonify({"message": response_data.get("message", "Failed to create conversation")}), 400
     except Exception as e:
         return jsonify({"message": f"Internal server error: {str(e)}"}), 500
+
+
+@app.route("/conversations", methods=["GET"])
+def get_history():
+    uid = session.get("uid")
+    if not uid:
+        return jsonify({"message": "User not logged in"}), 401  # Consistent error handling
+
+    print(f"Fetching history for UID: {uid}")  # Debug UID
+
+    try:
+        # Forward the request to the backend API
+        response = requests.get(f"{BASE_URL}/conversations/{uid}")
+        response_data = response.json()
+
+        if response.status_code == 200 and response_data.get("message") == "success":
+            # Consistent key for the client
+            return jsonify({
+                "message": "success",
+                "conversations": response_data.get("conversations", {})
+            })
+        else:
+            return jsonify({"message": response_data.get("message", "Failed to fetch conversations")}), response.status_code
+    except requests.RequestException as e:
+        return jsonify({"message": f"Error communicating with the backend: {str(e)}"}), 500
+
 
 @app.route("/active_conversation", methods=["POST"])
 def set_active_conversation():

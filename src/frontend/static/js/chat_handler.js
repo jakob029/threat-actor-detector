@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', () => {
     const chatForm = document.getElementById('chatForm');
     const chatInput = document.getElementById('chatInput');
@@ -10,6 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let pendingResponseBubble = null;
 
+    const uid = document.body.dataset.uid; // Get UID from body dataset
+
     function updateChatPlaceholder() {
         const chatContainer = document.getElementById('chatContainer');
         if (chatList.childElementCount === 0) {
@@ -19,7 +22,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    
+    function addChatToSidebar(cid, title) {
+        const chatItem = document.createElement('button');
+        chatItem.classList.add('sidebar-button', 'chat-item');
+        chatItem.textContent = title;
+        chatItem.dataset.cid = cid;
+
+        chatItem.addEventListener('click', () => {
+            chatList.querySelectorAll('.chat-item').forEach((c) => c.classList.remove('active-chat'));
+            chatItem.classList.add('active-chat');
+            loadConversation(cid);
+        });
+
+        chatList.appendChild(chatItem);
+        updateChatPlaceholder();
+    }
 
     function addMessageToChat(content, type) {
         const messageBubble = document.createElement('div');
@@ -182,6 +199,30 @@ document.addEventListener('DOMContentLoaded', () => {
         renderConversation([]);
     }
 
+    async function fetchChatHistory(uid) {
+        if (!uid) {
+            console.error("No UID provided for fetching chat history.");
+            return;
+        }
+
+        try {
+            const response = await fetch('/conversations'); // No UID appended
+            const data = await response.json();
+
+            if (!response.ok || !data.conversations) {
+                console.error("Failed to fetch chat history:", data.message);
+                return;
+            }
+
+            chatList.innerHTML = ''; // Clear the sidebar
+            Object.entries(data.conversations).forEach(([cid, title]) => {
+                addChatToSidebar(cid, title || "Untitled Conversation");
+            });
+        } catch (error) {
+            console.error("Error fetching chat history:", error);
+        }
+    }
+
     newChatButton?.addEventListener('click', async () => {
         const date = new Date().toISOString().split('T')[0];
 
@@ -211,4 +252,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     updateChatPlaceholder();
+    fetchChatHistory(uid)
 });

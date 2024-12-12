@@ -1,12 +1,8 @@
 // conversation_manager.js
 
-// This module handles all conversation-related operations:
-// - Creating new conversations
-// - Loading a conversation's message history
-// - Returning data to be displayed by sidebar and chat handler
-
 // Function to create a new conversation via /conversations endpoint.
 // Returns a promise that resolves to { cid, date }
+/*
 async function createNewConversation() {
     const response = await fetch('/conversations', {
         method: 'POST'
@@ -27,29 +23,26 @@ async function createNewConversation() {
     return { cid: data.cid, date: dateLabel };
 }
 
-// Function to load a conversation's entire message history from /messages/<cid>
-// Returns a promise that resolves to an array of message objects:
-// [{ role: "user" or "assistant", text: "<message>"}]
-async function loadConversation(cid) {
+// Function to fetch all chat history for a user via /conversations/<uid> endpoint.
+// Returns a promise that resolves to an object containing chat history { cid1: title1, cid2: title2 }
+
+async function fetchChatHistory(uid) {
     try {
-        const response = await fetch(`/messages/${cid}`);
-        if (!response.ok) throw new Error(`Failed to fetch messages: ${response.statusText}`);
+        const response = await fetch(`/conversations/${uid}`);
         const data = await response.json();
 
-        if (data.message === 'success') {
-            // Render the conversation messages
-            renderConversation(data.conversation_history);
-
-            // Render the chart if data points are available
-            if (data.data_points && Object.keys(data.data_points).length > 0) {
-                await renderChartWrapper(data.data_points);
-            }
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to fetch chat history");
         }
+
+        return data.conversations; // Assuming the API returns { conversations: { cid1: title1, cid2: title2 } }
     } catch (error) {
-        console.error('Error fetching conversation:', error);
+        console.error('Error fetching chat history:', error);
+        throw error;
     }
 }
 
-
 // Export the functions so other modules can use them
-export { createNewConversation, loadConversationHistory };
+//export { createNewConversation, fetchChatHistory };
+
+*/
