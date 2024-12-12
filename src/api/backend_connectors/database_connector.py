@@ -42,8 +42,6 @@ def _load_config(database: str) -> dict:
         raise DatabaseException("Variable TAD_MYSQL_USER is not set.", VARIABLE_NOT_SET)
     if password is None:
         raise DatabaseException("Variable TAD_MYSQL_PASSWORD is not set.", VARIABLE_NOT_SET)
-    if database is None:
-        raise DatabaseException("Variable TAD_MYSQL_DATABASE is not set.", VARIABLE_NOT_SET)
 
     db_config = {
         "host": host,
@@ -99,7 +97,11 @@ def get_password_hash(username: str) -> str:
         AuthenticationException: USER_DOES_NOT_EXIST
         TypeError
     """
-    db_config = _load_config(environ.get("TAD_MYSQL_DATABASE"))
+    database = environ.get("TAD_MYSQL_DATABASE")
+    if database is None:
+        raise DatabaseException("Variable TAD_MYSQL_DATABASE is not set.", VARIABLE_NOT_SET)
+
+    db_config = _load_config(database)
     password_hash: str = ""
     with connector.connect(**db_config) as db:
         with db.cursor() as cursor:
@@ -134,7 +136,11 @@ def get_user_salt(username: str) -> str:
         DatabaseException: UNKNOWN_ISSUE | VARIABLE_NOT_SET
         TypeError
     """
-    db_config = _load_config(environ.get("TAD_MYSQL_DATABASE"))
+    database = environ.get("TAD_MYSQL_DATABASE")
+    if database is None:
+        raise DatabaseException("Variable TAD_MYSQL_DATABASE is not set.", VARIABLE_NOT_SET)
+
+    db_config = _load_config(database)
     salt: str = ""
     with connector.connect(**db_config) as db:
         with db.cursor() as cursor:
@@ -167,7 +173,11 @@ def update_user_auth(uid: str, password_hash: str, salt: str):
         DatabaseException: USER_DOES_NOT_EXIST | UNKNOWN_ISSUE | VARIABLE_NOT_SET
 
     """
-    db_config = _load_config(environ.get("TAD_MYSQL_DATABASE"))
+    database = environ.get("TAD_MYSQL_DATABASE")
+    if database is None:
+        raise DatabaseException("Variable TAD_MYSQL_DATABASE is not set.", VARIABLE_NOT_SET)
+
+    db_config = _load_config(database)
     try:
         with connector.connect(**db_config) as db:
             with db.cursor() as cursor:
@@ -193,7 +203,11 @@ def get_user_id(username: str) -> str:
         TypeError
 
     """
-    db_config = _load_config(environ.get("TAD_MYSQL_DATABASE"))
+    database = environ.get("TAD_MYSQL_DATABASE")
+    if database is None:
+        raise DatabaseException("Variable TAD_MYSQL_DATABASE is not set.", VARIABLE_NOT_SET)
+
+    db_config = _load_config(database)
     uid: str = ""
     with connector.connect(**db_config) as db:
         with db.cursor() as cursor:
@@ -227,7 +241,11 @@ def register_user(username: str, password_hash: str, salt: str):
         DatabaseException: VARIABLE_NOT_SET | UNKNOWN_ISSUE
 
     """
-    db_config = _load_config(environ.get("TAD_MYSQL_DATABASE"))
+    database = environ.get("TAD_MYSQL_DATABASE")
+    if database is None:
+        raise DatabaseException("Variable TAD_MYSQL_DATABASE is not set.", VARIABLE_NOT_SET)
+
+    db_config = _load_config(database)
     try:
         with connector.connect(**db_config) as db:
             with db.cursor() as cursor:
@@ -251,7 +269,11 @@ def create_conversation(uid: str, title: str) -> str:
         DatabaseException: VARIABLE_NOT_SET | USER_DOES_NOT_EXIST | UNKNOWN_ISSUE
 
     """
-    db_config = _load_config(environ.get("TAD_MYSQL_DATABASE"))
+    database = environ.get("TAD_MYSQL_DATABASE")
+    if database is None:
+        raise DatabaseException("Variable TAD_MYSQL_DATABASE is not set.", VARIABLE_NOT_SET)
+
+    db_config = _load_config(database)
     try:
         with connector.connect(**db_config) as db:
             with db.cursor() as cursor:
@@ -288,7 +310,11 @@ def add_message(text: str, role: str, cid: str) -> None:
         DatabaseException: CONVERSATION_DOES_NOT_EXIST | UNKNOWN_ISSUE | VARIABLE_NOT_SET
 
     """
-    db_config = _load_config(environ.get("TAD_MYSQL_DATABASE"))
+    database = environ.get("TAD_MYSQL_DATABASE")
+    if database is None:
+        raise DatabaseException("Variable TAD_MYSQL_DATABASE is not set.", VARIABLE_NOT_SET)
+
+    db_config = _load_config(database)
     try:
         with connector.connect(**db_config) as db:
             with db.cursor() as cursor:
@@ -310,7 +336,11 @@ def end_conversation(cid: str) -> None:
         DatabaseException: CONVERSATION_DOES_NOT_EXIST | UNKNOWN_ISSUE | VARIABLE_NOT_SET
 
     """
-    db_config = _load_config(environ.get("TAD_MYSQL_DATABASE"))
+    database = environ.get("TAD_MYSQL_DATABASE")
+    if database is None:
+        raise DatabaseException("Variable TAD_MYSQL_DATABASE is not set.", VARIABLE_NOT_SET)
+
+    db_config = _load_config(database)
     try:
         with connector.connect(**db_config) as db:
             with db.cursor() as cursor:
@@ -335,7 +365,11 @@ def get_conversations(uid: str) -> dict:
         DatabaseException: VARIABLE_NOT_SET
         TypeError
     """
-    db_config = _load_config(environ.get("TAD_MYSQL_DATABASE"))
+    database = environ.get("TAD_MYSQL_DATABASE")
+    if database is None:
+        raise DatabaseException("Variable TAD_MYSQL_DATABASE is not set.", VARIABLE_NOT_SET)
+
+    db_config = _load_config(database)
     conversations: dict[str, str] = {}
     with connector.connect(**db_config) as db:
         with db.cursor() as cursor:
@@ -375,7 +409,11 @@ def get_messages(cid: str) -> list[dict[str, str]]:
         TypeError
 
     """
-    db_config = _load_config(environ.get("TAD_MYSQL_DATABASE"))
+    database = environ.get("TAD_MYSQL_DATABASE")
+    if database is None:
+        raise DatabaseException("Variable TAD_MYSQL_DATABASE is not set.", VARIABLE_NOT_SET)
+
+    db_config = _load_config(database)
     messages: list[dict[str, str]] = []
     with connector.connect(**db_config) as db:
         with db.cursor() as cursor:
@@ -415,7 +453,11 @@ def get_graph(cid: str) -> dict[str, int]:
         DatabaseException: VARIABLE_NOT_SET
         TypeError
     """
-    db_config = _load_config(environ.get("TAD_MYSQL_DATABASE"))
+    database = environ.get("TAD_MYSQL_DATABASE")
+    if database is None:
+        raise DatabaseException("Variable TAD_MYSQL_DATABASE is not set.", VARIABLE_NOT_SET)
+
+    db_config = _load_config(database)
     data_points: dict[str, int] = {}
     with connector.connect(**db_config) as db:
         with db.cursor() as cursor:
@@ -453,7 +495,11 @@ def add_graph_point(cid: str, name: str, value: int) -> None:
     Raises:
         DatabaseException: CONVERSATION_DOES_NOT_EXIST | UNKNOWN_ISSUE | VARIABLE_NOT_SET
     """
-    db_config = _load_config(environ.get("TAD_MYSQL_DATABASE"))
+    database = environ.get("TAD_MYSQL_DATABASE")
+    if database is None:
+        raise DatabaseException("Variable TAD_MYSQL_DATABASE is not set.", VARIABLE_NOT_SET)
+
+    db_config = _load_config(database)
 
     try:
         with connector.connect(**db_config) as db:
@@ -476,7 +522,11 @@ def reset_conversation(cid: str):
         DatabaseException: CONVERSATION_DOES_NOT_EXIST | UNKNOWN_ISSUE | VARIABLE_NOT_SET
 
     """
-    db_config = _load_config(environ.get("TAD_MYSQL_DATABASE"))
+    database = environ.get("TAD_MYSQL_DATABASE")
+    if database is None:
+        raise DatabaseException("Variable TAD_MYSQL_DATABASE is not set.", VARIABLE_NOT_SET)
+
+    db_config = _load_config(database)
 
     try:
         with connector.connect(**db_config) as db:
@@ -499,7 +549,11 @@ def delete_user(uid: str):
         DatabaseException: UNKNOWN_ISSUE | VARIABLE_NOT_SET
 
     """
-    db_config = _load_config(environ.get("TAD_MYSQL_DATABASE"))
+    database = environ.get("TAD_MYSQL_DATABASE")
+    if database is None:
+        raise DatabaseException("Variable TAD_MYSQL_DATABASE is not set.", VARIABLE_NOT_SET)
+
+    db_config = _load_config(database)
 
     try:
         with connector.connect(**db_config) as db:
@@ -519,7 +573,11 @@ def delete_conversation(cid: str):
         DatabaseException: UNKNOWN_ISSUE | VARIABLE_NOT_SET
 
     """
-    db_config = _load_config(environ.get("TAD_MYSQL_DATABASE"))
+    database = environ.get("TAD_MYSQL_DATABASE")
+    if database is None:
+        raise DatabaseException("Variable TAD_MYSQL_DATABASE is not set.", VARIABLE_NOT_SET)
+
+    db_config = _load_config(database)
 
     try:
         with connector.connect(**db_config) as db:
@@ -539,7 +597,11 @@ def delete_all_conversations(uid: str):
         DatabaseException: UNKNOWN_ISSUE | VARIABLE_NOT_SET
 
     """
-    db_config = _load_config(environ.get("TAD_MYSQL_DATABASE"))
+    database = environ.get("TAD_MYSQL_DATABASE")
+    if database is None:
+        raise DatabaseException("Variable TAD_MYSQL_DATABASE is not set.", VARIABLE_NOT_SET)
+
+    db_config = _load_config(database)
 
     try:
         with connector.connect(**db_config) as db:
@@ -558,7 +620,11 @@ def collect_ioc_mapping(IoC: str) -> tuple | None:
     Return:
         Collected database information with structure: (IoC, APT).
     """
-    db_config = _load_config(environ.get("IOC_MYSQL_DATABASE"))
+    database = environ.get("IOC_MYSQL_DATABASE")
+    if database is None:
+        raise DatabaseException("Variable IOC_MYSQL_DATABASE is not set.", VARIABLE_NOT_SET)
+
+    db_config = _load_config(database)
     try:
         with connector.connect(**db_config) as db:
             with db.cursor() as cursor:
