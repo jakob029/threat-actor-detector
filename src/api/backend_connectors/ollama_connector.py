@@ -38,7 +38,7 @@ def send_prompt(prompt: list) -> str:
     return llm_response["message"]["content"]
 
 
-def send_analyze_prompt(prompt: str | list, cid: str) -> str:
+def construct_analyze_prompt(prompt: str | list, cid: str) -> list:
     """Send prompt to llm.
 
     Send a prompt to the llm and return it. Can use chat history
@@ -49,11 +49,9 @@ def send_analyze_prompt(prompt: str | list, cid: str) -> str:
         cid (str): Conversation id.
 
     Return:
-        llm_response (str): The response of the LLM.
-
+        A fully constructed prompt to send to the LLM.
     """
     location = Path(os.path.dirname(os.path.abspath(__file__))).parent.absolute()
-    llm_model = os.environ.get("LLM_MODEL", default="llama3.1")
     llm_address = os.environ.get("LLM_ADDRESS", default="http://100.77.88.10")
     llm_preprompt_path = os.environ.get("LLM_PREPROMPT_PATH", default=f"{location}/prepromt")
 
@@ -68,7 +66,7 @@ def send_analyze_prompt(prompt: str | list, cid: str) -> str:
     ioc_select_prompt = copy.deepcopy(prompt)
 
     skip_vector_database: bool = False
-    logger.warning(vector_db_host)
+
     try:
         vector_db_prompt = {"prompt": prompt[0]["content"]}
     except KeyError:
@@ -96,6 +94,8 @@ def send_analyze_prompt(prompt: str | list, cid: str) -> str:
         )
 
     if not skip_vector_database:
+        logger.info(f"The Vector_db response: {vector_database_response}")
+
         group_names = vector_database_response.json()["response"]["ids"][0]
 
         describer_payload = ":".join(group_names)
@@ -142,6 +142,22 @@ def send_analyze_prompt(prompt: str | list, cid: str) -> str:
         add_message(prompt_i["content"], prompt_i["role"], cid)
 
     logger.info(f"The final llm prompt was: |{prompt}|")
+
+    return prompt
+
+def send_analyze_prompt(prompt: list) -> str:
+    """Send an analyze prompt to the specialized analyzer LLM.
+
+    Args:
+        prompt: A constructed prompt for the llm.
+
+    Returns:
+        A string value of the recieved response from the llm.
+    """
+    llm_address = os.environ.get("LLM_ADDRESS", default="http://100.77.88.10")
+    llm_model = os.environ.get("LLM_MODEL", default="llama3.1")
+
+    client: Client = Client(host=llm_address, timeout=120)
 
     response = client.chat(model=llm_model, messages=prompt)["message"]["content"]
 
