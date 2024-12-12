@@ -62,7 +62,7 @@ class Analyzis(Resource):
         counter: int = 0
 
         constucted_prompt: list = construct_analyze_prompt(prompt, cid)
-        while True:
+        for _ in range(10):
             try:
                 response: str = send_analyze_prompt(constucted_prompt)
                 defined_json = SchemaParser()
@@ -93,9 +93,10 @@ class Analyzis(Resource):
 
                 logger.error(e)
                 return {"message": "success", "response": response}, 200
+            break
 
-            return {
-                "message": "success",
-                "response": response,
-                "data_points": statistics,
-            }, 200
+        return {
+            "message": "success",
+            "response": response,
+            "data_points": statistics,
+        }, 200
