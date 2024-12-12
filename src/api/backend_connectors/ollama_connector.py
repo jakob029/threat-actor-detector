@@ -8,10 +8,12 @@ Functions:
 import os
 import logging
 from pathlib import Path
-
+import copy
 import requests
+
 from ollama import Client
 from src.api.backend_connectors.database_connector import add_message
+from src.api.backend_connectors.database_connector import collect_ioc_mapping
 
 
 logger = logging.getLogger(__name__)
@@ -55,11 +57,15 @@ def send_analyze_prompt(prompt: str | list, cid: str) -> str:
     llm_address = os.environ.get("LLM_ADDRESS", default="http://100.77.88.10")
     llm_preprompt_path = os.environ.get("LLM_PREPROMPT_PATH", default=f"{location}/prepromt")
 
-    vector_db_host = os.environ.get("VECTOR_DB_HOST", default="http://100.77.88.70")
+    vector_db_host = os.environ.get("VECTOR_DB_HOST", default="100.77.88.70")
     vector_db_port = os.environ.get("VECTOR_DB_PORT", default="5000")
+
+    ioc_parser_model = "ioc_parser"
 
     if isinstance(prompt, str):
         prompt = [{"role": "user", "content": prompt}]
+
+    ioc_select_prompt = copy.deepcopy(prompt)
 
     skip_vector_database: bool = False
     logger.warning(vector_db_host)
@@ -110,6 +116,24 @@ def send_analyze_prompt(prompt: str | list, cid: str) -> str:
             },
         )
 
+    client: Client = Client(host=llm_address, timeout=120)
+
+    select_ioc_prompt: str = "Could you select the IoC in this sentence, and respond only with the IoC: "
+    ioc_select_prompt[0]["content"] = select_ioc_prompt + ioc_select_prompt[0]["content"]
+
+    selected_ioc = client.chat(model=ioc_parser_model, messages=ioc_select_prompt)["message"]["content"]
+    ioc_info = collect_ioc_mapping(selected_ioc)
+
+    if ioc_info:
+        prompt.insert(
+            0,
+            {
+                "role": "system",
+                "name": "IoC database",
+                "content": f"The IoC {selected_ioc} is related to {ioc_info[1]} according to the database.",
+            },
+        )
+
     with open(llm_preprompt_path, "r", encoding="utf-8") as f:
         preprompt = f.read()
         prompt.insert(0, {"role": "system", "name": "Threat Analyzer", "content": preprompt})
@@ -117,7 +141,8 @@ def send_analyze_prompt(prompt: str | list, cid: str) -> str:
     for prompt_i in prompt:
         add_message(prompt_i["content"], prompt_i["role"], cid)
 
-    client: Client = Client(host=llm_address, timeout=120)
+    logger.info(f"The final llm prompt was: |{prompt}|")
+
     response = client.chat(model=llm_model, messages=prompt)["message"]["content"]
 
     return response
