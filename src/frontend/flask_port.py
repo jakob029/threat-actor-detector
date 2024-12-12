@@ -1,13 +1,18 @@
+"""Flask API for managing user sessions, prompts, and interactions with an LLM backend."""
+
 from flask import Flask, request, jsonify, render_template, session
 import requests
+from datetime import datetime
 
 app = Flask(__name__)
 
 BASE_URL = "http://100.77.88.40:5000"
 app.secret_key = "Jeppecool1"
 
+
 @app.route("/")
 def homepage():
+    """Render the homepage and sets uid if signed in."""
     cookies_accepted = session.get("cookies_accepted", False)
     is_logged_in = "uid" in session
     uid = session["uid"] if is_logged_in else None  # Assign uid if the user is logged in
@@ -16,16 +21,20 @@ def homepage():
         is_logged_in=is_logged_in,
         username=session.get("username"),
         cookies_accepted=cookies_accepted,
-        uid=uid  # Pass uid to the template
+        uid=uid,  # Pass uid to the template
     )
+
 
 @app.route("/accept-cookies", methods=["POST"])
 def accept_cookies():
+    """Route to keep track if user has accepted cookies."""
     session["cookies_accepted"] = True
     return jsonify({"message": "Cookies accepted"})
 
+
 @app.route("/user/login", methods=["POST"])
 def login():
+    """Handle user sign in process."""
     data = request.json
     username = data.get("username")
     password = data.get("password")
@@ -41,8 +50,10 @@ def login():
     except requests.RequestException as err:
         return jsonify({"message": f"Error communicating with the server: {str(err)}"})
 
+
 @app.route("/user/register", methods=["POST"])
 def register():
+    """Route to handle user registration."""
     data = request.json
     username = data.get("username")
     password = data.get("password")
@@ -52,14 +63,17 @@ def register():
     except requests.RequestException as err:
         return jsonify({"message": f"Error communicating with the server: {str(err)}"})
 
+
 @app.route("/conversations", methods=["POST"])
 def create_conversation():
+    """Route to create conversations."""
     uid = session.get("uid")
     if not uid:
         return jsonify({"message": "User not logged in"}), 401
 
     try:
-        payload = {"uid": uid, "title": "New Conversation"}
+        title = datetime.now().strftime("%Y-%m-%d")
+        payload = {"uid": uid, "title": title}
         response = requests.post(f"{BASE_URL}/conversations", json=payload)
         response_data = response.json()
 
@@ -67,7 +81,7 @@ def create_conversation():
             session["cid"] = response_data["conversation_id"]
             session.modified = True
             return jsonify({"message": "Conversation created", "cid": session["cid"]})
-        
+
         return jsonify({"message": response_data.get("message", "Failed to create conversation")}), 400
     except Exception as e:
         return jsonify({"message": f"Internal server error: {str(e)}"}), 500
@@ -75,6 +89,7 @@ def create_conversation():
 
 @app.route("/conversations", methods=["GET"])
 def get_history():
+    """Route to retrieve user chat history."""
     uid = session.get("uid")
     if not uid:
         return jsonify({"message": "User not logged in"}), 401  # Consistent error handling
@@ -88,18 +103,19 @@ def get_history():
 
         if response.status_code == 200 and response_data.get("message") == "success":
             # Consistent key for the client
-            return jsonify({
-                "message": "success",
-                "conversations": response_data.get("conversations", {})
-            })
+            return jsonify({"message": "success", "conversations": response_data.get("conversations", {})})
         else:
-            return jsonify({"message": response_data.get("message", "Failed to fetch conversations")}), response.status_code
+            return (
+                jsonify({"message": response_data.get("message", "Failed to fetch conversations")}),
+                response.status_code,
+            )
     except requests.RequestException as e:
         return jsonify({"message": f"Error communicating with the backend: {str(e)}"}), 500
 
 
 @app.route("/active_conversation", methods=["POST"])
 def set_active_conversation():
+    """Set the active conversation and handle cid and uid."""
     uid = session.get("uid")
     if not uid:
         return jsonify({"message": "User not logged in"}), 401
@@ -117,12 +133,10 @@ def set_active_conversation():
     session.modified = True
     return jsonify({"message": "Active conversation updated", "cid": session.get("cid")})
 
+
 @app.route("/chat", methods=["POST"])
 def chat():
-    """
-    Handle sending a prompt to the backend, either starting a new conversation
-    or appending a message to an existing one.
-    """
+    """Start a new conversation or appending a message to an existing one."""
     prompt = request.json.get("prompt")
     is_new = request.json.get("is_new", False)  # Indicate if it's a new conversation
     if not prompt:
@@ -146,11 +160,13 @@ def chat():
                 # Mark conversation as started
                 session["cid"] = response_data.get("cid", cid)
                 session.modified = True
-                return jsonify({
-                    "message": "success",
-                    "response": response_data.get("response"),
-                    "data_points": response_data.get("data_points", {})
-                })
+                return jsonify(
+                    {
+                        "message": "success",
+                        "response": response_data.get("response"),
+                        "data_points": response_data.get("data_points", {}),
+                    }
+                )
             else:
                 return jsonify({"message": response_data.get("message", "Failed to process first prompt")}), 500
         except requests.RequestException as e:
@@ -161,39 +177,37 @@ def chat():
         response = requests.post(f"{BASE_URL}/messages", json={"cid": cid, "text": prompt})
         response_data = response.json()
         if response.status_code == 200:
-            return jsonify({
-                "message": "success",
-                "response": response_data.get("response")
-            })
+            return jsonify({"message": "success", "response": response_data.get("response")})
         else:
             return jsonify({"message": response_data.get("message", "Failed to process follow-up message")}), 500
     except requests.RequestException as e:
         return jsonify({"message": f"Error communicating with backend: {str(e)}"}), 500
 
 
-
 @app.route("/messages/<cid>", methods=["GET"])
 def get_messages(cid):
+    """Get messages from a conversation."""
     try:
         response = requests.get(f"{BASE_URL}/messages/{cid}")
         response_data = response.json()
 
         if response.status_code == 200 and response_data.get("message") == "success":
-            return jsonify({
-                "message": "success",
-                "conversation_history": response_data.get("conversation_history"),
-                "data_points": response_data.get("data_points", {})
-            })
+            return jsonify(
+                {
+                    "message": "success",
+                    "conversation_history": response_data.get("conversation_history"),
+                    "data_points": response_data.get("data_points", {}),
+                }
+            )
         else:
             return jsonify({"message": response_data.get("message", "Failed to fetch messages")}), 500
     except requests.RequestException as e:
         return jsonify({"message": f"Error communicating with backend: {str(e)}"}), 500
-    
+
+
 @app.route("/conversations", methods=["DELETE"])
 def delete_all_conversations():
-    """
-    Deletes all conversations for the current user (uid).
-    """
+    """Deletes all conversations for the current user (uid)."""
     uid = session.get("uid")
     if not uid:
         return jsonify({"message": "User not logged in"}), 401
@@ -206,16 +220,20 @@ def delete_all_conversations():
             return jsonify({"message": "All conversations deleted successfully"})
         else:
             response_data = response.json()
-            return jsonify({"message": response_data.get("mesage", "Failed to delete conversations")}), response.status_code
+            return (
+                jsonify({"message": response_data.get("mesage", "Failed to delete conversations")}),
+                response.status_code,
+            )
     except requests.RequestException as e:
         return jsonify({"message": f"Error communicating with backend: {str(e)}"}), 500
 
-    
 
 @app.route("/logout", methods=["POST"])
 def logout():
+    """Log out user and clear session."""
     session.clear()
     return jsonify({"message": "Logged out successfully"})
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="127.0.0.1")
