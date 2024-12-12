@@ -187,6 +187,29 @@ def get_messages(cid):
             return jsonify({"message": response_data.get("message", "Failed to fetch messages")}), 500
     except requests.RequestException as e:
         return jsonify({"message": f"Error communicating with backend: {str(e)}"}), 500
+    
+@app.route("/conversations", methods=["DELETE"])
+def delete_all_conversations():
+    """
+    Deletes all conversations for the current user (uid).
+    """
+    uid = session.get("uid")
+    if not uid:
+        return jsonify({"message": "User not logged in"}), 401
+
+    try:
+        # Forward the delete request to the backend API with UID in the payload
+        payload = {"uid": uid}
+        response = requests.delete(f"{BASE_URL}/conversations", json=payload)  # Payload sent as JSON
+        if response.status_code == 200:
+            return jsonify({"message": "All conversations deleted successfully"})
+        else:
+            response_data = response.json()
+            return jsonify({"message": response_data.get("mesage", "Failed to delete conversations")}), response.status_code
+    except requests.RequestException as e:
+        return jsonify({"message": f"Error communicating with backend: {str(e)}"}), 500
+
+    
 
 
 @app.route("/logout", methods=["POST"])

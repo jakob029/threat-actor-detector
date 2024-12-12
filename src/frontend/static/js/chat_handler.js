@@ -244,12 +244,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    clearHistoryButton?.addEventListener('click', () => {
-        chatList.innerHTML = '';
-        chatContainer.innerHTML = '';
-        document.getElementById("chartContainer").style.display = "none";
-        updateChatPlaceholder();
+    clearHistoryButton?.addEventListener('click', async () => {
+        const confirmation = confirm("Are you sure you want to delete all conversations? This action cannot be undone.");
+    
+        if (!confirmation) return;
+    
+        try {
+            const response = await fetch(`/conversations`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok) {
+                console.log("All conversations deleted successfully.");
+                // Clear the frontend chat list and container
+                chatList.innerHTML = '';
+                chatContainer.innerHTML = '';
+                document.getElementById("chartContainer").style.display = "none";
+                updateChatPlaceholder();
+            } else {
+                console.error("Failed to delete conversations. Message:", data.message);
+            }
+        } catch (error) {
+            console.error("Error deleting all conversations:", error);
+        }
     });
+    
+    
 
     updateChatPlaceholder();
     fetchChatHistory(uid)
