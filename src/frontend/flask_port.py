@@ -10,12 +10,13 @@ app.secret_key = "Jeppecool1"
 def homepage():
     cookies_accepted = session.get("cookies_accepted", False)
     is_logged_in = "uid" in session
+    uid = session["uid"] if is_logged_in else None  # Assign uid if the user is logged in
     return render_template(
         "homepage.html",
         is_logged_in=is_logged_in,
         username=session.get("username"),
         cookies_accepted=cookies_accepted,
-        uid=session["uid"]
+        uid=uid  # Pass uid to the template
     )
 
 @app.route("/accept-cookies", methods=["POST"])
@@ -210,7 +211,6 @@ def delete_all_conversations():
         return jsonify({"message": f"Error communicating with backend: {str(e)}"}), 500
 
     
-
 
 @app.route("/logout", methods=["POST"])
 def logout():
