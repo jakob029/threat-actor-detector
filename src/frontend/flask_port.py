@@ -3,11 +3,11 @@
 from flask import Flask, request, jsonify, render_template, session
 import requests
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 
-BASE_URL = "http://100.77.88.40:5000"
-app.secret_key = "Jeppecool1"
+HOST = os.environ.get("FRONTEND_ADDR")
 
 
 @app.route("/")
@@ -244,4 +244,4 @@ def logout():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="127.0.0.1")
+    app.run(host=HOST)
