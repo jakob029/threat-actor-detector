@@ -7,6 +7,7 @@ import os
 
 app = Flask(__name__)
 
+app.secret_key = os.environ.get("APP_SECRET")
 HOST = os.environ.get("FRONTEND_ADDR")
 
 
