@@ -145,6 +145,7 @@ def construct_analyze_prompt(prompt: str | list, cid: str) -> list:
 
     return prompt
 
+
 def send_analyze_prompt(prompt: list) -> str:
     """Send an analyze prompt to the specialized analyzer LLM.
 
