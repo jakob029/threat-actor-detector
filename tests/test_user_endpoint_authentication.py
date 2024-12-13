@@ -1,21 +1,18 @@
+"""Unittest for API user endpoint."""
+
 import unittest
 from unittest.mock import patch
 from flask import Flask
 from flask_restful import Api
 from argon2.exceptions import VerifyMismatchError
-from src.api import api
+
 from src.api.endpoints.user_endpoint import Authentication
-from src.api.api_exceptions import (
-    AuthenticationException,
-    DatabaseException,
-    USERNAME_TOO_LONG,
-    USER_DOES_NOT_EXIST,
-    VARIABLE_NOT_SET,
-    UNKNOWN_ISSUE,
-)
+from src.api.api_exceptions import AuthenticationException, DatabaseException, USERNAME_TOO_LONG, VARIABLE_NOT_SET
 
 
 class TestAuthentication(unittest.TestCase):
+    """Test class for API user endpoint for authentication."""
+
     def setUp(self):
         """Set up Flask test app and API."""
         self.app = Flask(__name__)

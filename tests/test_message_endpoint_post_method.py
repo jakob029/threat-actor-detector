@@ -1,13 +1,17 @@
+"""Unittest for API message endpoint."""
+
 import unittest
 from unittest.mock import patch
 from flask import Flask
 from flask_restful import Api
+
 from src.api.endpoints.message_endpoint import MessagesEndpoint
 from src.api.api_exceptions import DatabaseException, CONVERSATION_DOES_NOT_EXIST
-from src.api import api
 
 
 class TestMessagesEndpoint(unittest.TestCase):
+    """Test class for API messages endpoint post delete methods."""
+
     def setUp(self):
         """Set up Flask test app and API."""
         self.app = Flask(__name__)

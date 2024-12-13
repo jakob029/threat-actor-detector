@@ -1,13 +1,17 @@
+"""Unittest for API message endpoint."""
+
 import unittest
 from unittest.mock import patch
 from flask import Flask
 from flask_restful import Api
+
 from src.api.endpoints.message_endpoint import MessagesEndpoint
 from src.api.api_exceptions import DatabaseException, CONVERSATION_DOES_NOT_EXIST
-from src.api import api
 
 
 class TestMessagesEndpoint(unittest.TestCase):
+    """Test class for API messages endpoint get delete methods."""
+
     def setUp(self):
         """Set up Flask test app and API."""
         self.app = Flask(__name__)
@@ -15,14 +19,17 @@ class TestMessagesEndpoint(unittest.TestCase):
         self.api.add_resource(MessagesEndpoint, "/messages/<string:cid>")
         self.client = self.app.test_client()
 
+    @patch("src.api.endpoints.message_endpoint.get_graph")
     @patch("src.api.endpoints.message_endpoint.get_messages")
-    def test_get_success(self, mock_get_messages):
+    def test_get_success(self, mock_get_messages, mock_get_graph):
         """Test the GET method for a successful response."""
         mock_get_messages.return_value = [
             {"role": "user", "content": "Hello"},
             {"role": "assistant", "content": "Hi there!"},
             {"role": "system", "content": "System message"},
         ]
+
+        mock_get_graph.return_value = {}
 
         response = self.client.get("/messages/test_cid")
 
