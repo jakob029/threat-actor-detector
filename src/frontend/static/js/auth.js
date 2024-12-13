@@ -1,8 +1,8 @@
 // Handle sign-in form submission
 document.getElementById('signInForm')?.addEventListener('submit', async (event) => {
     event.preventDefault();
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
 
     if (username && password) {
         try {
@@ -11,6 +11,7 @@ document.getElementById('signInForm')?.addEventListener('submit', async (event) 
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password }),
             });
+
             const data = await response.json();
 
             if (data.message === "success") {
@@ -19,8 +20,7 @@ document.getElementById('signInForm')?.addEventListener('submit', async (event) 
             } else {
                 alert(data.message || 'Login failed');
             }
-        } catch (error) {
-            console.error('Error during login:', error);
+        } catch {
             alert('Error communicating with the server');
         }
     } else {
@@ -30,8 +30,8 @@ document.getElementById('signInForm')?.addEventListener('submit', async (event) 
 
 // Handle registration button click
 document.getElementById('registerButton')?.addEventListener('click', async () => {
-    const username = document.getElementById('username')?.value;
-    const password = document.getElementById('password')?.value;
+    const username = document.getElementById('username')?.value.trim();
+    const password = document.getElementById('password')?.value.trim();
 
     if (username && password) {
         try {
@@ -40,10 +40,10 @@ document.getElementById('registerButton')?.addEventListener('click', async () =>
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password }),
             });
+
             const data = await response.json();
             alert(data.message || 'Registration complete');
-        } catch (error) {
-            console.error('Error during registration:', error);
+        } catch {
             alert('Error communicating with the server');
         }
     } else {
@@ -58,8 +58,7 @@ document.getElementById('logoutButton')?.addEventListener('click', async () => {
         const data = await response.json();
         alert(data.message);
         window.location.reload();
-    } catch (error) {
-        console.error('Error logging out:', error);
+    } catch {
         alert('Failed to log out. Please try again.');
     }
 });
