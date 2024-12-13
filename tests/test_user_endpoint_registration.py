@@ -1,9 +1,10 @@
+"""Unittest for API user endpoint."""
+
 import unittest
 from unittest.mock import patch
 from flask import Flask
 from flask_restful import Api
 from src.api.endpoints.user_endpoint import Registration
-from src.api import api
 
 from src.api.api_exceptions import (
     RegistrationException,
@@ -15,6 +16,8 @@ from src.api.api_exceptions import (
 
 
 class TestRegistration(unittest.TestCase):
+    """Test class for API user endpoint for registration."""
+
     def setUp(self):
         """Set up Flask test app and API."""
         self.app = Flask(__name__)

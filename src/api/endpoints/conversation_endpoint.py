@@ -46,10 +46,10 @@ class ConversationsEndpoint(Resource):
             else:
                 return {"message": "CID or UID is needed."}, 400
         except DatabaseException as e:
-            logger.error(e.message)
+            logger.info(e.message)
             return {"message": "something went wrong."}, 500
         except Exception as e:
-            logger.error(e)
+            logger.info(e)
             return {"message": "something went wrong."}, 500
 
         return {"message": "success"}, 200
@@ -67,10 +67,10 @@ class ConversationsEndpoint(Resource):
         try:
             conversations = get_conversations(uid)
         except DatabaseException as e:
-            logger.error(e.message)
+            logger.info(e.message)
             return {"message": "something went wrong."}, 500
         except Exception as e:
-            logger.error(e)
+            logger.info(e)
             return {"message": "something went wrong."}, 500
 
         return {"message": "success", "conversations": conversations}, 200
@@ -94,10 +94,10 @@ class ConversationsEndpoint(Resource):
             if e.code == USER_DOES_NOT_EXIST:
                 return {"message": e.message}, 200
 
-            logger.error(e.message)
+            logger.info(e.message)
             return {"message": e.message}, 500
         except Exception as e:
-            logger.error(e)
+            logger.info(e)
             return {"message": "something went wrong."}, 500
 
         return {"messgae": "success", "conversation_id": cid}, 200

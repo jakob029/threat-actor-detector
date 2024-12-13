@@ -1,15 +1,19 @@
+"""Unittest for API ollama endpoint."""
+
 import unittest
 from unittest.mock import patch
 from flask import Flask
 from flask_restful import Api
-from src.api.endpoints.ollama_endpoint import Analyzis
-from src.api.api_exceptions import DatabaseException, UNKNOWN_ISSUE
 from ollama import ResponseError
 from httpx import ConnectTimeout
-from src.api import api
+
+from src.api.endpoints.ollama_endpoint import Analyzis
+from src.api.api_exceptions import DatabaseException, UNKNOWN_ISSUE
 
 
 class TestAnalyzisPost(unittest.TestCase):
+    """Test class for API ollama endpoint post delete methods."""
+
     def setUp(self):
         """Set up Flask test app and API."""
         self.app = Flask(__name__)
@@ -37,6 +41,9 @@ class TestAnalyzisPost(unittest.TestCase):
         mock_send_prompt.return_value = "response"
         mock_llama_json_parser.return_value = "parsed_response"
         mock_correct_structure.return_value = "statistics"
+
+        mock_add_message.return_value = None
+        mock_set_graph.return_value = None
 
         response = self.client.post("/analysis", json={"prompt": "example_prompt", "cid": "test_cid"})
         self.assertEqual(response.status_code, 200)

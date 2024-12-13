@@ -36,10 +36,10 @@ class Analyzis(Resource):
         try:
             data_points = get_graph(cid)
         except DatabaseException as e:
-            logger.error(e.message)
+            logger.info(e.message)
             return {"message": "Something went wrong."}, 500
         except Exception as e:
-            logger.error(e)
+            logger.info(e)
             return {"message": "Something went wrong."}, 500
 
         return {"message": "success", "data_points": data_points}, 200
@@ -72,7 +72,7 @@ class Analyzis(Resource):
                 add_message(response, "assistant", cid)
 
             except ResponseError as e:
-                logger.error(str(e))
+                logger.info(str(e))
                 if counter < 3:
                     reset_conversation(cid)
                     continue
@@ -91,7 +91,7 @@ class Analyzis(Resource):
                     reset_conversation(cid)
                     continue
 
-                logger.error(e)
+                logger.info(e)
                 return {"message": "success", "response": response}, 200
             break
 
