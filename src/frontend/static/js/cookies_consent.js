@@ -6,20 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const infoPopup = document.getElementById('infoPopup');
     const closePopup = document.getElementById('closePopup');
 
-    // Check cookie consent status from the server via session
-    fetch('/cookie-status')
-        .then(response => response.json())
-        .then(data => {
-            if (data.cookies_accepted) {
-                console.log("Cookies already accepted. Hiding consent box.");
-                cookieConsent.style.display = 'none'; // Hide cookie consent box
-            } else {
-                console.log("Showing cookie consent box.");
-                cookieConsent.style.display = 'block'; // Show cookie consent box
-            }
-        })
-        .catch(error => console.error('Error fetching cookie status:', error));
-
     // Handle "Accept Cookies" button click
     acceptCookies?.addEventListener('click', async () => {
         try {
