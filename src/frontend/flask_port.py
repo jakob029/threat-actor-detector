@@ -24,6 +24,11 @@ def homepage():
         uid=uid,  # Pass uid to the template
     )
 
+@app.route('/info.html')
+def info_page():
+    print(f"Session on info page: {session}")  # Debug log
+    is_logged_in = 'uid' in session  # Check if the user is logged in
+    return render_template('info.html', is_logged_in=is_logged_in, username=session.get('username'))
 
 @app.route("/accept-cookies", methods=["POST"])
 def accept_cookies():
