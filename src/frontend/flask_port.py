@@ -3,11 +3,12 @@
 from flask import Flask, request, jsonify, render_template, session
 import requests
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 
-BASE_URL = "http://100.77.88.40:5000"
-app.secret_key = "Jeppecool1"
+app.secret_key = os.environ.get("APP_SECRET")
+HOST = os.environ.get("FRONTEND_ADDR")
 
 
 @app.route("/")
@@ -39,7 +40,7 @@ def login():
     username = data.get("username")
     password = data.get("password")
     try:
-        response = requests.post(f"{BASE_URL}/user/login", json={"username": username, "password": password})
+        response = requests.post(f"{HOST}/user/login", json={"username": username, "password": password})
         response_data = response.json()
         if response_data.get("message") == "success":
             session.clear()
@@ -58,7 +59,7 @@ def register():
     username = data.get("username")
     password = data.get("password")
     try:
-        response = requests.post(f"{BASE_URL}/user/register", json={"username": username, "password": password})
+        response = requests.post(f"{HOST}/user/register", json={"username": username, "password": password})
         return jsonify(response.json())
     except requests.RequestException as err:
         return jsonify({"message": f"Error communicating with the server: {str(err)}"})
@@ -74,7 +75,7 @@ def create_conversation():
     try:
         title = datetime.now().strftime("%Y-%m-%d")
         payload = {"uid": uid, "title": title}
-        response = requests.post(f"{BASE_URL}/conversations", json=payload)
+        response = requests.post(f"{HOST}/conversations", json=payload)
         response_data = response.json()
 
         if "conversation_id" in response_data:
@@ -98,7 +99,7 @@ def get_history():
 
     try:
         # Forward the request to the backend API
-        response = requests.get(f"{BASE_URL}/conversations/{uid}")
+        response = requests.get(f"{HOST}/conversations/{uid}")
         response_data = response.json()
 
         if response.status_code == 200 and response_data.get("message") == "success":
@@ -154,7 +155,7 @@ def chat():
     if is_new:
         # Use `/analyzis` for the first prompt
         try:
-            response = requests.post(f"{BASE_URL}/analyzis", json={"prompt": prompt, "cid": cid})
+            response = requests.post(f"{HOST}/analyzis", json={"prompt": prompt, "cid": cid})
             response_data = response.json()
             if response.status_code == 200:
                 # Mark conversation as started
@@ -174,7 +175,7 @@ def chat():
 
     # Handle follow-up messages
     try:
-        response = requests.post(f"{BASE_URL}/messages", json={"cid": cid, "text": prompt})
+        response = requests.post(f"{HOST}/messages", json={"cid": cid, "text": prompt})
         response_data = response.json()
         if response.status_code == 200:
             return jsonify({"message": "success", "response": response_data.get("response")})
@@ -188,7 +189,7 @@ def chat():
 def get_messages(cid):
     """Get messages from a conversation."""
     try:
-        response = requests.get(f"{BASE_URL}/messages/{cid}")
+        response = requests.get(f"{HOST}/messages/{cid}")
         response_data = response.json()
 
         if response.status_code == 200 and response_data.get("message") == "success":
@@ -215,7 +216,7 @@ def delete_all_conversations():
     try:
         # Forward the delete request to the backend API with UID in the payload
         payload = {"uid": uid}
-        response = requests.delete(f"{BASE_URL}/conversations", json=payload)  # Payload sent as JSON
+        response = requests.delete(f"{HOST}/conversations", json=payload)  # Payload sent as JSON
         if response.status_code == 200:
             return jsonify({"message": "All conversations deleted successfully"})
         else:
@@ -236,4 +237,4 @@ def logout():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="127.0.0.1")
+    app.run(host=HOST)
