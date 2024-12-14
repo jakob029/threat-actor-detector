@@ -89,12 +89,12 @@ def construct_analyze_prompt(prompt: str | list, cid: str) -> list:
             {
                 "role": "system",
                 "name": "Vector database",
-                "content": f"The vector database analyzed this: {vector_database_response}",
+                "content": f"The vector database analyzed this: {vector_database_response.json()}",
             },
         )
 
     if not skip_vector_database:
-        logger.info(f"The Vector_db response: {vector_database_response}")
+        logger.info(f"The Vector_db response: {vector_database_response.json()}")
 
         group_names = vector_database_response.json()["response"]["ids"][0]
 
