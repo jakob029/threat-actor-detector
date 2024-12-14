@@ -9,9 +9,12 @@ class collection_emulator:
     """Emulate the collection query function."""
 
     @staticmethod
-    def query(query_texts, n_results: int, include: list):
+    def query(query_texts: str, n_results: int, include: list):
         """Emulate the collection query function."""
-        return "Test response."
+        if query_texts and n_results and include:
+            return "Test response"
+
+        return "Incorrect response"
 
 
 class build_vector_emulator:
@@ -28,9 +31,10 @@ class TestGroupAnalyzer(unittest.TestCase):
     def test_get(self, parse_args, mocked_constructor):
         """Test the HTTP GET method for the GroupAnalyzer endpoint."""
         mocked_constructor.return_value = None
+
         endpoint_instance = GroupAnalyzer()
+        endpoint_instance.vector_databases = ("vector", "db")
 
         endpoint_instance.vector_databases = (build_vector_emulator(),)
-
         parse_args.return_value = {"prompt": "This is the prompt."}
-        assert endpoint_instance.get() == ({"response": "Test response."}, 200)
+        assert endpoint_instance.get() == ({"response": "Test response"}, 200)

@@ -8,7 +8,7 @@ from src.vector_db_api.build_dataset.run import build_vector_database
 class GroupAnalyzer(Resource):
     """Group analyzer endpoint for vector db API."""
 
-    vector_databases: tuple = build_vector_database()
+    vector_databases: tuple = tuple()
 
     def get(self) -> tuple:
         """Retrieve a response from the vector database.
@@ -22,6 +22,9 @@ class GroupAnalyzer(Resource):
             Response given from the vector database including 'ids' for
             represented by names of APT groups & distances to those ids.
         """
+        if not self.vector_databases:
+            self.vector_databases = build_vector_database()
+
         parser: RequestParser = RequestParser()
         parser.add_argument("prompt", type=str, required=True)
         args = parser.parse_args(strict=True)
