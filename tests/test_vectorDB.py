@@ -1,5 +1,9 @@
 """Test the functionality for the vector DB setup & API."""
 
+import os
+
+os.environ["SKIP_VECTOR_DB"] = "1"  # Solution since flask API needs vector db in memory.
+
 import unittest
 import unittest.mock as um
 from src.vector_db_api.endpoints.group_analyzer import GroupAnalyzer
@@ -33,8 +37,7 @@ class TestGroupAnalyzer(unittest.TestCase):
         mocked_constructor.return_value = None
 
         endpoint_instance = GroupAnalyzer()
-        endpoint_instance.vector_databases = ("vector", "db")
 
-        endpoint_instance.vector_databases = (build_vector_emulator(),)
+        endpoint_instance.vector_databases = build_vector_emulator()
         parse_args.return_value = {"prompt": "This is the prompt."}
         assert endpoint_instance.get() == ({"response": "Test response"}, 200)
