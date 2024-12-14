@@ -11,6 +11,7 @@ app.secret_key = "JesperÄrCool1!"
 API_HOST = os.environ.get("API_ADDR")
 FRONTEND_ADDR = os.environ.get("FRONTEND_ADDR")
 
+
 @app.route("/")
 def homepage():
     """Render the homepage and sets uid if signed in."""
