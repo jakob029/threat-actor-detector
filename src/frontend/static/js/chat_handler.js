@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const uid = document.body.dataset.uid;
 
     // Track if we are currently setting an active conversation to avoid race conditions
-    let isSettingActiveConversation = false; 
+    let currentConversationPromise = null; 
 
     function updateChatPlaceholder() {
         if (chatList.childElementCount === 0) {
@@ -23,31 +23,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function setActiveConversation(cid) {
-        try {
-            isSettingActiveConversation = true;
-            disableUIInteraction();
-
-            const response = await fetch('/active_conversation', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cid: cid || null }),
-            });
-
-            if (!response.ok) {
-                console.error('Failed to set active conversation:', response.statusText);
-                return null;
-            }
-
-            const data = await response.json();
-            console.log('Active conversation set on backend:', data.cid);
-            return data.cid;
-        } catch (err) {
-            console.error("Error setting active conversation:", err);
+        // If we already have a conversation-changing process ongoing, wait or refuse new actions
+        if (currentConversationPromise) {
+            console.log("Another conversation is being set, please wait...");
             return null;
-        } finally {
-            isSettingActiveConversation = false;
-            enableUIInteraction();
         }
+
+        const promise = (async () => {
+            disableUIInteraction();
+            try {
+                const response = await fetch('/active_conversation', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cid: cid || null }),
+                });
+
+                if (!response.ok) {
+                    console.error('Failed to set active conversation:', response.statusText);
+                    return null;
+                }
+
+                const data = await response.json();
+                console.log('Active conversation set on backend:', data.cid);
+                return data.cid;
+            } catch (err) {
+                console.error("Error setting active conversation:", err);
+                return null;
+            } finally {
+                enableUIInteraction();
+            }
+        })();
+
+        currentConversationPromise = promise;
+        const result = await promise;
+        currentConversationPromise = null;
+        return result;
     }
 
     function disableUIInteraction() {
@@ -79,8 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
         chatItem.dataset.isNew = isNew;
     
         chatItem.addEventListener('click', async () => {
-            if (isSettingActiveConversation) {
-                console.log("Already setting active conversation, please wait.");
+            // Remove any check for isSettingActiveConversation. We use currentConversationPromise now.
+            if (currentConversationPromise) {
+                console.log("Already in the process of setting a conversation. Please wait...");
                 return;
             }
     
@@ -107,9 +118,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     
         chatList.appendChild(chatItem);
-        // Removed the line that automatically adds 'active-chat' here
         updateChatPlaceholder();
     }
+    
     
 
     function addMessageToChat(content, type) {
@@ -147,75 +158,75 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Changes in chatForm submission handler
-chatForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    // If we're currently setting the active conversation, don't allow sending messages
-    if (isSettingActiveConversation) {
-        console.log("Please wait, still setting active conversation.");
-        return;
-    }
-
-    const userInput = chatInput.value.trim();
-    if (!userInput) return;
-
-    addMessageToChat(userInput, 'user');
-    chatInput.value = '';
-
-    // Store cid and isNew at the moment of sending
-    const currentChatItem = document.querySelector('.chat-item.active-chat');
-    const sendCid = currentChatItem?.dataset.cid;
-    const sendIsNew = currentChatItem?.dataset.isNew === 'true';
-
-    if (!sendCid) {
-        console.error("No active chat selected. Unable to send message.");
-        return;
-    }
-
-    pendingResponseBubble = addMessageToChat('', 'bot');
-    const loader = document.createElement('div');
-    loader.className = 'loader';
-    pendingResponseBubble.appendChild(loader);
-
-    const body = { cid: sendCid, prompt: userInput, is_new: sendIsNew };
-
-    try {
-        const response = await fetch('/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body),
-        });
-
-        const data = await response.json();
-        pendingResponseBubble.innerHTML = '';
-
-        if (response.ok) {
-            const cleanHTML = DOMPurify.sanitize(marked.parse(data.response || 'No response'));
-            pendingResponseBubble.innerHTML = cleanHTML;
-            pendingResponseBubble.querySelectorAll('pre code').forEach((block) => {
-                hljs.highlightElement(block);
-            });
-
-            await renderChartWrapper(data.data_points);
-
-            // Update is_new based on the cid we sent with, not the currently active chat
-            if (sendIsNew) {
-                const sentChatItem = chatList.querySelector(`.chat-item[data-cid="${sendCid}"]`);
-                if (sentChatItem) {
-                    sentChatItem.dataset.isNew = false;
-                }
-            }
-        } else {
-            pendingResponseBubble.innerHTML = `<p>${data.message || 'Error communicating with the server.'}</p>`;
-            document.getElementById("chartContainer").style.display = "none";
+    chatForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        // Remove the isSettingActiveConversation check
+        if (currentConversationPromise) {
+            console.log("Please wait until the active conversation is set.");
+            return;
         }
-    } catch (error) {
-        console.error('Error during chat submission:', error);
-        pendingResponseBubble.innerHTML = '<p>Error communicating with the server.</p>';
-        document.getElementById("chartContainer").style.display = "none";
-    } finally {
-        pendingResponseBubble = null;
-    }
-});
+    
+        const userInput = chatInput.value.trim();
+        if (!userInput) return;
+    
+        addMessageToChat(userInput, 'user');
+        chatInput.value = '';
+    
+        const currentChatItem = document.querySelector('.chat-item.active-chat');
+        const sendCid = currentChatItem?.dataset.cid;
+        const sendIsNew = currentChatItem?.dataset.isNew === 'true';
+    
+        if (!sendCid) {
+            console.error("No active chat selected. Unable to send message.");
+            return;
+        }
+    
+        pendingResponseBubble = addMessageToChat('', 'bot');
+        const loader = document.createElement('div');
+        loader.className = 'loader';
+        pendingResponseBubble.appendChild(loader);
+    
+        const body = { cid: sendCid, prompt: userInput, is_new: sendIsNew };
+    
+        try {
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            });
+    
+            const data = await response.json();
+            pendingResponseBubble.innerHTML = '';
+    
+            if (response.ok) {
+                const cleanHTML = DOMPurify.sanitize(marked.parse(data.response || 'No response'));
+                pendingResponseBubble.innerHTML = cleanHTML;
+                pendingResponseBubble.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+    
+                await renderChartWrapper(data.data_points);
+    
+                if (sendIsNew) {
+                    const sentChatItem = chatList.querySelector(`.chat-item[data-cid="${sendCid}"]`);
+                    if (sentChatItem) {
+                        sentChatItem.dataset.isNew = false;
+                    }
+                }
+            } else {
+                pendingResponseBubble.innerHTML = `<p>${data.message || 'Error communicating with the server.'}</p>`;
+                document.getElementById("chartContainer").style.display = "none";
+            }
+        } catch (error) {
+            console.error('Error during chat submission:', error);
+            pendingResponseBubble.innerHTML = '<p>Error communicating with the server.</p>';
+            document.getElementById("chartContainer").style.display = "none";
+        } finally {
+            pendingResponseBubble = null;
+        }
+    });
+    
+    
 
 
     chatInput.addEventListener('keydown', (event) => {
@@ -273,54 +284,51 @@ chatForm.addEventListener('submit', async (event) => {
     }
 
     // Changes in newChatButton event listener
-newChatButton?.addEventListener('click', async () => {
-    if (isSettingActiveConversation) {
-        console.log("Please wait, still setting active conversation.");
-        return;
-    }
-
-    disableUIInteraction();
-
-    const date = new Date().toISOString().split('T')[0];
-
-    try {
-        const response = await fetch('/conversations', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-        });
-
-        const data = await response.json();
-        if (response.ok && data.cid) {
-            const updatedCid = await setActiveConversation(data.cid);
-            if (!updatedCid) {
-                console.error("Failed to set the new conversation as active.");
-                enableUIInteraction();
-                return;
-            }
-
-            // Add the new conversation to the sidebar and mark it as new
-            addChatToSidebar(data.cid, date, true);
-
-            // Immediately mark this new chat as active in the UI
-            const newChatItem = chatList.querySelector(`.chat-item[data-cid="${data.cid}"]`);
-            chatList.querySelectorAll('.chat-item').forEach((c) => c.classList.remove('active-chat'));
-            newChatItem.classList.add('active-chat');
-
-            // Render an empty conversation for the new chat
-            renderConversation([]);
-            
-            chatContainer.innerHTML = '';
-            document.getElementById("chartContainer").style.display = "none";
-            updateChatPlaceholder();
+    newChatButton?.addEventListener('click', async () => {
+        // Remove isSettingActiveConversation checks
+        if (currentConversationPromise) {
+            console.log("Please wait, still setting active conversation.");
+            return;
         }
-    } catch (error) {
-        console.error('Error creating new conversation:', error);
-    } finally {
-        enableUIInteraction();
-    }
-});
-
-
+    
+        disableUIInteraction();
+    
+        const date = new Date().toISOString().split('T')[0];
+    
+        try {
+            const response = await fetch('/conversations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+    
+            const data = await response.json();
+            if (response.ok && data.cid) {
+                const updatedCid = await setActiveConversation(data.cid);
+                if (!updatedCid) {
+                    console.error("Failed to set the new conversation as active.");
+                    enableUIInteraction();
+                    return;
+                }
+    
+                addChatToSidebar(data.cid, date, true);
+    
+                const newChatItem = chatList.querySelector(`.chat-item[data-cid="${data.cid}"]`);
+                chatList.querySelectorAll('.chat-item').forEach((c) => c.classList.remove('active-chat'));
+                newChatItem.classList.add('active-chat');
+    
+                renderConversation([]);
+                chatContainer.innerHTML = '';
+                document.getElementById("chartContainer").style.display = "none";
+                updateChatPlaceholder();
+            }
+        } catch (error) {
+            console.error('Error creating new conversation:', error);
+        } finally {
+            enableUIInteraction();
+        }
+    });
+    
+    
     clearHistoryButton?.addEventListener('click', async () => {
         const confirmation = confirm("Are you sure you want to delete all conversations? This action cannot be undone.");
         if (!confirmation) return;
