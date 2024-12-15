@@ -19,6 +19,33 @@ from src.api.backend_connectors.database_connector import collect_ioc_mapping
 logger = logging.getLogger(__name__)
 
 
+def _guardrail(llm_response: str, client: Client, llm_model: str = "llama3.1") -> bool:
+    """Guardrail for the output prompt that checks for offensive content.
+
+    Args:
+        llm_response: Any generated response from an llm.
+        client: An ollama client.
+        llm_model (optional): Model to use for guardrail.
+
+    Response:
+        True if guardrail is broken, otherwise False.
+    """
+    guardrail_prompt = (
+        "You are now acting as a guardrail, trying to prevent output that could be considered offensive."
+        " Respond with only yes or no, could the following message be considered offensive?"
+    )
+    text_prompt = guardrail_prompt + llm_response
+
+    prompt = [{"role": "user", "content": text_prompt}]
+    guardrail_response = client.chat(model=llm_model, messages=prompt)
+    guardrail_response_text = guardrail_response["message"]["content"]
+
+    if "yes" in guardrail_response_text.lower():
+        return True
+
+    return False
+
+
 def send_prompt(prompt: list) -> str:
     """Send basic proompt to llm.
 
@@ -34,8 +61,12 @@ def send_prompt(prompt: list) -> str:
 
     client: Client = Client(host=llm_address, timeout=120)
     llm_response = client.chat(model=llm_model, messages=prompt)
+    llm_response_text = llm_response["message"]["content"]
 
-    return llm_response["message"]["content"]
+    if _guardrail(llm_response_text, client):
+        return "Return prompt violated guardrail."
+
+    return llm_response_text
 
 
 def construct_analyze_prompt(prompt: str | list, cid: str) -> list:
@@ -144,22 +175,3 @@ def construct_analyze_prompt(prompt: str | list, cid: str) -> list:
     logger.info(f"The final llm prompt was: |{prompt}|")
 
     return prompt
-
-
-def send_analyze_prompt(prompt: list) -> str:
-    """Send an analyze prompt to the specialized analyzer LLM.
-
-    Args:
-        prompt: A constructed prompt for the llm.
-
-    Returns:
-        A string value of the recieved response from the llm.
-    """
-    llm_address = os.environ.get("LLM_ADDRESS", default="http://100.77.88.10")
-    llm_model = os.environ.get("LLM_MODEL", default="llama3.1")
-
-    client: Client = Client(host=llm_address, timeout=120)
-
-    response = client.chat(model=llm_model, messages=prompt)["message"]["content"]
-
-    return response
