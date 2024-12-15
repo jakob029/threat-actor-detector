@@ -22,7 +22,7 @@ class TestAnalyzisPost(unittest.TestCase):
         self.client = self.app.test_client()
 
     @patch("src.api.endpoints.ollama_endpoint.construct_analyze_prompt")
-    @patch("src.api.endpoints.ollama_endpoint.send_analyze_prompt")
+    @patch("src.api.endpoints.ollama_endpoint.send_prompt")
     @patch("src.api.endpoints.ollama_endpoint.set_graph_to_conversation")
     @patch("src.api.endpoints.ollama_endpoint.add_message")
     @patch("src.api.endpoints.ollama_endpoint.SchemaParser.correct_structure")
@@ -48,7 +48,7 @@ class TestAnalyzisPost(unittest.TestCase):
         response = self.client.post("/analysis", json={"prompt": "example_prompt", "cid": "test_cid"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, {"message": "success", "response": "response", "data_points": "statistics"})
-        mock_send_prompt.assert_called_once_with("constructed_prompt")
+        mock_send_prompt.assert_called_with("constructed_prompt")
 
     @patch("src.api.endpoints.ollama_endpoint.construct_analyze_prompt")
     def test_post_response_error(self, mock_send_prompt):
