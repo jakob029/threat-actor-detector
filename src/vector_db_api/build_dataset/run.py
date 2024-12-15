@@ -10,6 +10,7 @@ from src.vector_db_api.build_dataset.build_chroma_db import VectorDB
 
 logging.basicConfig(level=logging.INFO)
 
+PATH = os.path.dirname(os.path.abspath(__file__))
 
 def build_vector_database() -> None | VectorDB:
     """Vector database builder.
@@ -22,9 +23,9 @@ def build_vector_database() -> None | VectorDB:
 
     construction_instance = construct_db.ConstructDataBase()
     construction_instance.construct_atp_descriptor()
-    relationship = construction_instance.retrieve_instruction_set_relationships()
+    relationship = "manually_constructed_dataset.json"
 
-    relationship_builder = VectorDB(relationship, "group_desc_db")
+    relationship_builder = VectorDB(os.path.join(LOCATION, relationship), "group_desc_db")
     relationship_builder.build_db()
 
     return relationship_builder

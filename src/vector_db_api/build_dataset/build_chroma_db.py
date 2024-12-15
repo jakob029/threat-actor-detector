@@ -25,9 +25,9 @@ class VectorDB:
     def build_db(self) -> None:
         """Build a vector database saved to memory."""
         chroma_client = chromadb.Client()
+        self._structure_data()
         sentence_transformer = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-mpnet-base-v2")
         self.collection = chroma_client.create_collection(name=self.name, embedding_function=sentence_transformer)
-        self._structure_data()
         self._build_collection()
 
     def _structure_data(self):

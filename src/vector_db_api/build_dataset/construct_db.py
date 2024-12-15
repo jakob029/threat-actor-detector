@@ -18,7 +18,7 @@ class ConstructDataBase:
         status = subprocess.run([f"{LOCATION}/retrieve_data.sh", LOCATION], check=True)
         self.ERROR = status.returncode
 
-    def retrieve_instruction_set_relationships(self, attack_path: str = "enterprise-attack") -> list:
+    def retrieve_instruction_set_relationships(self, attack_path: str = "enterprise-attack") -> dict:
         """Retrieve each relationship for each instruction-set object.
 
         Args:
