@@ -158,91 +158,97 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Changes in chatForm submission handler
-    chatForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        // Remove the isSettingActiveConversation check
-        if (currentConversationPromise) {
-            console.log("Please wait until the active conversation is set.");
-            return;
-        }
+    // Submit event listener (unchanged except ensuring no dispatchEvent is used elsewhere)
+chatForm.addEventListener('submit', async (event) => {
+    console.log('Submit event triggered');
+    event.preventDefault();
+
+    // Since we're no longer using dispatchEvent, this will only fire once per Enter press.
+    if (currentConversationPromise) {
+        console.log("Please wait until the active conversation is set.");
+        return;
+    }
+
     
-        const userInput = chatInput.value.trim();
-        if (!userInput) return;
-    
-        addMessageToChat(userInput, 'user');
-        chatInput.value = '';
-    
-        const currentChatItem = document.querySelector('.chat-item.active-chat');
-        const sendCid = currentChatItem?.dataset.cid;
-        const sendIsNew = currentChatItem?.dataset.isNew === 'true';
-    
-        if (!sendCid) {
-            console.error("No active chat selected. Unable to send message.");
-            return;
-        }
-    
-        pendingResponseBubble = addMessageToChat('', 'bot');
-        const loader = document.createElement('div');
-        loader.className = 'loader';
-        pendingResponseBubble.appendChild(loader);
-    
-        const body = { cid: sendCid, prompt: userInput, is_new: sendIsNew };
-    
-        try {
-            const response = await fetch('/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body),
+
+    const userInput = chatInput.value.trim();
+    console.log('User input:', userInput);
+    if (!userInput) return;
+
+    addMessageToChat(userInput, 'user');
+    chatInput.value = '';
+
+    const currentChatItem = document.querySelector('.chat-item.active-chat');
+    const sendCid = currentChatItem?.dataset.cid;
+    const sendIsNew = currentChatItem?.dataset.isNew === 'true';
+
+    if (!sendCid) {
+        console.error("No active chat selected. Unable to send message.");
+        return;
+    }
+
+    pendingResponseBubble = addMessageToChat('', 'bot');
+    const loader = document.createElement('div');
+    loader.className = 'loader';
+    pendingResponseBubble.appendChild(loader);
+
+    const body = { cid: sendCid, prompt: userInput, is_new: sendIsNew };
+
+    try {
+        console.log('Fetching /chat with user input:', userInput);
+        const response = await fetch('/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+
+        const data = await response.json();
+        pendingResponseBubble.innerHTML = '';
+
+        if (response.ok) {
+            const cleanHTML = DOMPurify.sanitize(marked.parse(data.response || 'No response'));
+            pendingResponseBubble.innerHTML = cleanHTML;
+            pendingResponseBubble.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
             });
-    
-            const data = await response.json();
-            pendingResponseBubble.innerHTML = '';
-    
-            if (response.ok) {
-                const cleanHTML = DOMPurify.sanitize(marked.parse(data.response || 'No response'));
-                pendingResponseBubble.innerHTML = cleanHTML;
-                pendingResponseBubble.querySelectorAll('pre code').forEach((block) => {
-                    hljs.highlightElement(block);
-                });
-    
-                await renderChartWrapper(data.data_points);
-    
-                if (sendIsNew) {
-                    const sentChatItem = chatList.querySelector(`.chat-item[data-cid="${sendCid}"]`);
-                    if (sentChatItem) {
-                        sentChatItem.dataset.isNew = false;
-                    }
+
+            await renderChartWrapper(data.data_points);
+
+            if (sendIsNew) {
+                const sentChatItem = chatList.querySelector(`.chat-item[data-cid="${sendCid}"]`);
+                if (sentChatItem) {
+                    sentChatItem.dataset.isNew = false;
                 }
-            } else {
-                pendingResponseBubble.innerHTML = `<p>${data.message || 'Error communicating with the server.'}</p>`;
-                document.getElementById("chartContainer").style.display = "none";
             }
-        } catch (error) {
-            console.error('Error during chat submission:', error);
-            pendingResponseBubble.innerHTML = '<p>Error communicating with the server.</p>';
+        } else {
+            pendingResponseBubble.innerHTML = `<p>${data.message || 'Error communicating with the server.'}</p>`;
             document.getElementById("chartContainer").style.display = "none";
-        } finally {
-            pendingResponseBubble = null;
         }
-    });
-    
-    
+    } catch (error) {
+        console.error('Error during chat submission:', error);
+        pendingResponseBubble.innerHTML = '<p>Error communicating with the server.</p>';
+        document.getElementById("chartContainer").style.display = "none";
+    } finally {
+        pendingResponseBubble = null;
+    }
+});
 
 
-    chatInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            if (event.shiftKey) {
-                const cursorPos = chatInput.selectionStart;
-                const textBeforeCursor = chatInput.value.slice(0, cursorPos);
-                const textAfterCursor = chatInput.value.slice(cursorPos);
-                chatInput.value = `${textBeforeCursor}\n${textAfterCursor}`;
-                chatInput.selectionStart = chatInput.selectionEnd = cursorPos + 1;
-            } else {
-                event.preventDefault();
-                chatForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
-            }
+chatInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        if (event.shiftKey) {
+            const cursorPos = chatInput.selectionStart;
+            const textBeforeCursor = chatInput.value.slice(0, cursorPos);
+            const textAfterCursor = chatInput.value.slice(cursorPos);
+            chatInput.value = `${textBeforeCursor}\n${textAfterCursor}`;
+            chatInput.selectionStart = chatInput.selectionEnd = cursorPos + 1;
+        } else {
+            event.preventDefault();
+            chatForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
         }
-    });
+    }
+});
+
 
     async function loadConversation(cid) {
         try {
