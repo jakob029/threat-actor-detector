@@ -15,6 +15,7 @@ from src.api.endpoints.conversation_endpoint import ConversationsEndpoint
 
 Path("logs").mkdir(parents=True, exist_ok=True)
 
+load_dotenv()
 HOST = environ.get("BIND_ADDRESS")
 
 logging.basicConfig(
@@ -27,8 +28,6 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-# load env
-load_dotenv()
 logging.info("loaded .env")
 
 app = Flask(__name__)

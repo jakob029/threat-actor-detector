@@ -17,7 +17,7 @@ def llama_json_parser(content: str, bit: int = 0) -> dict:
 
     if not bit:
         for text in json_structure:
-            if "json" in text:
+            if "{" in text:
                 data = text
                 break
         else:

@@ -628,9 +628,9 @@ def collect_ioc_mapping(IoC: str) -> tuple | None:
     try:
         with connector.connect(**db_config) as db:
             with db.cursor() as cursor:
-                db_request = f'SELECT IoC, APT FROM ioc_table where ioc = "{IoC}"'
+                db_request = 'SELECT IoC, APT FROM ioc_table where ioc = %s'
 
-                cursor.execute(db_request)
+                cursor.execute(db_request, (IoC,))
                 response = cursor.fetchall()
 
                 if response:
