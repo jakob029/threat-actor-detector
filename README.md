@@ -8,4 +8,4 @@
 
 [Database documentation](docs/database.md)
 
-[Installation documentation](docs/installation_instructions.md)
+[Installation documentation](docs/run_instructions.md)
