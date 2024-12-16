@@ -37,7 +37,7 @@ class TestAnalyzisPost(unittest.TestCase):
         mock_construct_analyze_prompt,
     ):
         """Test the POST method for a successful response."""
-        mock_construct_analyze_prompt.return_value = "constructed_prompt"
+        mock_construct_analyze_prompt.return_value = ("constructed_prompt", False)
         mock_send_prompt.return_value = "response"
         mock_llama_json_parser.return_value = "parsed_response"
         mock_correct_structure.return_value = "statistics"

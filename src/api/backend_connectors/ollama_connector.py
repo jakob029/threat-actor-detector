@@ -165,14 +165,13 @@ def construct_analyze_prompt(prompt: str | list, cid: str) -> tuple:
     if ioc_info:
         IOC_FLAG = True
         prompt.insert(
-                -2,
-                {
-                    "role": "system",
-                    "name": "IoC database",
-                    "content": f"The IoC {selected_ioc} is related to {ioc_info[1]} according to the database.",
-                },
-            )
-
+            -2,
+            {
+                "role": "system",
+                "name": "IoC database",
+                "content": f"The IoC {selected_ioc} is related to {ioc_info[1]} according to the database.",
+            },
+        )
 
     with open(llm_preprompt_path, "r", encoding="utf-8") as f:
         preprompt = f.read()

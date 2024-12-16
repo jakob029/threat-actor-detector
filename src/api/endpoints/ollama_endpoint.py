@@ -59,7 +59,6 @@ class Analyzis(Resource):
 
         prompt: str = args["prompt"]
         cid: str = args["cid"]
-        counter: int = 0
 
         constructed_prompt, ioc_flag = construct_analyze_prompt(prompt, cid)
         for _ in range(3):
@@ -82,7 +81,6 @@ class Analyzis(Resource):
                     break
                 continue
 
-                return {"message": "success", "response": response}, 200
             except ConnectTimeout:
                 return {"message": "LLM_error"}, 500
             except TypeError:
@@ -91,7 +89,7 @@ class Analyzis(Resource):
                 if e.code == UNKNOWN_ISSUE:
                     return {"message": e.message}, 500
                 return {"message": e.message}, 200
-            except Exception as e:
+            except Exception:
                 reset_conversation(cid)
                 if ioc_flag:
                     add_message(prompt, "user", cid)
@@ -99,8 +97,6 @@ class Analyzis(Resource):
                     break
                 continue
 
-                logger.info(e)
-                return {"message": "success", "response": response}, 200
             break
 
         if (not ioc_flag) and (not statistics):
