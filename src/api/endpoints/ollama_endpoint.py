@@ -59,25 +59,28 @@ class Analyzis(Resource):
 
         prompt: str = args["prompt"]
         cid: str = args["cid"]
-        counter: int = 0
 
-        constructed_prompt: list = construct_analyze_prompt(prompt, cid)
-        for _ in range(10):
+        constructed_prompt, ioc_flag = construct_analyze_prompt(prompt, cid)
+        for _ in range(3):
             try:
                 response: str = send_prompt(constructed_prompt)
+                logger.info(f"The response: {response}")
+
                 defined_json = SchemaParser()
                 statistics = defined_json.correct_structure(llama_json_parser(response))
 
                 set_graph_to_conversation(cid, statistics)
+                add_message(prompt, "user", cid)
                 add_message(response, "assistant", cid)
-
             except ResponseError as e:
                 logger.info(str(e))
-                if counter < 3:
-                    reset_conversation(cid)
-                    continue
+                reset_conversation(cid)
+                if ioc_flag:
+                    add_message(prompt, "user", cid)
+                    add_message(response, "assistant", cid)
+                    break
+                continue
 
-                return {"message": "success", "response": response}, 200
             except ConnectTimeout:
                 return {"message": "LLM_error"}, 500
             except TypeError:
@@ -86,16 +89,21 @@ class Analyzis(Resource):
                 if e.code == UNKNOWN_ISSUE:
                     return {"message": e.message}, 500
                 return {"message": e.message}, 200
-            except Exception as e:
-                if counter < 3:
-                    reset_conversation(cid)
-                    continue
+            except Exception:
+                reset_conversation(cid)
+                if ioc_flag:
+                    add_message(prompt, "user", cid)
+                    add_message(response, "assistant", cid)
+                    break
+                continue
 
-                logger.info(e)
-                return {"message": "success", "response": response}, 200
             break
 
-        response: str = send_prompt(constructed_prompt)
+        if (not ioc_flag) and (not statistics):
+            add_message(prompt, "user", cid)
+            response: str = send_prompt(constructed_prompt)
+            add_message(response, "assistant", cid)
+
         return {
             "message": "success",
             "response": response,

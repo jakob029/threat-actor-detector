@@ -1,1 +1,7 @@
-Based on the following description and earlier sourced data from a vector database and IoC database if provided. What APT group is most likely to be the attacker? Also provide percentage estimation for the likelihood of each group using json (the vector DB provided some vector distances that can be used).
+Analyze the attack described by the user using earlier sourced data from the database, if a mapped IoC is given it is highly probable to be the correct APT. Proved an procentage estimation of which APTs likely executed the attack in a JSON format. Make sure to allways respond with the following JSON structure 
+```json
+{
+"<FIRST_APT>": PROCENTAGE,
+"<SECOND_APT>": PROCENTAGE
+}
+```

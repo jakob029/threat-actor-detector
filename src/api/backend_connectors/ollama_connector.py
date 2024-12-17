@@ -40,7 +40,7 @@ def _guardrail(llm_response: str, client: Client, llm_model: str = "llama3.1") -
     guardrail_response = client.chat(model=llm_model, messages=prompt)
     guardrail_response_text = guardrail_response["message"]["content"]
 
-    if "yes" in guardrail_response_text.lower():
+    if "yes" == guardrail_response_text:
         return True
 
     return False
@@ -69,7 +69,7 @@ def send_prompt(prompt: list) -> str:
     return llm_response_text
 
 
-def construct_analyze_prompt(prompt: str | list, cid: str) -> list:
+def construct_analyze_prompt(prompt: str | list, cid: str) -> tuple:
     """Send prompt to llm.
 
     Send a prompt to the llm and return it. Can use chat history
@@ -80,7 +80,8 @@ def construct_analyze_prompt(prompt: str | list, cid: str) -> list:
         cid (str): Conversation id.
 
     Return:
-        A fully constructed prompt to send to the LLM.
+        Tuple with format (PROMPT_FOR_LLM, IOC_FLAG) where the IoC flag
+        specifies if an IoC was mapped.
     """
     location = Path(os.path.dirname(os.path.abspath(__file__))).parent.absolute()
     llm_address = os.environ.get("LLM_ADDRESS", default="http://100.77.88.10")
@@ -120,7 +121,7 @@ def construct_analyze_prompt(prompt: str | list, cid: str) -> list:
             {
                 "role": "system",
                 "name": "Vector database",
-                "content": f"The vector database analyzed this: {vector_database_response.json()}",
+                "content": f"Vector distance (not procentages): {vector_database_response.json()}",
             },
         )
 
@@ -148,16 +149,23 @@ def construct_analyze_prompt(prompt: str | list, cid: str) -> list:
         )
 
     client: Client = Client(host=llm_address, timeout=120)
+    IOC_FLAG: bool = False
 
     select_ioc_prompt: str = "Could you select the IoC in this sentence, and respond only with the IoC: "
-    ioc_select_prompt[0]["content"] = select_ioc_prompt + ioc_select_prompt[0]["content"]
+    for _ in range(5):
+        ioc_select_prompt[0]["content"] = select_ioc_prompt + ioc_select_prompt[0]["content"]
 
-    selected_ioc = client.chat(model=ioc_parser_model, messages=ioc_select_prompt)["message"]["content"]
-    ioc_info = collect_ioc_mapping(selected_ioc)
+        selected_ioc = client.chat(model=ioc_parser_model, messages=ioc_select_prompt)["message"]["content"]
+        logger.info(f"Running {ioc_parser_model}")
+        logger.info(f"The IOC model found: {selected_ioc}")
+        ioc_info = collect_ioc_mapping(selected_ioc)
+        if ioc_info:
+            break
 
     if ioc_info:
+        IOC_FLAG = True
         prompt.insert(
-            0,
+            -2,
             {
                 "role": "system",
                 "name": "IoC database",
@@ -174,4 +182,4 @@ def construct_analyze_prompt(prompt: str | list, cid: str) -> list:
 
     logger.info(f"The final llm prompt was: |{prompt}|")
 
-    return prompt
+    return prompt, IOC_FLAG

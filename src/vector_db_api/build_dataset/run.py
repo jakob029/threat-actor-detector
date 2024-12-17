@@ -12,6 +12,7 @@ logging.basicConfig(level=logging.INFO)
 
 PATH = os.path.dirname(os.path.abspath(__file__))
 
+
 def build_vector_database() -> None | VectorDB:
     """Vector database builder.
 

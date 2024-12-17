@@ -9,7 +9,16 @@ class SchemaParser:
     ANALYSIS: bool
 
     name_struct: tuple = ("name", "Name", "Names", "names")
-    likelihood_estimate: tuple = ("Likelihood", "likelihood", "Likelihoods", "likelihoods")
+    likelihood_estimate: tuple = (
+        "Likelihood",
+        "likelihood",
+        "Likelihoods",
+        "likelihoods",
+        "percentage",
+        "Percentage",
+        "percentages",
+        "Percentages",
+    )
 
     @property
     def default_structure(self) -> dict:
