@@ -1,0 +1,50 @@
+http:
+ #region routers
+  routers:
+    app:
+      entryPoints:
+        - "https"
+      rule: "Host(`app.encryptedallies.com`)"
+      middlewares:
+        - default-headers
+        - https-redirectscheme
+      tls: {}
+      service: app
+#endregion
+#region services
+  services:
+    app:
+      loadBalancer:
+        servers:
+          - url: "http://10.20.0.20:5000"
+        passHostHeader: true
+#endregion
+  middlewares:
+    https-redirectscheme:
+      redirectScheme:
+        scheme: https
+        permanent: true
+    default-headers:
+      headers:
+        frameDeny: true
+        browserXssFilter: true
+        contentTypeNosniff: true
+        forceSTSHeader: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 15552000
+        customFrameOptionsValue: SAMEORIGIN
+        customRequestHeaders:
+          X-Forwarded-Proto: https
+
+    default-whitelist:
+      ipAllowList:
+        sourceRange:
+          # IP addresses allowed to connect to traefik
+          - "100.77.88.0/24"
+
+    secured:
+      chain:
+        middlewares:
+        - default-whitelist
+        - default-headers
