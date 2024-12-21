@@ -1,5 +1,7 @@
 # General setup instructions
 
+Please, follow the instructions outlined in the [wiki installation file](https://github.com/jakob029/threat-actor-detector/wiki/Installation).
+
 # Developer instructions
 
 The Python code in this application shall be run using python version 3.10 or newer.
