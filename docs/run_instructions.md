@@ -81,6 +81,21 @@ TAD_MYSQL_USER=<USER>          	     # User name
 CHROMA_DB_ADDRESS=10.50.0.50
 ```
 
+### For forntend
+The following describes how to create a .env file for the vector database API.
+
+First, create a file in the given to this path: threat-actor-detector/src/vector_db_api/.env
+
+```bash
+touch threat-actor-detector/src/frontend/.env
+```
+
+Then, write the following to the file:
+```bash
+FRONTED_KEY="<TOKEN>"
+API_ADDR="<API_ADDRESS>"
+FRONTEND_ADDR="<ADDRESS_TO_BIND>"
+```
 
 ### Windows
 Execute the following in the local environment:
