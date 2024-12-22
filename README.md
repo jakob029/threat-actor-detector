@@ -6,7 +6,7 @@ This application aims to estimate likely attack groups based on indicators given
 
 After creating and sign in to the platform, a new chat should be created. The user then has the possibility to write a description of an attack senario. For optimal accuricy, the attack cenario shall include TTPs (tactics, techniques, and procedures) and IoCs (indicator of comprimize). The system will then analyze the senario and provide a description for the analyzation. The user can then further discuss the sourced APTs and attack senario with the LLM.
 
-## Video demenstration
+## Video demonstration
 
 Se video below:
 
